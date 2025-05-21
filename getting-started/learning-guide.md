@@ -6,8 +6,13 @@ The learning guide should provide recommended resources for developing out
 
 - [Using Git](https://docs.github.com/en/get-started/quickstart/hello-world)
 - [Git Learning Lab](https://lab.github.com/)
-- Deploying to Kubernetes
-- Developing Angular
+- [Deploying to Kubernetes](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+- [Developing Angular](https://angular.io/start)
+- [Developing React](https://react.dev/learn)
+- [Developing Python](https://www.python.org/about/gettingstarted/)
+- [Developing Node.js](https://nodejs.org/en/docs/guides/getting-started-guide/)
+- [Supabase](https://supabase.com/docs)
+- [Next.js](https://nextjs.org/learn)
 
 ## Book Recommendations
 
@@ -34,4 +39,4 @@ The learning guide should provide recommended resources for developing out
 
 
 ## Resources
-- ThoughtWorks Radar
+- [ThoughtWorks Radar](https://www.thoughtworks.com/en-us/radar)

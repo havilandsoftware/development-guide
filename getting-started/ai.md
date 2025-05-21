@@ -1,9 +1,7 @@
-# AI Responsibility Guide
+# AI
 
-## Introduction
+## Responsibility Guide
 This guide outlines the principles and best practices for responsible AI development within our team. Our goal is to ensure that our AI systems are ethical, transparent, and aligned with our values.
-
-## Principles
 
 ### 1. Fairness
 - Ensure AI systems do not discriminate against individuals or groups.
@@ -42,3 +40,7 @@ This guide outlines the principles and best practices for responsible AI develop
 ### User Interaction
 - Design AI systems to be user-friendly and provide clear explanations for their decisions.
 - Allow users to provide feedback and have control over AI interactions.
+
+
+## Tools and Frameworks
+- [Cursor](https://www.cursor.com/)

@@ -3,10 +3,11 @@
 ## Create Cloud Accounts
 - Slack
 - Github & Copilot
-- Trello
+- Trello & Jira
 - Google
 - Github Copilot
 - AWS
+- Supabase
 
 ## Install WSL (Windows)
 *NOTE: only necessary if using Windows*
@@ -57,17 +58,16 @@ Test your installation by cloning the development guide repository to your local
   git clone git@github.com:havilandsoftware/developer-guide.git
   ```
 
-
-## Install Languages
+## Install Languages and Frameworks
 - [Python](../technologies/python.md#installation)
 - [Node.js](../technologies/javascript.md#installation)
+- [Docker](https://docs.docker.com/engine/install/ubuntu)
 
 ## Install Developer Applications
-- [Zed](https://zed.dev/)
+- [Cursor](https://www.cursor.com/)
 - [VSCode](https://code.visualstudio.com/download)
 - [Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/)
 - [DBeaver](https://dbeaver.io/download/)
-- [Notepad++](https://notepad-plus-plus.org/downloads/)
 
 ## Install Browsers & Communication
 - Slack
