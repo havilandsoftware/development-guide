@@ -2,7 +2,7 @@
 
 ## 1. Learning & Context
 
-Sign up for the [Hugging Face Agents course](https://huggingface.co/learn/agents).
+Sign up for the [Hugging Face Agents course](hhttps://huggingface.co/learn/agents-course/unit0/introduction). Focus on only Unit 0 and 1!
 
 Watch [Karl Haviland's LinkedIn video introduction](https://www.linkedin.com/posts/karlhaviland_hf-first-agent-template-agents-course-activity-7298389656415465472-QTQA) to create an agent.
 
