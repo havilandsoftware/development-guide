@@ -59,15 +59,20 @@ Test your installation by cloning the development guide repository to your local
   ```
 
 ## Install Languages and Frameworks
-- [Python](../technologies/python.md#installation)
-- [Node.js](../technologies/javascript.md#installation)
+- [Python 3.11](../technologies/python.md#installation)
+- [Node.js v22](../technologies/javascript.md#installation)
 - [Docker](https://docs.docker.com/engine/install/ubuntu)
+- [uv (Python dependency manager)](../technologies/python.md#modern-dependency-management-with-uv)
 
 ## Install Developer Applications
 - [Cursor](https://www.cursor.com/)
 - [VSCode](https://code.visualstudio.com/download)
 - [Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/)
 - [DBeaver](https://dbeaver.io/download/)
+
+## Install AI Tools
+- [Claude Code CLI](../technologies/claude.md#installation) - AI-powered development assistant
+- [GitHub CLI](https://cli.github.com/) - Required for Claude Code GitHub integration
 
 ## Install Browsers & Communication
 - Slack
@@ -76,8 +81,12 @@ Test your installation by cloning the development guide repository to your local
 - FireFox
 - LastPass or other password manager
 
-## Install CLI Tools
-- Kubectl
-- Terraform
-- Minikube
-- Helm
+## Install Cloud CLI Tools
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - Amazon Web Services command line interface
+- [gcloud CLI](https://cloud.google.com/sdk/docs/install) - Google Cloud Platform command line interface
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) - Kubernetes command line tool
+
+## Install Additional CLI Tools
+- [Terraform](https://developer.hashicorp.com/terraform/install)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [Helm](https://helm.sh/docs/intro/install/)

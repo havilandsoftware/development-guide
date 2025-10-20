@@ -25,6 +25,8 @@ brew install python@3.11
 ## Usage Guidelines
 - Follow [PEP8 conventions](https://www.python.org/dev/peps/pep-0008/)
 - Always use [virtual environments](https://docs.python.org/3/library/venv.html)
+
+### Traditional venv Setup
 ```
 python3.11 -m venv ./venv
 source ./venv/bin/activate
@@ -42,3 +44,28 @@ activate(){
     source ./venv/bin/activate  # commented out by conda initialize
 }
 ```
+
+### Modern Dependency Management with uv
+We are transitioning to [uv](https://docs.astral.sh/uv/) for faster and more reliable Python dependency management.
+
+**Installation:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Basic Usage:**
+```bash
+# Create a new project with uv
+uv init
+
+# Add dependencies
+uv add package-name
+
+# Sync dependencies from pyproject.toml
+uv sync
+
+# Run commands in the virtual environment
+uv run python script.py
+```
+
+For complete documentation, see the [uv documentation](https://docs.astral.sh/uv/).
