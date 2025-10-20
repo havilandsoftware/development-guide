@@ -8,8 +8,11 @@ We want to build and maintain a high quality development team! This guide outlin
 ## Getting started
 1. [Expectations](getting-started/expectations.md)
 2. [Installation and Setup Guide](getting-started/installation-and-setup-guide.md)
-3. [AI Responsibility Guide](getting-started/ai-responsibility-guide.md)
+3. [AI Responsibility Guide](getting-started/ai.md)
 4. [Learning Guide](getting-started/learning-guide.md)
-5. [Git Guide](getting-started/git-guide.md)
-6. [Python Guide](getting-started/python-guide.md)
-7. [JavaScript Guide](getting-started/javascript-guide.md)
+
+## Technologies
+- [Git](technologies/git.md)
+- [Python](technologies/python.md)
+- [JavaScript](technologies/javascript.md)
+- [Claude Code](technologies/claude.md)
