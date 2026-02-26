@@ -2,7 +2,7 @@
 These expectations are meant to be read and followed by all team members to foster growth, improve communication, and bolster product development.
 
 ## Team Guidelines
-- *Responsible AI First* - We are an AI-driven team, and our productivity improves when we use it in new and creative ways. Responsible and ethical usage of AI requires a methodical and iterative process.  We are intentional about AI, but believe in its use for good! For more details, refer to the [AI Responsibility Guide](../ai-responsibility-guide.md).
+- *Responsible AI First* - We are an AI-driven team, and our productivity improves when we use it in new and creative ways. Responsible and ethical usage of AI requires a methodical and iterative process.  We are intentional about AI, but believe in its use for good! For more details, refer to the [AI Responsibility Guide](./ai.md).
 - *Don't Hide* - As a remote team, we depend on you being proactive to use your voice and show your face. Good teammates communicate to their team and clients often!  Let them know what's happening, when its happening.
 - *Keep Learning, and Set Your Bar High* - Technologies change, and so should you.  There's always a next level and new things to learn.  The learning guide is a great place to start for reading material, videos/content, and tutorials!
 - *Contribute, Create, and Share* - As you learn/create new things, make your work known by sharing and teaching others!
