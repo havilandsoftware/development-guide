@@ -16,7 +16,7 @@
 ## Setup Git
 
 ### Install Git
-- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). **Needs to be version 2.40+.**
+- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). **Needs to be version 2.49+.**
 - Setup [first time configuration](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup) locally.- 
 ```
   git config --global user.name "John Doe"
@@ -84,6 +84,7 @@ Test your installation by cloning the development guide repository to your local
 ## Install Cloud CLI Tools
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - Amazon Web Services command line interface
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install) - Google Cloud Platform command line interface
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) - Supabase local development and project management
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) - Kubernetes command line tool
 
 ## Install Additional CLI Tools

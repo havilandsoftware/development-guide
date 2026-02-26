@@ -1,46 +1,53 @@
 # AI
 
 ## Responsibility Guide
-This guide outlines the principles and best practices for responsible AI development within our team. Our goal is to ensure that our AI systems are ethical, transparent, and aligned with our values.
+This guide outlines the principles and best practices for responsible AI use within our team. We are an AI-first team — we actively use AI tools to accelerate development, improve quality, and learn faster. Responsible usage means being intentional, verifying output, and maintaining accountability for everything we ship.
 
 ### 1. Fairness
-- Ensure AI systems do not discriminate against individuals or groups.
-- Regularly audit AI models for bias and take corrective actions as needed.
+- Ensure AI-generated systems and content do not discriminate against individuals or groups.
+- Regularly review AI-assisted decisions for unintended bias.
 
 ### 2. Transparency
-- Maintain clear documentation of AI models, including data sources, algorithms, and decision-making processes.
-- Communicate the purpose and limitations of AI systems to stakeholders.
+- Document when and how AI tools were used in a given piece of work.
+- Communicate the purpose and limitations of any AI system to stakeholders.
 
 ### 3. Accountability
-- Assign clear responsibility for the development, deployment, and monitoring of AI systems.
-- Implement mechanisms for reporting and addressing issues related to AI systems.
+- You are responsible for code you commit, regardless of whether AI generated it.
+- Review and understand AI-generated output before accepting it. Never blindly apply suggestions.
 
 ### 4. Privacy
-- Protect user data and ensure compliance with data protection regulations.
-- Implement data anonymization and encryption techniques where appropriate.
+- Do not paste sensitive data, credentials, API keys, or PII into AI tools.
+- Treat AI prompts as potentially logged — apply the same judgment you would to any external service.
 
 ### 5. Safety
-- Conduct thorough testing to ensure AI systems operate safely and reliably.
-- Monitor AI systems in production and have contingency plans for potential failures.
+- Test AI-generated code thoroughly before shipping.
+- When using AI agents or automated workflows, monitor outputs and have rollback plans.
 
-## Best Practices
+## Practical Usage Guidelines
 
-### Data Management
-- Use diverse and representative datasets to train AI models.
-- Regularly update datasets to reflect changing conditions and reduce bias.
+### When to Use AI
+- First-pass code generation, boilerplate, and scaffolding
+- Code review and refactoring suggestions
+- Explaining unfamiliar codebases or libraries
+- Writing tests, documentation, and commit messages
+- Debugging and root cause analysis
 
-### Model Development
-- Follow ethical guidelines during model development.
-- Use interpretable models where possible to facilitate understanding and trust.
+### When to Be Careful
+- Security-sensitive code (auth, encryption, access control) — always manually review
+- Business logic with edge cases AI may not be aware of
+- Anything touching production data or infrastructure
+- Legal, compliance, or contractual language
 
-### Deployment
-- Conduct impact assessments before deploying AI systems.
-- Monitor AI systems continuously and update them as needed to address new challenges.
-
-### User Interaction
-- Design AI systems to be user-friendly and provide clear explanations for their decisions.
-- Allow users to provide feedback and have control over AI interactions.
-
+### Verify Before You Ship
+- Run the code and read it — don't assume AI output is correct
+- Check for hallucinated imports, APIs, or method signatures
+- Validate logic against requirements, not just syntax
 
 ## Tools and Frameworks
-- [Cursor](https://www.cursor.com/)
+
+| Tool | Purpose |
+|------|---------|
+| [Cursor](https://www.cursor.com/) | Primary AI coding IDE with inline suggestions and chat |
+| [Claude Code](../technologies/claude.md) | CLI-based AI agent for complex coding tasks, planning, and GitHub integration |
+| [GitHub Copilot](https://github.com/features/copilot) | In-editor code completion and chat (VSCode, Cursor) |
+| [Claude (claude.ai)](https://claude.ai) | General-purpose AI assistant for research, writing, and analysis |

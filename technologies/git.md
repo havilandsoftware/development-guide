@@ -1,7 +1,7 @@
 # Git and Github
 
 ## Installation & First Time Setup
-Please follow the installation and first time setup instructions [here](../getting-started/installation-and-setup-guid.md#git).
+Please follow the installation and first time setup instructions [here](../getting-started/installation-and-setup-guide.md#setup-git).
 
 ## Repository Creation Standards
 - Make it private
