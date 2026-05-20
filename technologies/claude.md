@@ -12,6 +12,24 @@ npm install -g @anthropic-ai/claude-code
 
 For complete installation instructions, see the [Claude Code documentation](https://docs.claude.com/en/docs/claude-code).
 
+### Company Plugin
+
+After installing Claude Code, install the Haviland Software company plugin to get company-wide standards, developer environment verification, and project onboarding:
+
+```bash
+# Inside a Claude Code session:
+/plugin marketplace add havilandsoftware/pixelfuel-claude
+/plugin install pixelfuel@pixelfuel-claude
+```
+
+This provides:
+- Company git workflow rules and standards loaded into every Claude session
+- `/pixelfuel:dev-check` — verify your developer environment against this guide
+- `/pixelfuel:onboard-project <label>` — clone and bootstrap all repos for a topic label
+- `/pixelfuel:parallel-dev <task1> [task2]` — spin up parallel isolated development sessions
+
+Source: [havilandsoftware/pixelfuel-claude](https://github.com/havilandsoftware/pixelfuel-claude)
+
 ## Best Practices
 
 ### Always Use Plan Mode
