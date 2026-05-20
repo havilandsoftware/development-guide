@@ -27,8 +27,19 @@ This provides:
 - `/pixelfuel:dev-check` — verify your developer environment against this guide
 - `/pixelfuel:onboard-project <label>` — clone and bootstrap all repos for a topic label
 - `/pixelfuel:parallel-dev <task1> [task2]` — spin up parallel isolated development sessions
+- `/pixelfuel:build-skill <name>` — guided authoring of a new company skill, committed to a branch and submitted for admin review
 
 Source: [havilandsoftware/pixelfuel-claude](https://github.com/havilandsoftware/pixelfuel-claude)
+
+### Contributing Skills
+
+New skills go through a review process before they are available company-wide:
+
+1. Run `/pixelfuel:build-skill <name>` — Claude interviews you, drafts the `SKILL.md`, commits it to a `skill/<name>` branch, and opens a PR
+2. GitHub auto-requests review from repo admins (`@havkarl`, `@kengsc`)
+3. Admin approves and merges — the skill becomes available to everyone on next plugin update
+
+Direct pushes to `main` are blocked; all skill additions require an approved PR.
 
 ## Best Practices
 
