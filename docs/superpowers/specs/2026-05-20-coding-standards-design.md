@@ -20,6 +20,9 @@ This change creates `technologies/standards.md` as the single source of truth fo
 - Standards are specific enough to be machine-checkable (used by `/pixelfuel:project-check` skill in a future phase)
 - Standards are best-effort for non-Python/JS languages — not prohibitive
 - LTS version policy is explicit: projects below minimum supported versions are flagged
+- Secrets and credentials are never committed; procedure for removing them from history is documented
+- Every project defines local/dev/prod environment tiers with `.env.example` committed
+- All apps are versioned with semver; `package.json` and `pyproject.toml` are always filled out
 - What we intentionally don't enforce is documented so developers don't wonder
 
 ---
@@ -70,6 +73,88 @@ Must be present and cover at minimum:
 - OS files (`.DS_Store`, `Thumbs.db`)
 
 A language-appropriate `.gitignore` template from [github.com/github/gitignore](https://github.com/github/gitignore) is the starting point.
+
+#### .env.example
+Every project with environment variables must commit a `.env.example` file with all required keys listed, values blanked out or set to safe placeholders:
+
+```bash
+# .env.example
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+`.env` is always in `.gitignore`. `.env.example` is always committed.
+
+#### Environment Tiers
+
+Every project that connects to external services defines three environment tiers:
+
+| Tier | Purpose | Config source |
+|------|---------|--------------|
+| `local` | Developer's machine | `.env` (gitignored, copied from `.env.example`) |
+| `dev` | Shared development/staging environment | Environment variables set in hosting platform (Vercel, AWS, etc.) |
+| `prod` | Production | Environment variables set in hosting platform, restricted access |
+
+The README must document:
+- How to set up the local environment (copy `.env.example` → `.env`, fill in values)
+- Where dev/prod environment variables are managed (e.g. "Vercel dashboard → Settings → Environment Variables")
+- Which variables differ between tiers (e.g. different Supabase project for prod)
+
+#### Secret Removal Procedure
+
+If credentials or secrets are discovered in git history:
+
+1. **Rotate immediately** — treat the secret as compromised regardless of whether it was pushed
+2. **Remove from history** using `git filter-repo`:
+   ```bash
+   pip install git-filter-repo
+   git filter-repo --path-glob '*.env' --invert-paths
+   # Or to remove a specific string:
+   git filter-repo --replace-text <(echo 'ACTUAL_SECRET==>REMOVED')
+   ```
+3. **Force-push all branches** after history rewrite (coordinate with team)
+4. **Notify** the team and any affected service owners
+
+Never use `git rebase` or `git commit --amend` alone — they don't rewrite the full history.
+
+#### Versioning
+
+All applications use [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+- `MAJOR` — breaking changes
+- `MINOR` — new features, backwards compatible
+- `PATCH` — bug fixes
+
+**Python** — version in `pyproject.toml`:
+```toml
+[project]
+name = "my-package"
+version = "1.2.0"
+```
+
+**JavaScript/TypeScript** — version in `package.json`. `package.json` must always be fully filled out:
+```json
+{
+  "name": "my-app",
+  "version": "1.2.0",
+  "description": "What this app does",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest",
+    "lint": "eslint ."
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
+```
+
+Required `package.json` fields: `name`, `version`, `description`, `scripts` (with at minimum `dev`, `build`, `test`, `lint`), `engines.node`.
+
+Version is bumped as part of the release process (via `github-ops` tag commands).
 
 #### Branch Protection
 - `main` branch: direct pushes blocked, PR + at least 1 reviewer required
@@ -421,6 +506,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
       - uses: astral-sh/setup-uv@v3
       - run: uv sync --frozen
       - run: uv run ruff check .
@@ -440,6 +531,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
