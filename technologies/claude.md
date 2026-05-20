@@ -49,3 +49,55 @@ For detailed agent configuration, see the [Claude Code Agents documentation](htt
 - [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)
 - [GitHub CLI Documentation](https://cli.github.com/manual/)
 - [Effective Prompting Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering)
+
+## Parallel Development
+
+Running multiple Claude Code sessions simultaneously across isolated git worktrees is the single biggest productivity unlock, per the Claude Code team.
+
+### How It Works
+
+Each worktree is a full checkout of the repo on its own branch, with its own Claude session. Sessions work independently without interfering with each other.
+
+```bash
+# Create a worktree for each parallel task
+git worktree add .claude/worktrees/add-auth -b parallel/add-auth
+git worktree add .claude/worktrees/fix-payments -b parallel/fix-payments
+
+# Launch a Claude session in each (run in separate terminals)
+claude .claude/worktrees/add-auth
+claude .claude/worktrees/fix-payments
+
+# Clean up when done
+git worktree remove .claude/worktrees/add-auth
+```
+
+**Core rule**: Only one agent should edit a given file at a time. Design task boundaries so file changes don't overlap between sessions.
+
+### Multi-Repo Sessions
+
+Give Claude access to additional repositories in a session:
+
+```bash
+# At launch
+claude . --add-dir ~/workspaces/hs/shared-lib
+
+# Inside a running session
+/add-dir ~/workspaces/hs/shared-lib
+
+# Always load certain repos — add to .claude/settings.json
+{
+  "additionalDirectories": ["~/workspaces/hs/shared-lib"]
+}
+```
+
+### Self-Improvement Loop
+
+After every correction or mistake Claude makes, update the project's `CLAUDE.md` with a rule to prevent repeating it:
+
+> "Now update CLAUDE.md so you don't make that mistake again."
+
+### Reference
+
+These patterns are drawn from Boris Charny's (Claude Code team) published configuration:
+- [bcherny-claude CLAUDE.md](https://github.com/0xquinto/bcherny-claude/blob/main/CLAUDE.md) — full configuration with parallel dev, session management, automation, and self-improvement patterns
+- [pixelfuel-claude plugin](https://github.com/havilandsoftware/pixelfuel-claude) — company plugin that encodes these patterns as `/pixelfuel:parallel-dev` skill
