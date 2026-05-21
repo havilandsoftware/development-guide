@@ -59,10 +59,56 @@ Test your installation by cloning the development guide repository to your local
   ```
 
 ## Install Languages and Frameworks
-- [Python 3.11](../technologies/python.md#installation)
-- [Node.js v22](../technologies/javascript.md#installation)
-- [Docker](https://docs.docker.com/engine/install/ubuntu)
-- [uv (Python dependency manager)](../technologies/python.md#modern-dependency-management-with-uv)
+
+### Python 3.11+
+
+**Ubuntu:**
+```bash
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.11 python3.11-dev python3.11-venv
+```
+
+**macOS:**
+```bash
+brew update
+brew install python@3.11
+```
+
+**Windows:** Download the Python 3.11 installer from [python.org/downloads](https://www.python.org/downloads/windows/), run it, and check "Add Python to PATH".
+
+### uv (Python dependency manager)
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Verify: `uv --version`
+
+### Node.js v22 (via nvm)
+
+```bash
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+
+# Install and use Node 22
+nvm install 22
+nvm use 22
+
+# Make it the default
+echo "nvm use 22" >> ~/.bashrc
+```
+
+Verify: `node --version` → should show `v22.x.x`
+
+### Docker
+
+Follow the [Docker Engine install guide for Ubuntu](https://docs.docker.com/engine/install/ubuntu).
+
+For project structure and coding standards, see [Coding Standards](../technologies/standards.md).
 
 ## Install Developer Applications
 - [Cursor](https://www.cursor.com/)
