@@ -34,9 +34,23 @@ Source: [havilandsoftware/pixelfuel-claude](https://github.com/havilandsoftware/
 
 ### Contributing Skills
 
-New skills go through a review process before they are available company-wide:
+Skills in `pixelfuel-claude` must be **company-wide or broadly applicable to any Haviland Software development workflow** — things every developer across all projects would benefit from.
 
-1. Run `/pixelfuel:build-skill <name>` — Claude interviews you, drafts the `SKILL.md`, commits it to a `skill/<name>` branch, and opens a PR
+**Belongs in `pixelfuel-claude`:**
+- Developer tooling (environment setup, onboarding, repo auditing)
+- Git and release workflow automation
+- Skills any developer on any project would use
+
+**Does not belong here — put it in the project's own `.claude/skills/` instead:**
+- Anything specific to a single client or product (e.g. a skill that only works on one app or references client-specific services)
+- Workflows unique to one team
+- Anything that embeds client data, credentials, or service endpoints
+
+The `build-skill` scope check will prompt you if a proposed skill sounds project-specific and redirect you to the right place.
+
+**Review process** for skills that do belong here:
+
+1. Run `/pixelfuel:build-skill <name>` — Claude scope-checks the idea, interviews you, drafts the `SKILL.md`, commits it to a `skill/<name>` branch, and opens a PR
 2. GitHub auto-requests review from repo admins (`@havkarl`, `@kengsc`)
 3. Admin approves and merges — the skill becomes available to everyone on next plugin update
 
