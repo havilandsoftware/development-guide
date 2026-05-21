@@ -139,7 +139,8 @@ If credentials or secrets are discovered in git history:
    git filter-repo --path-glob '*.env' --invert-paths
 
    # Or remove a specific string across all history
-   git filter-repo --replace-text <(echo 'ACTUAL_SECRET==>REMOVED')
+   echo 'ACTUAL_SECRET==>REMOVED' > /tmp/replacements.txt
+   git filter-repo --replace-text /tmp/replacements.txt
    ```
 3. **Force-push all branches** after the history rewrite — coordinate with the team first
 4. **Notify** the team and rotate access on any affected service
@@ -286,7 +287,7 @@ Every public function has at least one test. 100% coverage is not required.
 
 ### Dockerfile
 
-Use `python:3.11-slim` as builder. Distroless (`gcr.io/distroless/python3-debian12`) preferred for runtime. If distroless is not viable (e.g. shell required for entrypoint), use `ubuntu:22.04` or `ubuntu:24.04` and document the reason in the Dockerfile.
+Use `python:3.11-slim` for both build and runtime stages. Run as a non-root user. If you need a smaller attack surface, distroless is an option but requires careful handling of site-packages — prefer slim unless you have a specific security requirement.
 
 ```dockerfile
 # Build stage
@@ -296,11 +297,13 @@ COPY pyproject.toml uv.lock ./
 RUN pip install uv && uv sync --frozen --no-dev
 
 # Runtime stage
-FROM gcr.io/distroless/python3-debian12
+FROM python:3.11-slim AS runner
 WORKDIR /app
+RUN useradd --no-create-home appuser
 COPY --from=builder /app/.venv /app/.venv
 COPY src/ ./src/
 ENV PATH="/app/.venv/bin:$PATH"
+USER appuser
 CMD ["python", "-m", "my_package.main"]
 ```
 
@@ -401,6 +404,7 @@ test('renders label', () => {
 Multi-stage build, `node:22-alpine`, non-root user.
 
 ```dockerfile
+# Requires output: 'standalone' in next.config.ts for server.js to be generated
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -415,6 +419,7 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 USER nextjs
 EXPOSE 3000
 CMD ["node", "server.js"]
@@ -437,7 +442,7 @@ Used with Supabase (PostgreSQL).
 supabase migration new add_users_table
 
 # Apply locally
-supabase db push
+supabase migration up
 
 # Generate TypeScript types
 supabase gen types typescript --local > lib/database.types.ts
@@ -500,17 +505,22 @@ jobs:
         with:
           fetch-depth: 0
       - name: Secret scan
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@v3
         with:
           extra_args: --only-verified
       - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.11"
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pytest --cov=src
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: false
 ```
 
@@ -527,7 +537,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Secret scan
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@v3
         with:
           extra_args: --only-verified
       - uses: actions/setup-node@v4
