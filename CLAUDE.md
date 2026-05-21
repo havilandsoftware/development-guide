@@ -8,7 +8,7 @@ This is the **Haviland Software Development Guide** - a comprehensive documentat
 
 The guide is structured into three main sections:
 - **getting-started/**: Onboarding materials, expectations, installation guides, and learning resources
-- **technologies/**: Language and framework-specific guidelines (Python, JavaScript, Git, Angular)
+- **technologies/**: Language and framework-specific guidelines (Git, Coding Standards, Claude Code)
 - **processes/**: Team workflows including OKRs, scrum, ticketing, and lifecycle management
 
 ## Repository Purpose & Architecture
@@ -75,9 +75,9 @@ Location: `getting-started/installation-and-setup-guide.md`
 - Include version requirements where applicable (e.g., Git 2.40+, Python 3.11, Node.js v22)
 
 ### Technology-Specific Guidelines
-- **Python**: getting-started/installation-and-setup-guide.md links to technologies/python.md
-- **JavaScript/Node**: getting-started/installation-and-setup-guide.md links to technologies/javascript.md
-- Always specify version requirements (Python 3.11, Node.js v22.12.0)
+- **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
+- Install steps for Python 3.11+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
+- Always specify version requirements (Python 3.11+, Node.js v22)
 
 ## Important Files
 
