@@ -13,6 +13,5 @@ We want to build and maintain a high quality development team! This guide outlin
 
 ## Technologies
 - [Git](technologies/git.md)
-- [Python](technologies/python.md)
-- [JavaScript](technologies/javascript.md)
+- [Coding Standards](technologies/standards.md)
 - [Claude Code](technologies/claude.md)
