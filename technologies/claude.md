@@ -28,7 +28,7 @@ This provides:
 - `/pixelfuel:onboard-project <label>` — clone and bootstrap all repos for a topic label
 - `/pixelfuel:parallel-dev <task1> [task2]` — spin up parallel isolated development sessions
 - `/pixelfuel:build-skill <name>` — guided authoring of a new company skill, committed to a branch and submitted for admin review
-- `/pixelfuel:project-check` — audit a repo against company coding standards, report gaps (coming soon)
+- `/pixelfuel:project-check [--fix]` — audit a repo against company coding standards, report gaps; `--fix` creates a branch with automated corrections
 
 Source: [havilandsoftware/pixelfuel-claude](https://github.com/havilandsoftware/pixelfuel-claude)
 
