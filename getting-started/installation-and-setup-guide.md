@@ -1,85 +1,69 @@
-# Installation Guide
+# Installation and Setup Guide
 
-## Create Cloud Accounts
+Work through this guide in order: create your accounts, install your programs, set up
+your machine, then verify the result. You are not finished until the verification step
+passes.
+
+> **Versions verified:** 2026-07-29. Every version below is a **floor** — `2.55+` means
+> 2.55 or newer. Newer is always fine. Run the verification step in section 4 to check
+> your machine against the current floors.
+
+---
+
+## 1. Create Cloud Accounts
+
+Create these before installing anything — several installers ask you to log in.
+
 - Slack
-- Github & Copilot
-- Trello & Jira
+- GitHub
+- Linear
+- InnoDay
 - Google
-- Github Copilot
 - AWS
 - Supabase
+- Railway
 
-## Install WSL (Windows)
-*NOTE: only necessary if using Windows*
-- Ubuntu 22.04 LTS
+Enable MFA on every one of them. See [Expectations](expectations.md#security-practices)
+for why this is not optional.
 
-## Setup Git
+---
 
-### Install Git
-- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). **Needs to be version 2.49+.**
-- Setup [first time configuration](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup) locally.- 
-```
-  git config --global user.name "John Doe"
-  git config --global user.email johndoe@example.com
-  git config --global init.defaultBranch main
-  git config --global core.editor nano
-  git config --global --add --bool push.autoSetupRemote true
-```
-- Create account in Github.
+## 2. Programs to Install
 
-### Create SSH Key and Add to Github
-For more detailed instructions, refer to [this guide](https://www.unixtutorial.org/how-to-generate-ed25519-ssh-key/).
-1. Generate the ssh key, then hit enter to create it in the default folder. *Notice the location of the id_ed25519.pub file in the output.*
-`ssh-keygen -t ed25519 -C "your-email@goes-here"`
-2. Type a password when prompted.
-3. Run the command to output the public key.
-`cat ~/.ssh/id_ed25519.pub`
+### Developer Tools
 
-Copy the contents into Github by
-1. Click on picture > Settings > SSH and GPG keys > New SSH Key >
-2. Put a name for your computer in the Title
-3. Paste the contents of your ~/.ssh/id_ed25519.pub file in the Key
-4. Click Add SSH key
+Everyone installs all of these, whatever you work on.
 
-### Create a Workspaces Directory
-Test your installation by cloning the development guide repository to your local workspace.
+| Tool | Version | Install |
+|------|---------|---------|
+| Git | 2.55+ | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
+| GitHub CLI (`gh`) | 2.96+ | [cli.github.com](https://cli.github.com/) |
+| nvm | 0.40+ | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
+| Node.js | 24.18+ | `nvm install 24 && nvm alias default 24` |
+| uv | 0.12+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Python | 3.14+ | Provisioned per-project by `uv` — see note below |
+| Claude Code CLI | 2.1+ | `npm install -g @anthropic-ai/claude-code` |
+| InnoDay CLI | latest | See [InnoDay](../technologies/innoday.md) |
+| Docker Engine | 29.6+ | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
 
-1. Open a terminal.
-2. Create the `~/workspaces/hs` directory:
-  ```sh
-  mkdir -p ~/workspaces/hs
-  ```
-3. Change into the new directory:
-  ```sh
-  cd ~/workspaces/hs
-  ```
-4. Clone the repository:
-  ```sh
-  git clone git@github.com:havilandsoftware/development-guide.git
-  ```
+**Node.js — install via nvm, not your system package manager:**
 
-## Install Languages and Frameworks
-
-### Python 3.11+
-
-**Ubuntu:**
 ```bash
-sudo apt update
-sudo apt install software-properties-common
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install python3.11 python3.11-dev python3.11-venv
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
+source ~/.bashrc
+
+nvm install 24
+nvm alias default 24
 ```
 
-**macOS:**
-```bash
-brew update
-brew install python@3.11
-```
+Verify: `node --version` → `v24.x.x`
 
-**Windows:** Download the Python 3.11 installer from [python.org/downloads](https://www.python.org/downloads/windows/), run it, and check "Add Python to PATH".
+Node 24 is the current Active LTS. If you are still on Node 22 (now Maintenance LTS),
+run the two `nvm` commands above to move across.
 
-### uv (Python dependency manager)
+**Python — do not install a global Python.** `uv` provisions and pins the right Python
+per project, which is why there is no `apt install python3.x` step here. Installing
+Python globally leads to projects silently running against the wrong interpreter.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -87,53 +71,135 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 Verify: `uv --version`
 
-### Node.js v22 (via nvm)
+**Claude Code** — after installing, see [Claude Code](../technologies/claude.md) for
+configuration and working practices.
+
+### DevOps Tools
+
+**Install this group only if you are working on infrastructure or deployments.** If you
+are writing application code, skip it.
+
+| Tool | Version | Install |
+|------|---------|---------|
+| Railway CLI | 5.30+ | [docs.railway.com/guides/cli](https://docs.railway.com/guides/cli) |
+| Terraform | 1.15+ | [developer.hashicorp.com](https://developer.hashicorp.com/terraform/install) |
+| gcloud CLI | 578+ | [cloud.google.com/sdk](https://cloud.google.com/sdk/docs/install) |
+| AWS CLI | 2.36+ | [docs.aws.amazon.com](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) |
+| Supabase CLI | 2.110+ | [supabase.com/docs](https://supabase.com/docs/guides/local-development/cli/getting-started) |
+| kubectl | 1.36+ | [kubernetes.io](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) |
+| Minikube | 1.38+ | [minikube.sigs.k8s.io](https://minikube.sigs.k8s.io/docs/start/) |
+| Helm | 4.2+ | [helm.sh](https://helm.sh/docs/intro/install/) |
+
+**kubectl version skew:** Kubernetes supports kubectl within ±1 minor version of the
+cluster's API server. Match your kubectl to the cluster you are targeting rather than
+always taking the newest release.
+
+### Editors & Applications
+
+- [VSCode](https://code.visualstudio.com/download)
+- [DBeaver](https://dbeaver.io/download/) — database client
+
+### Browsers & Communication
+
+- [Firefox](https://www.mozilla.org/firefox/)
+- [Chrome](https://www.google.com/chrome/)
+- Slack
+- A password manager (LastPass, 1Password, or Bitwarden)
+
+Two browsers, because anything user-facing needs testing in more than one engine.
+
+---
+
+## 3. Setup
+
+### Create a Workspaces Directory
+
+All repositories are cloned under `~/workspaces/`.
 
 ```bash
-# Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-source ~/.bashrc
-
-# Install and use Node 22
-nvm install 22
-nvm use 22
-
-# Make it the default
-echo "nvm use 22" >> ~/.bashrc
+mkdir -p ~/workspaces
+cd ~/workspaces
 ```
 
-Verify: `node --version` → should show `v22.x.x`
+### Setup Git
 
-### Docker
+Install Git 2.55+, then set your global configuration:
 
-Follow the [Docker Engine install guide for Ubuntu](https://docs.docker.com/engine/install/ubuntu).
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+git config --global init.defaultBranch main
+git config --global core.editor nano
+git config --global --add --bool push.autoSetupRemote true
+```
 
-For project structure and coding standards, see [Coding Standards](../technologies/standards.md).
+Check what is set with `git config --global --list`.
 
-## Install Developer Applications
-- [Cursor](https://www.cursor.com/)
-- [VSCode](https://code.visualstudio.com/download)
-- [Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/)
-- [DBeaver](https://dbeaver.io/download/)
+### Create an SSH Key and Add It to GitHub
 
-## Install AI Tools
-- [Claude Code CLI](../technologies/claude.md#installation) - AI-powered development assistant
-- [GitHub CLI](https://cli.github.com/) - Required for Claude Code GitHub integration
+For a more detailed walkthrough, see
+[this guide](https://www.unixtutorial.org/how-to-generate-ed25519-ssh-key/).
 
-## Install Browsers & Communication
-- Slack
-- Edge
-- Chrome
-- FireFox
-- LastPass or other password manager
+1. Generate the key, accepting the default location:
 
-## Install Cloud CLI Tools
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - Amazon Web Services command line interface
-- [gcloud CLI](https://cloud.google.com/sdk/docs/install) - Google Cloud Platform command line interface
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) - Supabase local development and project management
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) - Kubernetes command line tool
+   ```bash
+   ssh-keygen -t ed25519 -C "your-email@example.com"
+   ```
 
-## Install Additional CLI Tools
-- [Terraform](https://developer.hashicorp.com/terraform/install)
-- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
-- [Helm](https://helm.sh/docs/intro/install/)
+2. Set a passphrase when prompted.
+3. Print the public key:
+
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+
+Add it to GitHub: profile picture → **Settings** → **SSH and GPG keys** →
+**New SSH key**. Title it after your computer, paste the key contents, and save.
+
+Test it:
+
+```bash
+ssh -T git@github.com
+```
+
+Expected: `Hi <username>! You've successfully authenticated...`
+
+### Install WSL (Windows only)
+
+*Skip this section on macOS and Linux.*
+
+Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu
+24.04 LTS, then run everything above from inside the WSL environment rather than
+from PowerShell.
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+---
+
+## 4. Verify Your Setup
+
+Installing tools and knowing they work are different things. Verify with the
+[dev-check skill](../skills/dev-check/SKILL.md) bundled in this repository:
+
+```
+/pixelfuel:dev-check
+```
+
+It prints a pass/fail table for every tool, your git configuration, SSH access, and
+the InnoDay CLI and MCP server — with the exact fix command for anything missing or
+out of date.
+
+**You are not done onboarding until this comes back clean.** If you do not have the
+company Claude Code plugin installed, the same checks are documented step by step in
+[`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md) and can be run by hand.
+
+---
+
+## Next Steps
+
+- [Expectations](expectations.md) — how the team works
+- [AI Responsibility Guide](ai.md) — using AI tools responsibly
+- [Learning Guide](learning-guide.md) — what to learn first
+- [Coding Standards](../technologies/standards.md) — project structure, linting, testing, CI
