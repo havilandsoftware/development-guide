@@ -1,0 +1,132 @@
+# Claude Code
+
+Claude Code is an AI-powered CLI tool that assists with software development tasks. It provides intelligent code generation, refactoring, and project management capabilities.
+
+## Installation
+
+Install Claude Code CLI globally:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+For complete installation instructions, see the [Claude Code documentation](https://docs.claude.com/en/docs/claude-code).
+
+### Project Configuration
+
+Claude Code reads a `CLAUDE.md` file at the repository root and loads it into every session.
+Use it to encode the standards in this guide so they apply automatically rather than relying on
+each developer to remember them:
+
+- Git workflow rules (feature branches, PR-only merges — see [git.md](git.md))
+- Coding standards and linting expectations (see [standards.md](standards.md))
+- Build, test, and release commands for the project
+
+Project-specific skills belong in the repository's own `.claude/skills/` directory, versioned
+alongside the code they automate.
+
+### Skill Scope
+
+When deciding where a skill belongs, the test is how widely it applies:
+
+**Broadly applicable — worth sharing across projects:**
+- Developer tooling (environment setup, onboarding, repo auditing)
+- Git and release workflow automation
+- Anything a developer on any project would use
+
+**Project-specific — keep it in that project's `.claude/skills/`:**
+- Anything tied to a single client or product, or that references product-specific services
+- Workflows unique to one team
+- Anything that embeds client data, credentials, or service endpoints
+
+Never commit client data, credentials, or service endpoints into a skill regardless of where it
+lives.
+
+## Best Practices
+
+### Always Use Plan Mode
+Plan mode is critical for complex tasks. It allows Claude to:
+- Break down work into clear steps
+- Get your approval before implementing
+- Ensure alignment with your goals before writing code
+
+Start plan mode by using the `/plan` command or specifying your intent upfront.
+
+### Creating GitHub Issues with Claude
+Use the GitHub CLI integration to create well-structured issues efficiently:
+
+```bash
+gh issue create --title "Issue Title" --body "Description"
+```
+
+**Key principles when creating issues:**
+- **Re-plan to force code reuse**: Before implementing, have Claude analyze existing patterns and architectures to maximize code reuse
+- **Break up changes into separate issues**: Large features should be decomposed into smaller, manageable issues that can be worked independently
+- **Be pragmatic about modifications**: Focus on targeted changes rather than large rewrites. Modify only what's necessary to achieve the goal
+
+### Setting Up a Design Agent
+A design agent helps ensure architectural consistency and proper planning before implementation.
+
+**Configuration steps:**
+1. Create a `.claude/` directory in your repository
+2. Define agent prompts for architectural review
+3. Configure the agent to validate changes against established patterns
+4. Use the agent to review proposals before implementation
+
+For detailed agent configuration, see the [Claude Code Agents documentation](https://docs.claude.com/en/docs/claude-code/agents).
+
+## Additional Resources
+- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)
+- [GitHub CLI Documentation](https://cli.github.com/manual/)
+- [Effective Prompting Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering)
+
+## Parallel Development
+
+Running multiple Claude Code sessions simultaneously across isolated git worktrees is the single biggest productivity unlock, per the Claude Code team.
+
+### How It Works
+
+Each worktree is a full checkout of the repo on its own branch, with its own Claude session. Sessions work independently without interfering with each other.
+
+```bash
+# Create a worktree for each parallel task
+git worktree add .claude/worktrees/add-auth -b parallel/add-auth
+git worktree add .claude/worktrees/fix-payments -b parallel/fix-payments
+
+# Launch a Claude session in each (run in separate terminals)
+claude .claude/worktrees/add-auth
+claude .claude/worktrees/fix-payments
+
+# Clean up when done
+git worktree remove .claude/worktrees/add-auth
+```
+
+**Core rule**: Only one agent should edit a given file at a time. Design task boundaries so file changes don't overlap between sessions.
+
+### Multi-Repo Sessions
+
+Give Claude access to additional repositories in a session:
+
+```bash
+# At launch
+claude . --add-dir ~/workspaces/hs/shared-lib
+
+# Inside a running session
+/add-dir ~/workspaces/hs/shared-lib
+
+# Always load certain repos — add to .claude/settings.json
+{
+  "additionalDirectories": ["~/workspaces/hs/shared-lib"]
+}
+```
+
+### Self-Improvement Loop
+
+After every correction or mistake Claude makes, update the project's `CLAUDE.md` with a rule to prevent repeating it:
+
+> "Now update CLAUDE.md so you don't make that mistake again."
+
+### Reference
+
+These patterns are drawn from Boris Charny's (Claude Code team) published configuration:
+- [bcherny-claude CLAUDE.md](https://github.com/0xquinto/bcherny-claude/blob/main/CLAUDE.md) — full configuration with parallel dev, session management, automation, and self-improvement patterns

@@ -1,0 +1,3 @@
+# Ignore technologies and processes directories
+technologies/angular.md
+processes/
