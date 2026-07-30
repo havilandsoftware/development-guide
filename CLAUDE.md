@@ -70,13 +70,31 @@ Since this is a documentation repository, there are no build/test commands. Comm
 
 ### Updating Installation Guides
 Location: `getting-started/installation-and-setup-guide.md`
-- Maintain sections: Cloud Accounts, WSL, Git Setup, Languages/Frameworks, Developer Applications, Browsers, CLI Tools
-- Include version requirements where applicable (e.g., Git 2.40+, Python 3.11, Node.js v22)
+- Maintain the three-tier structure: Tier 1 (core, required at onboarding), Tier 2 (project-specific), Tier 3 (DevOps). Tier 2/3 tools belong under "Additional Tooling" at the end, not in the main flow
+- Include version requirements where applicable (e.g., Git 2.49+, Python 3.12+, Node.js v22)
 
 ### Technology-Specific Guidelines
 - **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
-- Install steps for Python 3.11+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
-- Always specify version requirements (Python 3.11+, Node.js v22)
+- Install steps for Python 3.12+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
+- Always specify version requirements (Python 3.12+, Node.js v22)
+
+### Skills
+`.claude/skills/` ships skills usable from any clone of this repo. They must depend on **nothing
+outside this repository** — no private repos, no internal service endpoints, no client names. A
+skill that only works for one org does not belong here.
+
+- `dev-check/` — machine audit. **Must honour the three tiers**: only Tier 1 can produce a ❌.
+  Tier 2/3 are `N/A` unless the current repo shows a marker (`angular.json`, `*.tf`, etc.) proving
+  it needs them. Failing a developer for a missing Terraform trains people to ignore the report.
+
+### Interview Task and Skill
+- `getting-started/interview-test.md` — the candidate task, structured as six virtual tickets
+  (`HS-9001`–`HS-9006`). Ticket IDs are deliberately fictional; real InnoDay/ticket-system
+  integration is out of scope and marked TBD in the doc.
+- `.claude/skills/interview/SKILL.md` — guided mode. **It must coach, never implement**: writing a
+  candidate's ticket for them invalidates the assessment. It samples repo state every 2 minutes for
+  one hour into `log/.checkpoints.tsv` and writes an observational (never scored) report at wrap-up.
+- `log/` is gitignored — session logs must never land in a PR.
 
 ## Important Files
 

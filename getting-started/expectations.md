@@ -43,6 +43,13 @@ Employees use the ticketing process to assign work.  The ticket owner is respons
 - Ticket completion should be equivalent with "production" use, no matter the type of ticket.
 - Tickets should be given a standard label, and in the case of product development, a release assignment.
 
+### Development Tooling
+Install the core (Tier 1) toolchain during onboarding — see the
+[Installation and Setup Guide](installation-and-setup-guide.md). Project-specific and DevOps tooling
+(Tier 2 and 3) is installed only when a project actually needs it: import the project, run
+`dev-check` from inside the repository, and install what it reports. Installing every CLI up front
+leaves you maintaining tools you never use.
+
 ### Security Practices
 Employees are responsible to protect the data and software systems of the company through basic security practices.
 - Enable MFA on all SaaS applications, e.g AWS, Atlassian, Github, Slack
