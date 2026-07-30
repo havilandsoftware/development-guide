@@ -371,12 +371,17 @@ MCP server read it from the client config — it is **not** seeded automatically
 `innoday config init`, so a machine can have the CLI installed, MCP registered, and
 still `401` on every call.
 
+The config is profile-based, so the secret lives under the **active profile**, not at the
+top level — `profiles.<current_profile>.platform.team_secret`. Check it there:
+
 ```bash
 python3 -c "
 import json, os
 try:
     d = json.load(open(os.path.expanduser('~/.innoday/config.json')))
-    print('seeded' if d.get('team_secret') else 'missing')
+    prof = d.get('profiles', {}).get(d.get('current_profile') or 'default', {})
+    secret = prof.get('platform', {}).get('team_secret')
+    print('seeded' if secret else 'missing')
 except Exception: print('no-config')
 " 2>/dev/null
 ```
@@ -385,6 +390,11 @@ except Exception: print('no-config')
 - `missing` → ⚠️ WARN — only an error when targeting a gated/deployed API; a purely
   local API has no team secret. Fix is in Step 9.
 - `no-config` → skip (already reported by 7b)
+
+**Check the active profile, not every profile.** A machine commonly has a `default`
+profile with no secret and a `dev` profile with one. Reporting on the wrong profile gives
+a confidently wrong answer in both directions, so always resolve `current_profile` first
+and report only on that one. Mention which profile was checked in the output.
 
 If MCP tools `401` while the CLI works, the running MCP server cached the config from
 before it was seeded — reconnect it so it re-reads the file.
@@ -583,10 +593,11 @@ needed.
 ```bash
 innoday config set team-secret "<secret>"
 ```
-Obtain the secret from whoever administers the API you are targeting. A purely local
-API has no team secret and this warning can be ignored. After seeding, reconnect the
-MCP server (`/mcp reconnect`) so it re-reads the config — otherwise MCP calls keep
-`401`ing while the CLI works.
+This writes to the **active profile**, so confirm you are on the right one first with
+`innoday config show`. Obtain the secret from whoever administers the API you are
+targeting; a purely local API has none and this warning can be ignored. After seeding,
+reconnect the MCP server (`/mcp reconnect`) so it re-reads the config — otherwise MCP
+calls keep `401`ing while the CLI works.
 
 For git config failures, print the exact `git config --global` command.
 

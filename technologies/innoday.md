@@ -53,8 +53,14 @@ A deployed InnoDay API gates every non-public route behind a team secret sent as
 have the CLI installed and MCP registered and still fail every call:
 
 ```bash
-innoday config set team-secret "<secret>"
+innoday config show                        # confirm which profile is active
+innoday config set team-secret "<secret>"  # writes to the active profile
 ```
+
+Configuration is **per profile** — the secret lives at
+`profiles.<current_profile>.platform.team_secret` in `~/.innoday/config.json`, not at the
+top level. Having it seeded on `default` while working on `dev` fails exactly as though it
+were never set, so check the profile before concluding the secret is missing.
 
 Get the secret from whoever administers the API you are targeting. A purely local API
 has none. `/pixelfuel:dev-check` checks for this specifically, because the symptom —
