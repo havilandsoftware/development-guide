@@ -10,6 +10,11 @@ We want to build and maintain a high quality development team! This guide outlin
 2. [Installation and Setup Guide](getting-started/installation-and-setup-guide.md)
 3. [AI Responsibility Guide](getting-started/ai.md)
 4. [Learning Guide](getting-started/learning-guide.md)
+5. [Release Guide](getting-started/release-guide.md)
+
+## Interview Task
+Candidates: [Interview Task](getting-started/interview-test.md) — build a small AI agent across six
+tickets. A guided Claude Code skill is included (`/interview`).
 
 ## Technologies
 - [Git](technologies/git.md)

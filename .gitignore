@@ -1,3 +1,7 @@
-# Ignore technologies and processes directories
-technologies/angular.md
-processes/
+# Interview session logs — observational records for the interviewer, never committed
+log/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/

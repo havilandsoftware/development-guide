@@ -1,6 +1,19 @@
 # Installation Guide
 
-## Create Cloud Accounts
+Tooling here is split into three tiers. **Install Tier 1 on day one** — it is what every developer
+needs before opening any project. Tiers 2 and 3 are installed on demand and are covered in
+[Additional Tooling](#additional-tooling-install-on-demand) at the end of this guide.
+
+| Tier | What | When to install |
+|------|------|-----------------|
+| **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, linters, Supabase, Vercel | Onboarding. Required. |
+| **2 — Project-specific** | Angular, Amplify, clasp, Codex | Only when you take on a project that uses it. |
+| **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Zapier | Only if you do infrastructure work. |
+
+If a tool is missing when you import a project, `dev-check` run from inside that repo will tell you
+exactly which tier-2/3 tools that project needs.
+
+## Tier 1 — Create Cloud Accounts
 - Slack
 - Github & Copilot
 - Trello & Jira
@@ -9,11 +22,11 @@
 - AWS
 - Supabase
 
-## Install WSL (Windows)
+## Tier 1 — Install WSL (Windows)
 *NOTE: only necessary if using Windows*
 - Ubuntu 22.04 LTS
 
-## Setup Git
+## Tier 1 — Setup Git
 
 ### Install Git
 - Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). **Needs to be version 2.49+.**
@@ -58,9 +71,9 @@ Test your installation by cloning the development guide repository to your local
   git clone git@github.com:havilandsoftware/development-guide.git
   ```
 
-## Install Languages and Frameworks
+## Tier 1 — Install Languages and Frameworks
 
-### Python 3.11+
+### Python 3.12+
 
 **Ubuntu:**
 ```bash
@@ -68,16 +81,19 @@ sudo apt update
 sudo apt install software-properties-common
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
-sudo apt install python3.11 python3.11-dev python3.11-venv
+sudo apt install python3.12 python3.12-dev python3.12-venv
 ```
 
 **macOS:**
 ```bash
 brew update
-brew install python@3.11
+brew install python@3.12
 ```
 
-**Windows:** Download the Python 3.11 installer from [python.org/downloads](https://www.python.org/downloads/windows/), run it, and check "Add Python to PATH".
+**Windows:** Download the Python 3.12 installer from [python.org/downloads](https://www.python.org/downloads/windows/), run it, and check "Add Python to PATH".
+
+Note that `uv` provisions the right Python version per project, so this system Python is only a
+baseline — you do not need to install every version you work with.
 
 ### uv (Python dependency manager)
 
@@ -110,30 +126,86 @@ Follow the [Docker Engine install guide for Ubuntu](https://docs.docker.com/engi
 
 For project structure and coding standards, see [Coding Standards](../technologies/standards.md).
 
-## Install Developer Applications
+## Tier 1 — Install Developer Applications
 - [Cursor](https://www.cursor.com/)
 - [VSCode](https://code.visualstudio.com/download)
 - [Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/)
 - [DBeaver](https://dbeaver.io/download/)
 
-## Install AI Tools
+## Tier 1 — Install AI Tools
 - [Claude Code CLI](../technologies/claude.md#installation) - AI-powered development assistant
 - [GitHub CLI](https://cli.github.com/) - Required for Claude Code GitHub integration
 
-## Install Browsers & Communication
+## Tier 1 — Install Browsers & Communication
 - Slack
 - Edge
 - Chrome
 - FireFox
 - LastPass or other password manager
 
-## Install Cloud CLI Tools
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - Amazon Web Services command line interface
-- [gcloud CLI](https://cloud.google.com/sdk/docs/install) - Google Cloud Platform command line interface
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) - Supabase local development and project management
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) - Kubernetes command line tool
+## Tier 1 — Linters, Formatters, and Platform CLIs
 
-## Install Additional CLI Tools
-- [Terraform](https://developer.hashicorp.com/terraform/install)
-- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
-- [Helm](https://helm.sh/docs/intro/install/)
+These are invoked by your editor and pre-commit hooks *before* any project environment is activated,
+so they must be installed globally rather than per-project.
+
+**Python globals** — always via `uv tool install`, never `pip install --user`:
+
+```bash
+uv tool install ruff    # linter + formatter (replaces flake8, black, isort)
+uv tool install mypy    # static type checker
+```
+
+**Node globals:**
+
+```bash
+. ~/.nvm/nvm.sh
+npm install -g typescript prettier pnpm
+```
+
+**Platform CLIs** — these act on projects from the shell, so they are machine-level too:
+
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) — PostgreSQL, auth, migrations
+- [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments
+
+Verify everything at once by running `dev-check` from outside any repository.
+
+---
+
+## Additional Tooling (Install On Demand)
+
+Everything above is required. Everything below is **not** — install it only when a project or role
+actually calls for it. Installing all of it up front creates a machine full of stale CLIs that
+`dev-check` then reports as outdated.
+
+The signal to install is concrete: you clone or import a project, run `dev-check` **from inside that
+repository**, and it reports a tool that project depends on. Then install just that tool.
+
+### Tier 2 — Project-Specific
+
+Needed only by projects built on these platforms. New frontend projects use Next.js, so Angular is
+maintenance-only; see [Coding Standards](../technologies/standards.md#4-javascript--typescript-standards).
+
+| Tool | Install | Needed when |
+|------|---------|-------------|
+| [Angular CLI](https://angular.dev/tools/cli) | `npm install -g @angular/cli` | Maintaining an existing Angular app |
+| [AWS Amplify CLI](https://docs.amplify.aws/cli/) | `npm install -g @aws-amplify/cli` | Project deploys via Amplify |
+| [clasp](https://github.com/google/clasp) | `npm install -g @google/clasp` | Project ships Google Apps Script |
+| [Codex CLI](https://github.com/openai/codex) | `npm install -g @openai/codex` | Project workflow uses Codex |
+
+### Tier 3 — DevOps and Infrastructure
+
+Needed only if you provision or operate infrastructure. A developer working purely on application
+code does not need any of these.
+
+| Tool | Install | Needed when |
+|------|---------|-------------|
+| [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | [installer](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | Deploying to or debugging AWS |
+| [gcloud CLI](https://cloud.google.com/sdk/docs/install) | [installer](https://cloud.google.com/sdk/docs/install) | Working on Google Cloud |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | [installer](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | Operating Kubernetes / EKS |
+| [Terraform](https://developer.hashicorp.com/terraform/install) | [installer](https://developer.hashicorp.com/terraform/install) | Managing infrastructure as code |
+| [Helm](https://helm.sh/docs/intro/install/) | [installer](https://helm.sh/docs/intro/install/) | Deploying Kubernetes charts |
+| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | [installer](https://minikube.sigs.k8s.io/docs/start/) | Running Kubernetes locally |
+| [Zapier Platform CLI](https://docs.zapier.com/platform/build-cli/overview) | `npm install -g zapier-platform-cli` | Building a Zapier integration |
+
+**kubectl version skew:** Kubernetes supports only ±1 minor version between `kubectl` and the API
+server, so match your cluster rather than always taking the newest release.

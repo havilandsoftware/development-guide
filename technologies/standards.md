@@ -160,7 +160,7 @@ Run on actively supported LTS versions. Using an end-of-life runtime is a tracke
 
 | Runtime | Minimum Version | Current LTS | Check |
 |---------|----------------|-------------|-------|
-| Python  | 3.11+          | 3.12 / 3.13 | `python --version` |
+| Python  | 3.12+          | 3.12 / 3.13 | `python --version` |
 | Node.js | 22 LTS+        | 22 LTS      | `node --version` |
 | Other   | Latest LTS at project creation | — | Document in README |
 
@@ -168,14 +168,14 @@ Projects below minimum version add to their README:
 
 ```markdown
 ## Known Issues
-- Runtime: Python X.Y — below minimum supported version (3.11). Upgrade tracked in [issue link].
+- Runtime: Python X.Y — below minimum supported version (3.12). Upgrade tracked in [issue link].
 ```
 
 ---
 
 ## 3. Python Standards
 
-**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for Python 3.11+ and uv installation.
+**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for Python 3.12+ and uv installation.
 
 ### Project Structure
 
@@ -239,7 +239,7 @@ Add to `pyproject.toml`:
 ```toml
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
@@ -287,17 +287,17 @@ Every public function has at least one test. 100% coverage is not required.
 
 ### Dockerfile
 
-Use `python:3.11-slim` for both build and runtime stages. Run as a non-root user. If you need a smaller attack surface, distroless is an option but requires careful handling of site-packages — prefer slim unless you have a specific security requirement.
+Use `python:3.12-slim` for both build and runtime stages. Run as a non-root user. If you need a smaller attack surface, distroless is an option but requires careful handling of site-packages — prefer slim unless you have a specific security requirement.
 
 ```dockerfile
 # Build stage
-FROM python:3.11-slim AS builder
+FROM python:3.12-slim AS builder
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN pip install uv && uv sync --frozen --no-dev
 
 # Runtime stage
-FROM python:3.11-slim AS runner
+FROM python:3.12-slim AS runner
 WORKDIR /app
 RUN useradd --no-create-home appuser
 COPY --from=builder /app/.venv /app/.venv
@@ -510,7 +510,7 @@ jobs:
           extra_args: --only-verified
       - uses: astral-sh/setup-uv@v3
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
