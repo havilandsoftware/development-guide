@@ -119,7 +119,7 @@ description = "What this package does"
     "lint": "eslint ."
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   }
 }
 ```
@@ -160,9 +160,14 @@ Run on actively supported LTS versions. Using an end-of-life runtime is a tracke
 
 | Runtime | Minimum Version | Current LTS | Check |
 |---------|----------------|-------------|-------|
-| Python  | 3.11+          | 3.12 / 3.13 | `python --version` |
-| Node.js | 22 LTS+        | 22 LTS      | `node --version` |
+| Python  | 3.11+          | 3.13 / 3.14 | `python --version` |
+| Node.js | 24 LTS+        | 24 LTS      | `node --version` |
 | Other   | Latest LTS at project creation | — | Document in README |
+
+Node 22 moved to Maintenance LTS — new projects use 24, and existing ones should move
+across (`nvm install 24 && nvm alias default 24`). Verified 2026-07-29; re-check against
+[nodejs.org/en/about/previous-releases](https://nodejs.org/en/about/previous-releases)
+and [endoflife.date/python](https://endoflife.date/python).
 
 Projects below minimum version add to their README:
 
@@ -311,7 +316,7 @@ CMD ["python", "-m", "my_package.main"]
 
 ## 4. JavaScript / TypeScript Standards
 
-**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for Node.js v22 and nvm installation.
+**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for Node.js 24 and nvm installation.
 
 TypeScript is required for all new JavaScript projects. Plain JavaScript is acceptable only for one-off scripts and tooling configs. Angular is not in active use; new frontend projects use Next.js.
 

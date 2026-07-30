@@ -45,7 +45,8 @@ Employees use the ticketing process to assign work.  The ticket owner is respons
 
 ### Security Practices
 Employees are responsible to protect the data and software systems of the company through basic security practices.
-- Enable MFA on all SaaS applications, e.g AWS, Atlassian, Github, Slack
+- Enable MFA on all SaaS applications, e.g AWS, GitHub, Linear, Slack
 - Using the Technology Radar and Development Guide as a barometer for approved frameworks, language, technologies
 - Do not share keys, passwords, code or data to unauthorized personel inside and outside of the organization.
 - Evaluate vulnerabilities in code that is deployed
+- Never make a repository public without an admin's approval and a full history scrub — see [GitHub](../technologies/github.md#public-repositories)

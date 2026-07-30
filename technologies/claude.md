@@ -109,14 +109,14 @@ Give Claude access to additional repositories in a session:
 
 ```bash
 # At launch
-claude . --add-dir ~/workspaces/hs/shared-lib
+claude . --add-dir ~/workspaces/shared-lib
 
 # Inside a running session
-/add-dir ~/workspaces/hs/shared-lib
+/add-dir ~/workspaces/shared-lib
 
 # Always load certain repos — add to .claude/settings.json
 {
-  "additionalDirectories": ["~/workspaces/hs/shared-lib"]
+  "additionalDirectories": ["~/workspaces/shared-lib"]
 }
 ```
 

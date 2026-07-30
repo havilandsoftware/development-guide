@@ -23,9 +23,11 @@ When editing this guide, respect these core team values:
 
 ### AI-First Approach
 The team is "Responsible AI First" - they actively use AI tools in creative ways while maintaining ethical standards. The team uses:
-- Cursor (primary AI coding tool)
-- Claude Code (this tool)
+- Claude Code (primary AI coding tool)
+- Claude (claude.ai) for research, writing, and analysis
 - Focus on responsible, methodical, and iterative AI usage
+
+Cursor and GitHub Copilot are no longer used — do not reintroduce references to them.
 
 ### Documentation Standards
 When creating or updating documentation in this repository:
@@ -70,22 +72,64 @@ Since this is a documentation repository, there are no build/test commands. Comm
 
 ### Updating Installation Guides
 Location: `getting-started/installation-and-setup-guide.md`
-- Maintain sections: Cloud Accounts, WSL, Git Setup, Languages/Frameworks, Developer Applications, Browsers, CLI Tools
-- Include version requirements where applicable (e.g., Git 2.40+, Python 3.11, Node.js v22)
+
+Four ordered sections — do not reorder them, the sequence is deliberate:
+1. Create Cloud Accounts
+2. Programs to Install — Developer Tools (everyone), DevOps Tools (infrastructure work
+   only), Editors & Applications, Browsers & Communication
+3. Setup — workspaces directory, git config, SSH key, then WSL last
+4. Verify Your Setup — run the dev-check skill
+
+**Version data has one source of truth: `skills/dev-check/SKILL.md`.** Its Step 2 table
+holds the floors. When bumping a version, edit the skill first, then bring the install
+guide tables into line — never the other way round, and never only one of them.
+
+Versions are written as floors with a `+` (`2.55+`), never exact pins, and each versioned
+section carries a `> **Versions verified:** <date>` marker. Update the date whenever you
+re-verify. Exact pins rot within weeks for tools that ship daily.
+
+The bundled skill is a copy of the one in the company Claude Code plugin. A version bump
+needs to land in both, or they drift.
 
 ### Technology-Specific Guidelines
 - **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
-- Install steps for Python 3.11+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
-- Always specify version requirements (Python 3.11+, Node.js v22)
+- Runtime floors: Python 3.14+, Node.js 24 (Active LTS). Node 22 is Maintenance LTS — do
+  not reintroduce it as the recommended version.
+- Python is never installed globally — `uv` provisions it per project. Do not add a global
+  Python install step.
 
 ## Important Files
 
 - `README.md` - Main entry point, outlines all major sections
+- `LICENSE` - CC BY 4.0 for prose, MIT for embedded code samples
 - `getting-started/installation-and-setup-guide.md` - Complete setup instructions
 - `getting-started/expectations.md` - Team guidelines and standard practices
 - `getting-started/ai.md` - AI responsibility principles
-- `technologies/git.md` - Git workflow and repository standards
+- `getting-started/learning-guide.md` - Hub over the five areas to learn first
+- `getting-started/interview-test.md` - Hiring assessment; contains interviewer-only
+  notes in HTML comments (see warning below)
 - `getting-started/release-guide.md` - Standard release process
+- `technologies/git.md` - Git workflow and repository standards
+- `technologies/github.md` - GitHub platform, `gh` CLI, public-repo requirements
+- `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
+- `skills/dev-check/SKILL.md` - Environment audit skill; source of truth for versions
+- `interview/generated_report.py` - Deliberately defective code for the review exercise
+
+## This Repository Is Public
+
+Published under CC BY 4.0 / MIT. Before adding anything, check it does not include:
+- Client names, internal URLs, service endpoints, or customer data
+- Credentials or secrets of any kind
+- Absolute paths containing a username (`/home/<user>/...`)
+- Named individuals with privileges attached
+
+`interview/generated_report.py` **contains intentional bugs.** Do not "fix" them — they
+are the assessment. Its interviewer notes explain each one and record that all four were
+verified by execution.
+
+Both `getting-started/interview-test.md` and `interview/generated_report.py` carry
+interviewer-only sections in comments. They are visible to anyone reading the source, so
+rotate the planted defects and ambiguities periodically rather than relying on secrecy.
 
 ## Editing Guidelines
 
