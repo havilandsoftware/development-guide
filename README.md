@@ -12,6 +12,11 @@ We want to build and maintain a high quality development team! This guide outlin
 4. [Learning Guide](getting-started/learning-guide.md)
 5. [Release Guide](getting-started/release-guide.md)
 
+## Claude Code Skills
+This repository ships two skills that work once it is cloned:
+- `/dev-check` — audit your machine against this guide (core toolchain, git config, SSH, project deps)
+- `/interview` — guided walkthrough of the interview task below
+
 ## Interview Task
 Candidates: [Interview Task](getting-started/interview-test.md) — build a small AI agent across six
 tickets. A guided Claude Code skill is included (`/interview`).

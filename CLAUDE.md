@@ -78,6 +78,15 @@ Location: `getting-started/installation-and-setup-guide.md`
 - Install steps for Python 3.12+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
 - Always specify version requirements (Python 3.12+, Node.js v22)
 
+### Skills
+`.claude/skills/` ships skills usable from any clone of this repo. They must depend on **nothing
+outside this repository** — no private repos, no internal service endpoints, no client names. A
+skill that only works for one org does not belong here.
+
+- `dev-check/` — machine audit. **Must honour the three tiers**: only Tier 1 can produce a ❌.
+  Tier 2/3 are `N/A` unless the current repo shows a marker (`angular.json`, `*.tf`, etc.) proving
+  it needs them. Failing a developer for a missing Terraform trains people to ignore the report.
+
 ### Interview Task and Skill
 - `getting-started/interview-test.md` — the candidate task, structured as six virtual tickets
   (`HS-9001`–`HS-9006`). Ticket IDs are deliberately fictional; real InnoDay/ticket-system

@@ -167,7 +167,13 @@ npm install -g typescript prettier pnpm
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) — PostgreSQL, auth, migrations
 - [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments
 
-Verify everything at once by running `dev-check` from outside any repository.
+Verify everything at once with the `dev-check` skill from this repository, run from outside any
+project directory:
+
+```bash
+cd ~/workspaces/hs/development-guide && claude
+> /dev-check
+```
 
 ---
 
