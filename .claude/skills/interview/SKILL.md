@@ -77,13 +77,18 @@ START_EPOCH=$(date -u -d "$(cat log/.session-start)" +%s 2>/dev/null || echo 0)
 echo "state=$STATE started=$(cat log/.session-start)"
 [ "$START_EPOCH" != 0 ] && echo "elapsed_minutes=$(( ($(date -u +%s) - START_EPOCH) / 60 ))"
 
-# Launch the sampler once: 30 samples, one every 2 min, then stop.
-if [ ! -f log/.sampler.pid ] || ! kill -0 "$(cat log/.sampler.pid 2>/dev/null)" 2>/dev/null; then
+# Launch the sampler once: sample every 2 min until 60 min elapsed, then stop.
+if [ -f log/.sampler.pid ] && kill -0 "$(cat log/.sampler.pid 2>/dev/null)" 2>/dev/null; then
+  echo "sampler_already_running pid=$(cat log/.sampler.pid)"
+else
   [ -f log/.checkpoints.tsv ] || printf 'elapsed_min\tutc\tbranch\tcommits\tdirty_files\tlint\ttests\n' > log/.checkpoints.tsv
   nohup setsid bash -c '
-    S=$(date -u -d "$(cat log/.session-start)" +%s)
-    for i in $(seq 1 30); do
+    echo $$ > log/.sampler.pid        # own PID, from inside the child
+    S=$(date -u -d "$(cat log/.session-start)" +%s 2>/dev/null) || S=""
+    [ -n "$S" ] || S=$(date -u +%s)   # fallback: treat now as t=0 rather than break arithmetic
+    while :; do
       E=$(( ($(date -u +%s) - S) / 60 ))
+      [ "$E" -ge 60 ] && break
       B=$(git branch --show-current 2>/dev/null || echo "-")
       C=$(git rev-list --count HEAD 2>/dev/null || echo 0)
       D=$(git status --porcelain 2>/dev/null | wc -l | tr -d " ")
@@ -98,12 +103,20 @@ if [ ! -f log/.sampler.pid ] || ! kill -0 "$(cat log/.sampler.pid 2>/dev/null)" 
     done
     rm -f log/.sampler.pid
   ' >> log/.sampler.err 2>&1 &
-  echo $! > log/.sampler.pid
-  echo "sampler_started pid=$(cat log/.sampler.pid) interval=2min duration=60min"
-else
-  echo "sampler_already_running pid=$(cat log/.sampler.pid)"
+  sleep 1   # let the child write its own PID before we read it
+  echo "sampler_started pid=$(cat log/.sampler.pid 2>/dev/null || echo unknown) interval=2min duration=60min"
 fi
 ```
+
+Two things in that block are deliberate and must not be "simplified":
+
+- **The child writes its own PID** (`echo $$`), not the parent's `$!`. `setsid` forks and exits
+  immediately, so `$!` is a PID that is already dead a moment later — which would make the
+  already-running guard always fail (launching a second sampler on every resume) and make the
+  teardown `kill` in Step 3 silently miss.
+- **The loop is bounded by elapsed time**, not by an iteration count. Each pass costs `sleep 120`
+  *plus* however long ruff and pytest take, so `for i in $(seq 1 30)` would drift well past an hour
+  on a slow test suite.
 
 Before `uv init` (during HS-9001) the lint/test columns read `n/a`, not `fail` — there is no project
 to check yet. Note also that `ruff check` on a project with no Python files passes trivially, so an
@@ -183,10 +196,20 @@ is the clock — check it).
 Stop the sampler and read the full timeline first:
 
 ```bash
-[ -f log/.sampler.pid ] && kill "$(cat log/.sampler.pid)" 2>/dev/null; rm -f log/.sampler.pid
+if [ -f log/.sampler.pid ]; then
+  P=$(cat log/.sampler.pid)
+  kill -- "-$P" 2>/dev/null || kill "$P" 2>/dev/null   # process group first, then the bare pid
+  sleep 1
+  kill -0 "$P" 2>/dev/null && echo "WARNING: sampler $P still alive" || echo "sampler stopped"
+  rm -f log/.sampler.pid
+fi
 date -u +%Y-%m-%dT%H:%M:%SZ > log/.session-end
 column -t -s $'\t' log/.checkpoints.tsv
 ```
+
+`setsid` makes the sampler its own process-group leader, so `kill -- -$P` takes the loop *and* any
+`pytest` it currently has running. Confirm it actually died — a sampler that outlives the session
+keeps running tests in the candidate's repo.
 
 If the hour elapses while they are mid-flow, do not cut them off — write the report, tell them the
 hour is up, and ask whether they want to keep going. Re-invoking `/interview` starts a fresh sampler
@@ -275,11 +298,16 @@ Suggested discussion points — questions worth asking, not conclusions:
   know which, say so rather than guessing.
 - **The sampler runs `pytest` every 2 minutes.** On a project with slow or interactive tests this is
   intrusive; it is capped with `timeout 120`, but if the candidate says it is in their way, stop it
-  (`kill $(cat log/.sampler.pid)`) and fall back to noting checkpoints manually. Their work comes
-  before the log.
-- `date -u -d` is GNU coreutils. On macOS, substitute
-  `date -u -j -f %Y-%m-%dT%H:%M:%SZ "$(cat log/.session-start)" +%s`. If the arithmetic fails, report
-  raw timestamps and skip the elapsed figure rather than reporting a wrong number.
+  and fall back to noting checkpoints manually — their work comes before the log:
+  ```bash
+  P=$(cat log/.sampler.pid); kill -- "-$P" 2>/dev/null || kill "$P"; rm -f log/.sampler.pid
+  ```
+- **`date -u -d` and `timeout` are GNU.** On macOS, install coreutils (`brew install coreutils`) or
+  substitute `date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$(cat log/.session-start)" +%s` in **both** places
+  it appears — the Step 1 `START_EPOCH` *and* the `S=` line inside the sampler body. Missing the
+  second one leaves `S` empty; the fallback then treats the launch moment as t=0, so elapsed
+  minutes are measured from the sampler start rather than the session start. If the arithmetic fails
+  outright, report raw timestamps and skip the elapsed figure rather than a wrong number.
 - Tell the candidate the sampler is running and what it records. Do not run a background process that
   observes their work without saying so.
 - If the candidate is working in the development-guide repo itself, stop and redirect them: the task

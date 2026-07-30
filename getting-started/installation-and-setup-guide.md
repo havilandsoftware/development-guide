@@ -6,9 +6,10 @@ needs before opening any project. Tiers 2 and 3 are installed on demand and are 
 
 | Tier | What | When to install |
 |------|------|-----------------|
-| **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, linters, Supabase, Vercel | Onboarding. Required. |
+| **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, linters | Onboarding. Required. |
+| **1 — Platform** | Supabase, Vercel | Onboarding, or when you first deploy to them. |
 | **2 — Project-specific** | Angular, Amplify, clasp, Codex | Only when you take on a project that uses it. |
-| **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Zapier | Only if you do infrastructure work. |
+| **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
 
 If a tool is missing when you import a project, `dev-check` run from inside that repo will tell you
 exactly which tier-2/3 tools that project needs.
@@ -162,7 +163,8 @@ uv tool install mypy    # static type checker
 npm install -g typescript prettier pnpm
 ```
 
-**Platform CLIs** — these act on projects from the shell, so they are machine-level too:
+**Platform CLIs** — these act on projects from the shell, so they are machine-level too. Install
+whichever you need; a backend-only developer will not need `vercel`:
 
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) — PostgreSQL, auth, migrations
 - [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments

@@ -13,7 +13,8 @@ tool belongs to determines whether a missing tool is a failure or simply not nee
 
 | Tier | Contents | Verdict when missing |
 |------|----------|----------------------|
-| **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, ruff, mypy, TypeScript, prettier, pnpm, Supabase, Vercel | ❌ **FAIL** — required for every developer |
+| **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, ruff, mypy, TypeScript, prettier, pnpm | ❌ **FAIL** — required for every developer |
+| **1 — Platform** | Supabase, Vercel | ⚠️ **WARN** — install when you first touch a project that deploys there |
 | **2 — Project-specific** | Angular, Amplify, clasp, Codex | ℹ️ **N/A** unless this repo needs it |
 | **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
 
@@ -27,10 +28,10 @@ current repository gives evidence it is needed (see Step 4).
 
 ```bash
 git rev-parse --show-toplevel 2>/dev/null && echo GIT_REPO || echo NOT_GIT
-ls pyproject.toml requirements.txt 2>/dev/null && echo HAS_PYTHON || true
-ls package.json 2>/dev/null && echo HAS_NODE || true
-ls go.mod 2>/dev/null && echo HAS_GO || true
-ls Cargo.toml 2>/dev/null && echo HAS_RUST || true
+{ [ -f pyproject.toml ] || [ -f requirements.txt ]; } && echo HAS_PYTHON
+[ -f package.json ] && echo HAS_NODE
+[ -f go.mod ] && echo HAS_GO
+[ -f Cargo.toml ] && echo HAS_RUST
 ```
 
 | Mode | Condition | Scope |
@@ -66,8 +67,13 @@ State the mode at the top of the report so the reader knows what was and wasn't 
 | TypeScript | any | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
 | prettier | any | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
 | pnpm | any | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
-| Supabase CLI | any | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
-| Vercel CLI | any | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+| Supabase CLI† | any | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
+| Vercel CLI† | any | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+
+† Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
+([standards](../../../technologies/standards.md#7-approved-infrastructure--services)), but a
+backend-only developer has no use for `vercel`, and hard-failing them for it is the same mistake as
+failing them for Terraform.
 
 Source nvm before checking Node globals: `. ~/.nvm/nvm.sh 2>/dev/null`. If a tool is absent from
 `PATH` but present under `~/.nvm/versions/node/*/bin/`, report it found with a note that the shell
@@ -142,10 +148,12 @@ report only those.
 Detect from the repo, not from guesswork:
 
 ```bash
-# Tier 3 — infrastructure
-ls -d terraform/ *.tf 2>/dev/null && echo NEEDS_TERRAFORM
-ls -d k8s/ helm/ Chart.yaml 2>/dev/null && echo NEEDS_KUBERNETES
-grep -rlE "boto3|aws-sdk|amazonaws" --include=pyproject.toml --include=package.json . 2>/dev/null | head -1 && echo NEEDS_AWS
+# Tier 3 — infrastructure. Each marker is tested separately: a single `ls` with
+# several operands exits non-zero if ANY is missing, which would turn these
+# OR-detectors into AND-detectors and silently report "no markers found".
+{ [ -d terraform/ ] || compgen -G "*.tf" >/dev/null; } && echo NEEDS_TERRAFORM
+{ [ -d k8s/ ] || [ -d helm/ ] || [ -f Chart.yaml ]; } && echo NEEDS_KUBERNETES
+grep -rqE "boto3|aws-sdk|amazonaws" --include=pyproject.toml --include=package.json . 2>/dev/null && echo NEEDS_AWS
 
 # Tier 2 — project frameworks
 [ -f angular.json ] && echo NEEDS_ANGULAR
@@ -161,6 +169,7 @@ does not need the CLI locally; say so rather than flagging it.
 
 ```bash
 [ -f uv.lock ] && echo "uv.lock present" || echo "NO LOCKFILE"
+[ -f .python-version ] && echo ".python-version present" || echo "no .python-version"
 grep -E '^requires-python' pyproject.toml
 grep -E 'target-version' pyproject.toml
 uv run ruff check . 2>&1 | tail -3
@@ -179,7 +188,7 @@ Check against [Python Standards](../../../technologies/standards.md#3-python-sta
 
 ```bash
 [ -d node_modules ] && echo "installed" || echo "run install"
-ls pnpm-lock.yaml package-lock.json yarn.lock 2>/dev/null
+for f in pnpm-lock.yaml package-lock.json yarn.lock; do [ -f "$f" ] && echo "lockfile: $f"; done
 node -e "const p=require('./package.json'); console.log('engines:', JSON.stringify(p.engines||{}))"
 ```
 
@@ -194,8 +203,10 @@ Check the [Universal Requirements](../../../technologies/standards.md#1-universa
 for f in README.md CLAUDE.md .gitignore .env.example; do
   [ -f "$f" ] && echo "✅ $f" || echo "❌ $f"
 done
-grep -qE '^\.env$|^\.env' .gitignore 2>/dev/null && echo "✅ .env ignored" || echo "❌ .env NOT ignored"
-git ls-files | grep -qxE '\.env' && echo "🚨 .env IS COMMITTED" || echo "✅ no .env tracked"
+# Fixed-string, whole-line match. An unanchored regex like `^\.env` also matches
+# `.envrc` and `.env.example`, so a repo that ignores neither would falsely pass.
+grep -qxF '.env' .gitignore 2>/dev/null && echo "✅ .env ignored" || echo "❌ .env NOT ignored"
+git ls-files --error-unmatch .env >/dev/null 2>&1 && echo "🚨 .env IS COMMITTED" || echo "✅ no .env tracked"
 ```
 
 A committed `.env` is the one finding worth interrupting the report for. Point at the

@@ -94,6 +94,7 @@ Create a public GitHub repository, then add the four files every repo of ours ha
 
 **Success criteria**
 - [ ] Public repo, default branch `main`, squash-merge only, description and topics set
+      (our own repos start private — public here only so we can review yours)
 - [ ] `README.md` with all six sections: Title/summary, Prerequisites, Build, Run, Test, Troubleshooting
 - [ ] The summary says what your agent does in plain language and gives one example question it answers
 - [ ] `CLAUDE.md` — what the repo does, how to run tests, any non-obvious constraints
@@ -117,6 +118,7 @@ Create a public GitHub repository, then add the four files every repo of ours ha
 **Success criteria**
 - [ ] Project initialised with `uv init`; `pyproject.toml` and `uv.lock` both committed
 - [ ] Code under `src/<your_package>/`, tests under `tests/` mirroring it
+- [ ] `.python-version` committed, pinning 3.12+
 - [ ] No loose `app.py` or `run.py` at the repo root
 - [ ] `ruff` configured in `pyproject.toml` with `line-length = 100` and `target-version = "py312"`
 - [ ] `uv run ruff check .` and `uv run ruff format --check .` both clean
@@ -200,7 +202,7 @@ question types well is a much better result than an ambitious framework that hal
 **Success criteria**
 - [ ] Multi-stage `Dockerfile` on `python:3.12-slim`, running as a non-root user
 - [ ] The image builds and runs
-- [ ] `.github/workflows/ci.yml` running lint → test → build on every PR and push to `main`
+- [ ] `.github/workflows/ci.yml` running secret scan → lint → test → build on every PR and push to `main`
 - [ ] CI passing (green) on the PR
 - [ ] `README.md` documents the Docker build and run commands
 
