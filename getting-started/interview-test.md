@@ -30,7 +30,7 @@ Work through the
 [Installation and Setup Guide](installation-and-setup-guide.md), then verify it:
 
 ```
-/pixelfuel:dev-check
+/dev-check
 ```
 
 Paste the output into your `PLAN.md`. If you cannot run the skill, the same checks are

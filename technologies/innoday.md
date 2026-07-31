@@ -63,7 +63,7 @@ top level. Having it seeded on `default` while working on `dev` fails exactly as
 were never set, so check the profile before concluding the secret is missing.
 
 Get the secret from whoever administers the API you are targeting. A purely local API
-has none. `/pixelfuel:dev-check` checks for this specifically, because the symptom —
+has none. `/dev-check` checks for this specifically, because the symptom —
 uniform `401`s — reads like a network or auth bug rather than missing configuration.
 
 ## Core commands

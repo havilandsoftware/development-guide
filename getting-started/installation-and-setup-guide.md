@@ -184,7 +184,7 @@ Installing tools and knowing they work are different things. Verify with the
 [dev-check skill](../skills/dev-check/SKILL.md) bundled in this repository:
 
 ```
-/pixelfuel:dev-check
+/dev-check
 ```
 
 It prints a pass/fail table for every tool, your git configuration, SSH access, and
