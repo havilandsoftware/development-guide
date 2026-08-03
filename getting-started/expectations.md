@@ -3,14 +3,15 @@ These expectations are meant to be read and followed by all team members to fost
 
 ## Team Guidelines
 - *Responsible AI First* - We are an AI-driven team, and our productivity improves when we use it in new and creative ways. Responsible and ethical usage of AI requires a methodical and iterative process.  We are intentional about AI, but believe in its use for good! For more details, refer to the [AI Responsibility Guide](./ai.md).
-- *Don't Hide* - As a remote team, we depend on you being proactive to use your voice and show your face. Good teammates communicate to their team and clients often!  Let them know what's happening, when its happening.
+- *Review What your AI Generates before Sharing* - You are 100% responsible for anything that is generated with AI.  Do not share your work/PR with others unless you have thoroghly reviewed the changes first!
+- *Don't Hide* - As a remote team, we depend on you being proactive to use your voice and show your face. You are more than an empty screen or Slack handle. Additinoally, good teammates communicate to their team and clients often!  Let them know what's happening, when its happening.
 - *Keep Learning, and Set Your Bar High* - Technologies change, and so should you.  There's always a next level and new things to learn.  The learning guide is a great place to start for reading material, videos/content, and tutorials!
 - *Contribute, Create, and Share* - As you learn/create new things, make your work known by sharing and teaching others!
 - *Use Campground Rules* - Find ways to make the surrounding code, communication channel, directory, etc. nicer than what you found it.
-- *Bring Positive Energy* - Sometimes its not easy, but your team depends on it. Smile and cheer your teammates on!
-- *Follow the Tech Radar* - The technology radar is a guiding star for technology adoption in the company.
+- *Bring Positive Energy* - Sometimes its not easy, but your team depends on it. Cheer your teammates on!
+- *Follow the Tech Radar* - The technology radar is a guiding star for technology adoption in the company.  New technologies should be introduced or decommissioned methodically, not in isolation. And most importantly, avoid straddling technologies that accomplish the same thing!
 - *Know your OKRs* - OKRs are the flag poles that guide the team towards its strategic objectives.  If you don't know your OKRs, you won't know where to go!
-- *Deliver to Production, not Development* - If your code stays in development, it isn't adding value!
+- *Deliver to Production, not Development* - If your code stays in development, it isn't adding value! You are responsible for your PRs and getting them closed.
 - *Do the little things* - You are never too experienced to do the little things.  Set the example!
 
 ## Standard Practices
@@ -30,9 +31,10 @@ The development team relies on the README documentation to communicate how to wo
 
 ### Maintaining Code Quality
 
-- Branching, Pull Requests, and Code Reviews
-- Automating Feedback
-- Pair Programming
+- Keep Branching, Pull Requests, and Code Reviews Focused
+- Automate Feedback Loops over Manual Processes
+- Use Pair Programming
+- Leverage Approved Technology and Standards
 
 ### Ticketing Practices
 Employees use the ticketing process to assign work.  The ticket owner is responsible for moving the ticket forward and being its advocate.
