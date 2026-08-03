@@ -1,6 +1,6 @@
 # Haviland Software Development Guide
 
-Hello! My name is Karl Haviland and this is my company's development guide, for your benefit. I have
+Hello! 👋 My name is Karl Haviland and this is my company's development guide, for your benefit. I have
 been lucky enough to build up developers who went off to work at some of the best computer science
 and data science shops around the world. I am continuing to add and adjust to this guide — and if
 you have ideas for new additions, please let me know!
@@ -69,6 +69,15 @@ project as much as the first.
 
 If that sounds like you, let us know you exist — fill out
 [Join Us](https://www.pixelfuel.io/join-us).
+
+## Contributing
+
+This guide is published for reference and is maintained by our own team, so we do not accept outside
+pull requests. That said, I meant what I said above about wanting ideas — **open an issue**. Spotted a
+stale version, a broken link, or a standard that no longer makes sense? That is genuinely useful and
+I would rather hear it.
+
+Security concerns go through [SECURITY.md](SECURITY.md), not a public issue.
 
 ## Licence
 

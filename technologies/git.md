@@ -100,17 +100,103 @@ README documentation communicates how to work with the repository.  As the proje
 Most of our repositories are private. A public one carries extra requirements, because publishing is
 effectively irreversible — history stays visible in forks, mirrors, and caches after a takedown.
 
-Before making a repository public:
+### 1. Approval and content
 
 - **Get approval from a repository admin.** This is not a solo decision.
-- **Add a LICENSE.** Without one, default copyright applies and nobody can legally reuse the code,
-  which defeats the purpose of publishing.
 - **Scrub the full history, not just the current state.** A credential in an old commit is still
   exposed — see [Secret Removal Procedure](standards.md#secret-removal-procedure).
 - **Remove client names, internal URLs, service endpoints, and customer data.**
-- **Add `SECURITY.md`** with a vulnerability disclosure contact, and `CONTRIBUTING.md` if you intend
-  to accept outside contributions.
-- **Enable secret scanning and push protection**, and turn on Dependabot alerts.
+- **Remove absolute paths containing a username** (`/home/<user>/…`) and any named individual with
+  privileges attached.
 - **Audit dependency licences** for compatibility with the licence you are publishing under.
+
+### 2. Required files
+
+| File | Purpose |
+|------|---------|
+| `LICENSE` | **Required.** Without one, default copyright applies and nobody may legally reuse the code — which defeats the point of publishing. |
+| `SECURITY.md` | **Required.** Where to report a vulnerability privately, what is in scope, and how quickly you will respond. Without it, the first report arrives as a public issue. |
+| `README.md` | **Required.** Must state what the repo is, who it is for, and whether outside use is supported. |
+| `CONTRIBUTING.md` | Required **only if you accept outside pull requests.** If you do not, say so in `README.md` and disable forking instead — omitting the file silently is not the same as declining contributions. |
+| `CODE_OF_CONDUCT.md` | Optional. Conventional for repos expecting outside participation. |
+
+A minimal `SECURITY.md` covers four things: the private reporting channel (never a public issue), the
+scope, an acknowledgement target ("within 5 working days" beats silence), and which versions are
+supported — for most of our repos that is `main` only.
+
+### 3. Repository settings
+
+Set all of these **before** flipping visibility:
+
+| Setting | Value |
+|---------|-------|
+| Secret scanning | Enabled |
+| Secret scanning — push protection | Enabled |
+| Secret scanning — non-provider patterns and validity checks | Enabled |
+| Dependabot alerts and security updates | Enabled |
+| Branch protection on `main` | Require a pull request and at least one approving review |
+| Actions → workflow permissions | **Read-only**, and disable "Allow Actions to approve pull requests" |
+| Forking | Disabled, unless you intend to accept outside pull requests — see note below |
+| Private vulnerability reporting | Enable **immediately after** going public — see note below |
+
+```bash
+R=havilandsoftware/<repo>
+
+gh api -X PATCH repos/$R \
+  -f 'security_and_analysis[secret_scanning][status]=enabled' \
+  -f 'security_and_analysis[secret_scanning_push_protection][status]=enabled' \
+  -f 'security_and_analysis[secret_scanning_non_provider_patterns][status]=enabled' \
+  -f 'security_and_analysis[secret_scanning_validity_checks][status]=enabled' \
+  -f 'security_and_analysis[dependabot_security_updates][status]=enabled'
+
+gh api -X PUT repos/$R/actions/permissions/workflow \
+  -f default_workflow_permissions=read -F can_approve_pull_request_reviews=false
+
+gh api -X PUT repos/$R/branches/main/protection \
+  -F 'required_pull_request_reviews[required_approving_review_count]=1' \
+  -F enforce_admins=false -F required_status_checks=null -F restrictions=null
+```
+
+**Two settings can only be handled after the repo is public.** Both look already-correct while it is
+private, which is the trap — check them again immediately after flipping visibility.
+
+**Private vulnerability reporting** is a public-repo-only feature. Attempting it while private
+returns `404`, and it is silently ignored if passed in the `security_and_analysis` PATCH above.
+
+**Forking** is how an outsider opens a pull request. If the repo is published for reference and you
+do not want outside PRs, disable it. Note that `allow_forking` may *report* `false` on a private repo
+purely because the org blocks private-repo forking — the repo-level flag underneath can still be
+`true`, and it takes effect the moment you go public. Read the value, do not assume it.
+
+```bash
+# run these immediately AFTER flipping visibility
+gh api -X PUT repos/$R/private-vulnerability-reporting
+gh api -X PATCH repos/$R -F allow_forking=false      # only if declining outside PRs
+
+# then verify
+gh api repos/$R --jq '{allow_forking, private}'
+gh api repos/$R/private-vulnerability-reporting --jq '.enabled'
+```
+
+Disabling forks does not stop anyone cloning or copying the content — the licence governs that.
+It removes the pull-request route, so state the policy in `README.md` too rather than letting people
+discover it by finding the button missing.
+
+**Why workflow permissions matter most here.** GitHub's default gives every workflow a `write` token
+and lets Actions approve pull requests. On a public repo that combination means a workflow — yours or
+one added in a PR — can push to `main` and approve its own change. Read-only by default, elevated
+per-workflow only where genuinely needed.
+
+**On branch protection:** requiring a review means you cannot merge your own PR unaided on a
+solo-maintained repo. `enforce_admins=false` above leaves an admin override, which is the intended
+tradeoff — know it before you hit it mid-merge rather than after.
+
+Verify the result rather than assuming:
+
+```bash
+gh api repos/$R --jq '.security_and_analysis'
+gh api repos/$R/branches/main/protection --jq '.required_pull_request_reviews'
+gh api repos/$R/actions/permissions/workflow
+```
 
 Once public, treat every commit as permanent.
