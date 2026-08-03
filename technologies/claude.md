@@ -44,19 +44,24 @@ lives.
 
 ### Skills in This Guide
 
-This repository ships one skill:
+This repository ships two skills, and they work from any clone of it — nothing else to install:
 
-- [`skills/dev-check/SKILL.md`](../.claude/skills/dev-check/SKILL.md) — audits your machine against
-  the [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md)
-  and holds the version floors the guide quotes.
+- [`/dev-check`](../.claude/skills/dev-check/SKILL.md) — audits your machine against the
+  [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md). It also holds
+  the version floors the guide quotes, so it is the place to update a version.
+- [`/interview`](../.claude/skills/interview/SKILL.md) — guided walkthrough of the
+  [interview task](../getting-started/interview-test.md).
 
-It is written as instructions rather than a script, so it can be followed by hand if you
-are not running it as an installed skill. To install it as a slash command, copy the
-directory into `~/.claude/skills/` and invoke it with `/dev-check`.
+Both live in `.claude/skills/`, so cloning this repository and running `claude` from inside it makes
+them available immediately:
 
-Haviland Software developers get this and other shared skills through the company's
-internal Claude Code plugin; ask your team lead for access. Nothing in this guide depends
-on having it — every documented check can be run manually.
+```bash
+cd ~/workspaces/development-guide && claude
+> /dev-check
+```
+
+They are written as instructions rather than scripts, so you can also follow them by hand. To use
+them from anywhere, copy the directories into `~/.claude/skills/`.
 
 ## MCP Servers
 
