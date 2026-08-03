@@ -101,6 +101,6 @@ output.
 
 ## Related
 
-- [Claude Code](claude.md) — the MCP integration and company plugin
+- [Claude Code](claude.md#mcp-servers) — how MCP servers are registered and why they cache config
 - [Release Guide](../getting-started/release-guide.md) — releases are registered in InnoDay
 - [dev-check skill](../skills/dev-check/SKILL.md) — verifies CLI, config, MCP, and team secret

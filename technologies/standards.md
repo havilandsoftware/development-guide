@@ -158,14 +158,24 @@ Do not use `git rebase` or `git commit --amend` alone — they do not rewrite fu
 
 Run on actively supported LTS versions. Using an end-of-life runtime is a tracked issue, not a blocking error — document it in the README.
 
-| Runtime | Minimum Version | Current LTS | Check |
-|---------|----------------|-------------|-------|
-| Python  | 3.11+          | 3.13 / 3.14 | `python --version` |
-| Node.js | 24 LTS+        | 24 LTS      | `node --version` |
-| Other   | Latest LTS at project creation | — | Document in README |
+| Runtime | Minimum supported | New projects use | Check |
+|---------|------------------|------------------|-------|
+| Python  | 3.11+            | 3.14             | `python --version` |
+| Node.js | 22+              | 24 (Active LTS)  | `node --version` |
+| Other   | — | Latest LTS at project creation | Document in README |
 
-Node 22 moved to Maintenance LTS — new projects use 24, and existing ones should move
-across (`nvm install 24 && nvm alias default 24`). Verified 2026-07-29; re-check against
+Two numbers, deliberately. **Minimum supported** is the floor below which a repo is a
+tracked issue — 3.11 is still in security support, and Node 22 is in Maintenance LTS, so
+neither is an emergency. **New projects use** is what you start with today, and what the
+install guide and Dockerfile templates specify.
+
+Node 24 is the current Active LTS (until Node 26 takes over on 2026-10-28); Node 22 moved
+to Maintenance. Existing projects on 22 should move across when convenient:
+`nvm install 24 && nvm alias default 24`.
+
+Python has no LTS programme — 3.14 is simply the current stable release.
+
+Verified 2026-07-29; re-check against
 [nodejs.org/en/about/previous-releases](https://nodejs.org/en/about/previous-releases)
 and [endoflife.date/python](https://endoflife.date/python).
 
@@ -180,7 +190,7 @@ Projects below minimum version add to their README:
 
 ## 3. Python Standards
 
-**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for Python 3.11+ and uv installation.
+**Prerequisites:** See [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md) for uv installation. `uv` provisions Python per project — new projects use 3.14; 3.11 is the minimum supported.
 
 ### Project Structure
 
@@ -292,17 +302,17 @@ Every public function has at least one test. 100% coverage is not required.
 
 ### Dockerfile
 
-Use `python:3.11-slim` for both build and runtime stages. Run as a non-root user. If you need a smaller attack surface, distroless is an option but requires careful handling of site-packages — prefer slim unless you have a specific security requirement.
+Use `python:3.14-slim` for both build and runtime stages. Run as a non-root user. If you need a smaller attack surface, distroless is an option but requires careful handling of site-packages — prefer slim unless you have a specific security requirement.
 
 ```dockerfile
 # Build stage
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN pip install uv && uv sync --frozen --no-dev
 
 # Runtime stage
-FROM python:3.11-slim AS runner
+FROM python:3.14-slim AS runner
 WORKDIR /app
 RUN useradd --no-create-home appuser
 COPY --from=builder /app/.venv /app/.venv
@@ -406,18 +416,18 @@ test('renders label', () => {
 
 ### Dockerfile
 
-Multi-stage build, `node:22-alpine`, non-root user.
+Multi-stage build, `node:24-alpine`, non-root user.
 
 ```dockerfile
 # Requires output: 'standalone' in next.config.ts for server.js to be generated
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && \
@@ -515,7 +525,7 @@ jobs:
           extra_args: --only-verified
       - uses: astral-sh/setup-uv@v3
         with:
-          python-version: "3.11"
+          python-version: "3.14"
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
@@ -547,7 +557,7 @@ jobs:
           extra_args: --only-verified
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
       - run: npm ci
       - run: npx eslint .

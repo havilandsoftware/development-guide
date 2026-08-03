@@ -84,7 +84,7 @@ These are machine-level tools that every developer needs regardless of what repo
 | Tool | Min Version | Check Command |
 |------|-------------|---------------|
 | Git | 2.55+ | `git --version` |
-| uv | 0.12+ | `uv --version` |
+| uv | 0.11+ | `uv --version` |
 | nvm | 0.40+ | `[ -s "$NVM_DIR/nvm.sh" ] && echo "nvm found" \|\| [ -s "$HOME/.nvm/nvm.sh" ] && echo "nvm found" \|\| echo "nvm not found"` |
 | Node.js | v24 | `node --version 2>/dev/null \|\| ([ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh" && node --version 2>/dev/null)` |
 | Docker | 29.6+ | `docker --version` |
@@ -178,27 +178,31 @@ uv run --with anthropic --with openai --with boto3 python3 -c "print('SDKs avail
 
 ### Node.js: npm global packages
 
-**Linting / compilation (❌ FAIL if missing):**
+**Linting, compilation, package management (❌ FAIL if missing):**
+
+Every developer needs these — editors and pre-commit hooks invoke them before any project environment is active.
 
 | Package | Check Command | Latest Known | Purpose |
 |---------|---------------|-------------|---------|
 | `typescript` | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version 2>/dev/null)` | 7.0.2 | TypeScript compiler — editors invoke this globally |
 | `prettier` | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version 2>/dev/null)` | 3.9.6 | Formatter — editors invoke this globally |
-
-**Platform and deployment CLIs (❌ FAIL if missing):**
-
-These are invoked from the shell against any project — they are platform tools, not project dependencies. A project that uses Vercel doesn't install `vercel` in its `node_modules`; you install it once on the machine.
-
-| Package | Check Command | Latest Known | Purpose |
-|---------|---------------|-------------|---------|
-| `@angular/cli` | `(. ~/.nvm/nvm.sh 2>/dev/null && ng version 2>/dev/null \| head -1) \|\| ls ~/.nvm/versions/node/*/bin/ng 2>/dev/null \| head -1 \| xargs -I{} {} version 2>/dev/null \| head -1` | 21.2.12 | Angular scaffolding — `ng new`, `ng generate` run from anywhere |
-| `@aws-amplify/cli` | `amplify --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && amplify --version 2>/dev/null)` | 14.5.0 | AWS Amplify deployment |
-| `@google/clasp` | `clasp --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && clasp --version 2>/dev/null)` | 3.3.0 | Google Apps Script deploy |
-| `@openai/codex` | `codex --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && codex --version 2>/dev/null)` | 0.132.0 | OpenAI Codex CLI |
-| `vercel` | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version 2>/dev/null)` | 54.2.0 | Vercel deployment |
-| `zapier-platform-cli` | `zapier-platform --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && zapier-platform --version 2>/dev/null)` | 19.0.0 | Zapier integration CLI |
-| `supabase` | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version 2>/dev/null)` | 2.110.0 | Supabase CLI |
 | `pnpm` | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version 2>/dev/null)` | 11.18.0 | Package manager — must be global |
+
+**Platform CLIs (⚠️ WARN if missing — not required for everyone):**
+
+These are platform tools, not project dependencies — a project that deploys to Vercel doesn't put `vercel` in its `node_modules`. But **only a developer who works with that platform needs them**, so absence is a warning, never a failure. Do not tell someone writing a Python API that a missing Apps Script CLI is a problem.
+
+| Package | Check Command | Latest Known | Needed for |
+|---------|---------------|-------------|------------|
+| `supabase` | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version 2>/dev/null)` | 2.110.0 | Supabase projects |
+| `vercel` | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version 2>/dev/null)` | 54.2.0 | Vercel deployments |
+| `@aws-amplify/cli` | `amplify --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && amplify --version 2>/dev/null)` | 14.5.0 | AWS Amplify projects |
+| `@google/clasp` | `clasp --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && clasp --version 2>/dev/null)` | 3.3.0 | Google Apps Script projects |
+| `zapier-platform-cli` | `zapier-platform --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && zapier-platform --version 2>/dev/null)` | 19.0.0 | Zapier integrations |
+
+Angular tooling (`@angular/cli`) is deliberately not checked — `standards.md` §4 states Angular is not in active use and new frontend projects use Next.js. Do not add it back without changing that standard first.
+
+Do not check for other AI coding CLIs. `standards.md` and `ai.md` name Claude Code as the team's tool; requiring a competing agent on every machine contradicts that.
 
 **What does NOT belong here:** `jest`, `playwright`, `react`, `express`, `next`, `lodash`, `axios`, `tailwindcss`, `prisma`, etc. — these are project dependencies that belong in `package.json` and are installed per-project via `pnpm install`. Never check for these globally.
 
@@ -414,18 +418,29 @@ Print results grouped by section. Always show the detected mode header first.
 | Tool | Status | Installed | Notes |
 |------|--------|-----------|-------|
 | Git 2.55+ | ✅ PASS | 2.55.0 | |
-| uv | ✅ PASS | 0.8.3 | |
-| nvm | ✅ PASS | found | |
+| uv 0.11+ | ⚠️ OUTDATED | 0.8.3 | run: `uv self update` |
+| nvm 0.40+ | ✅ PASS | 0.40.6 | |
 | Node.js v24 | ✅ PASS | v24.18.0 | |
-| Docker | ✅ PASS | 29.5.1 | |
-| Claude Code CLI | ✅ PASS | 2.1.146 | |
-| GitHub CLI | ✅ PASS | 2.92.0 | |
-| innoday CLI | ✅ PASS | v0.91.0-beta | |
-| AWS CLI | ✅ PASS | 2.23.4 | |
-| gcloud CLI | ✅ PASS | 569.0.0 | |
-| kubectl | ⚠️ OUTDATED | v1.28.0 | outside ±1 skew — upgrade to v1.34 |
-| Terraform | ✅ PASS | v1.15.3 | |
-| Helm | ✅ PASS | v3.20.1 | |
+| Docker 29.6+ | ✅ PASS | 29.6.2 | |
+| Claude Code CLI 2.1+ | ✅ PASS | 2.1.220 | |
+| GitHub CLI 2.96+ | ✅ PASS | 2.96.0 | |
+| innoday CLI | ✅ PASS | v0.1.87b0 | |
+
+### DevOps Tools *(⚠️ WARN if absent — only needed for infrastructure work)*
+| Tool | Status | Installed | Notes |
+|------|--------|-----------|-------|
+| Railway CLI 5.30+ | ✅ PASS | 5.30.1 | |
+| AWS CLI 2.36+ | ✅ PASS | 2.36.10 | |
+| gcloud CLI 578+ | ✅ PASS | 578.0.0 | |
+| Supabase CLI 2.110+ | ⚠️ WARN | — | not installed |
+| kubectl 1.36+ | ⚠️ OUTDATED | v1.28.0 | outside ±1 skew of the target cluster |
+| Terraform 1.15+ | ✅ PASS | v1.15.8 | |
+| Minikube 1.38+ | ⚠️ WARN | — | not installed |
+| Helm 4.2+ | ⚠️ OUTDATED | v3.20.1 | Helm 4 is current major |
+
+Values in this sample are illustrative but must stay **consistent with the floors declared
+in Step 2** — a sample showing `uv 0.8.3` as ✅ PASS against a 0.11+ floor teaches the
+wrong thing. Regenerate this block whenever the floors move.
 
 ### Global Tools & Frameworks
 
@@ -443,12 +458,12 @@ Print results grouped by section. Always show the detected mode header first.
 |------|--------|-----------|--------|-------|
 | typescript | ✅ PASS | 7.0.2 | 7.0.2 | |
 | prettier | ✅ PASS | 3.9.6 | 3.9.6 | |
-| @angular/cli | ✅ PASS | 21.2.12 | 21.2.12 | |
-| @aws-amplify/cli | ✅ PASS | 14.5.0 | 14.5.0 | |
-| @google/clasp | ✅ PASS | 3.3.0 | 3.3.0 | |
-| @openai/codex | ✅ PASS | 0.132.0 | 0.132.0 | |
+| pnpm | ✅ PASS | 11.18.0 | 11.18.0 | |
+| supabase | ⚠️ WARN | — | 2.110.0 | not installed — only needed for Supabase projects |
 | vercel | ✅ PASS | 54.2.0 | 54.2.0 | |
-| zapier-platform-cli | ✅ PASS | 19.0.0 | 19.0.0 | |
+| @aws-amplify/cli | ⚠️ WARN | — | 14.5.0 | not installed — only needed for Amplify projects |
+| @google/clasp | ⚠️ WARN | — | 3.3.0 | not installed — only needed for Apps Script |
+| zapier-platform-cli | ⚠️ WARN | — | 19.0.0 | not installed — only needed for Zapier |
 | supabase | ✅ PASS | 2.110.0 | 2.110.0 | |
 | pnpm | ✅ PASS | 11.18.0 | 11.18.0 | |
 
@@ -525,11 +540,18 @@ uv run --with anthropic python3 myscript.py
 uv run --with openai --with boto3 python3 myscript.py
 ```
 
-**Missing Node.js global tools:**
+**Missing Node.js global tools (required for everyone):**
 ```bash
-. ~/.nvm/nvm.sh && npm install -g typescript prettier \
-  @angular/cli @aws-amplify/cli @google/clasp @openai/codex \
-  vercel zapier-platform-cli supabase pnpm
+. ~/.nvm/nvm.sh && npm install -g typescript prettier pnpm
+```
+
+**Missing platform CLIs (only what you actually use — do not install all of these):**
+```bash
+. ~/.nvm/nvm.sh && npm install -g supabase          # Supabase projects
+. ~/.nvm/nvm.sh && npm install -g vercel            # Vercel deployments
+. ~/.nvm/nvm.sh && npm install -g @aws-amplify/cli  # Amplify projects
+. ~/.nvm/nvm.sh && npm install -g @google/clasp     # Apps Script
+. ~/.nvm/nvm.sh && npm install -g zapier-platform-cli
 ```
 
 **Node.js v24 (if FAIL — nvm default not pointing to v24):**
@@ -632,7 +654,8 @@ For git config failures, print the exact `git config --global` command.
 - **Node.js v24**: `nvm install 24 && nvm use 24 && nvm alias default 24`
 - **Python linters (uv tools)**: `uv tool install ruff mypy`
 - **Python SDKs (on-demand)**: `uv run --with anthropic --with openai --with boto3 python3 myscript.py`
-- **Node.js global tools**: `. ~/.nvm/nvm.sh && npm install -g typescript prettier @angular/cli @aws-amplify/cli @google/clasp @openai/codex vercel zapier-platform-cli supabase pnpm`
+- **Node.js global tools (all developers)**: `. ~/.nvm/nvm.sh && npm install -g typescript prettier pnpm`
+- **Platform CLIs (only those you use)**: `. ~/.nvm/nvm.sh && npm install -g supabase vercel @aws-amplify/cli @google/clasp zapier-platform-cli`
 - **Docker**: https://docs.docker.com/engine/install/ubuntu
 - **Claude Code CLI**: `npm install -g @anthropic-ai/claude-code`
 - **GitHub CLI**: https://cli.github.com/

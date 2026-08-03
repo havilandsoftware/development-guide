@@ -42,6 +42,45 @@ When deciding where a skill belongs, the test is how widely it applies:
 Never commit client data, credentials, or service endpoints into a skill regardless of where it
 lives.
 
+### Skills in This Guide
+
+This repository ships one skill:
+
+- [`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md) — audits your machine against
+  the [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md)
+  and holds the version floors the guide quotes.
+
+It is written as instructions rather than a script, so it can be followed by hand if you
+are not running it as an installed skill. To install it as a slash command, copy the
+directory into `~/.claude/skills/` and invoke it with `/dev-check`.
+
+Haviland Software developers get this and other shared skills through the company's
+internal Claude Code plugin; ask your team lead for access. Nothing in this guide depends
+on having it — every documented check can be run manually.
+
+## MCP Servers
+
+The [Model Context Protocol](https://modelcontextprotocol.io/) lets Claude Code talk to
+external tools and services directly, rather than through shell commands you write by hand.
+
+```bash
+claude mcp list              # what's registered
+claude mcp add <name> -- <command>
+```
+
+Servers are configured per user and available in every session. Two notes that come up
+repeatedly:
+
+- **A server caches its configuration at startup.** If you change credentials or config
+  after the server is running, calls keep failing with the old values until you reconnect
+  (`/mcp reconnect`). A uniform `401` across every call on a server that used to work is
+  almost always this, not a network fault.
+- **Never put credentials in the MCP command line** — they end up in shell history and in
+  `claude mcp list` output. Have the server read them from its own config file.
+
+Internal tooling: see [InnoDay](innoday.md) for that server's setup, including a
+configuration gotcha that produces exactly the `401` symptom described above.
+
 ## Best Practices
 
 ### Always Use Plan Mode

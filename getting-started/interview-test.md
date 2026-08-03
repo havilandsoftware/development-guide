@@ -16,8 +16,8 @@ Three phases. The middle one carries the least weight.
 rather see 4 focused hours than a rushed weekend, and we will not reward whoever had the
 most spare time.
 
-**Compensation:** this task is paid at a flat rate of <!-- RATE: set before sending -->.
-You will be paid whether or not we move forward.
+**Compensation:** this task is paid at a flat rate of **[RATE — TO BE FILLED IN BEFORE
+SENDING]**. You will be paid whether or not we move forward.
 
 **Ask us things.** Your named contact is included in the email with this task. Questions
 are expected, not a sign of weakness — the brief below has gaps in it.
@@ -33,9 +33,14 @@ Work through the
 /dev-check
 ```
 
-Paste the output into your `PLAN.md`. If you cannot run the skill, the same checks are
-written out step by step in [`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md) —
-run them by hand and paste those results instead.
+Paste the output into your `PLAN.md`. If that slash command is not available to you, the
+skill is written as plain instructions — open
+[`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md), work through the checks by
+hand, and paste those results instead. Either is fine; we are checking that you have a
+working environment, not which route you took.
+
+Warnings about platform CLIs you do not need are expected — do not go installing things to
+chase a clean board.
 
 If you are new to Claude Code, read [Claude Code](../technologies/claude.md) first and
 spend twenty minutes on something throwaway before you start the real task. We are
@@ -63,6 +68,9 @@ Requirements:
 5. It has **tests**, however small.
 
 ### Fixed interface — do not change this
+
+**Write this in Python.** The frozen interface below is a Python signature and we import
+it directly, so the language is not open here even though the subject matter is.
 
 Your project must expose exactly this function, with this signature:
 
@@ -119,14 +127,14 @@ noticed the problem.
 
 - Commit in **logical, frequent chunks** with clear messages. We read the history.
 - Push to the same branch and PR you opened in Phase 1.
-- Follow [Coding Standards](../technologies/standards.md) for whichever language you use.
+- Follow the Python section of [Coding Standards](../technologies/standards.md).
 - Use Claude Code, and **keep your session transcript or prompt log.** Submit it with
   your work — we are more interested in how you directed the agent than in the diff.
 
 ### Included exercise: review this code
 
 In `interview/generated_report.py` you will find a file written by an AI agent that we
-have not reviewed. **It contains at least one defect.**
+have not reviewed. **It contains more than one defect — find as many as you can.**
 
 Review it as though a junior engineer on your team had opened it as a PR. For each
 problem you find, write in `REVIEW.md`:
@@ -146,6 +154,9 @@ is a repeatable method rather than a lucky catch.
 ### `REVIEW.md`
 
 - **What you chose not to build, and why.** Restraint only counts if it was deliberate.
+- **Anything you noticed but deliberately did not fix**, and your reasoning. Spotting a
+  problem and leaving it alone because it was out of scope is a good answer here — we
+  score that as judgment, not as an omission.
 - **What you would do next** with another four hours.
 - **What you are least confident about** in what you submitted.
 - Your findings from the code review exercise above.
@@ -174,7 +185,7 @@ submission, and each of us scores independently before we discuss it.
 | **Question-asking** | Surfaced the real gaps in the brief, including the contradictory bits. Asked about the ones that blocked progress and documented the rest. |
 | **Scope judgment** | Frozen interface untouched. Nothing from the out-of-scope list built. Noticed the tempting adjacent work and deliberately left it, saying so. |
 | **Communication** | `PLAN.md`, `ASSUMPTIONS.md`, `REVIEW.md`, README and commit messages are all clear to someone with no context. |
-| **AI direction** | Prompts carried real context. Output was verified, not accepted. Caught the planted defect and can say how. Noticed when the agent drifted and redirected it. |
+| **AI direction** | Prompts carried real context. Output was verified, not accepted. Found defects in the review exercise and can say how each was spotted. Noticed when the agent drifted and redirected it. |
 | **Ownership** | Explains every part of the submission, including AI-written parts. Critiques their own work honestly. Defends decisions with reasons. |
 
 Whether the code works is a **threshold**, not a score. It needs to run. Beyond that,
@@ -232,9 +243,19 @@ do not fix it. Rewriting the file is scope creep, however good the rewrite.
 
 ## Planted defects in generated_report.py
 
-Maintained separately — see the file's own interviewer notes. The set should include a
-hallucinated method that does not exist in the named library, a deprecated API call, and
-a subtle complexity problem on a hot path. Rotate them periodically.
+Maintained in the file's own interviewer notes, which record what was verified by
+execution. Currently: a hallucinated method (`csv.DictReader.has_header`), a deprecated
+API call (`datetime.utcnow`), a quadratic loop that also over-counts, and two unguarded
+edge cases. Rotate them periodically.
+
+Two things to hold in mind when scoring:
+
+- **Defect 1 blocks the others at runtime.** It raises on the first call of the first
+  function, so anyone who runs the module stops there. Reaching only defect 1 is not
+  shallowness — ask what they would look for next.
+- **The quadratic loop also produces a wrong count**, and `sample_history.csv` happens to
+  contain the one duplicate shape that returns the right answer. Either reading — "this is
+  O(n^2)" or "this count is wrong" — is correct.
 
 ## Known limitation
 
@@ -247,7 +268,9 @@ say so explicitly in the debrief; that is a trainable gap.
 ## Before using this task
 
 - Have an engineer complete it end to end and time it. If it exceeds 4 hours, cut scope.
-- Set the compensation rate in §0 before sending. Never ask the candidate to name it.
+- **Replace the `[RATE — TO BE FILLED IN BEFORE SENDING]` placeholder** in the
+  Compensation line at the top. It is deliberately visible so an unfilled task is obvious
+  to whoever sends it. Never ask the candidate to name a figure.
 - Book the walkthrough when you send the task, not after submission. A submission we
   never discuss is the single biggest driver of candidate dissatisfaction, and the
   walkthrough is also the best authenticity check available.

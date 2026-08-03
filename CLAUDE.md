@@ -93,8 +93,11 @@ needs to land in both, or they drift.
 
 ### Technology-Specific Guidelines
 - **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
-- Runtime floors: Python 3.14+, Node.js 24 (Active LTS). Node 22 is Maintenance LTS — do
-  not reintroduce it as the recommended version.
+- Runtimes use two numbers, and `standards.md` §2 is authoritative for both: **minimum
+  supported** (Python 3.11+, Node 22+ — below this a repo is a tracked issue) and **new
+  projects use** (Python 3.14, Node 24 Active LTS). The install guide, Dockerfile
+  templates, and CI templates all specify the latter. Do not reintroduce Node 22 or
+  Python 3.11 as what new work starts on.
 - Python is never installed globally — `uv` provisions it per project. Do not add a global
   Python install step.
 

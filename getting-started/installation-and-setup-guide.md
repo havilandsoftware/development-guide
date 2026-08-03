@@ -21,7 +21,8 @@ Create these before installing anything — several installers ask you to log in
 - Google
 - AWS
 - Supabase
-- Railway
+- Railway — you need the account to view deployments and logs even if you never install
+  the CLI
 
 Enable MFA on every one of them. See [Expectations](expectations.md#security-practices)
 for why this is not optional.
@@ -40,8 +41,8 @@ Everyone installs all of these, whatever you work on.
 | GitHub CLI (`gh`) | 2.96+ | [cli.github.com](https://cli.github.com/) |
 | nvm | 0.40+ | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
 | Node.js | 24.18+ | `nvm install 24 && nvm alias default 24` |
-| uv | 0.12+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| Python | 3.14+ | Provisioned per-project by `uv` — see note below |
+| uv | 0.11+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Python | 3.14 | Provisioned per-project by `uv` — see note below |
 | Claude Code CLI | 2.1+ | `npm install -g @anthropic-ai/claude-code` |
 | InnoDay CLI | latest | See [InnoDay](../technologies/innoday.md) |
 | Docker Engine | 29.6+ | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
@@ -73,6 +74,40 @@ Verify: `uv --version`
 
 **Claude Code** — after installing, see [Claude Code](../technologies/claude.md) for
 configuration and working practices.
+
+### Linters and Formatters
+
+These must be installed **globally**, not per project — editors and pre-commit hooks
+invoke them before any project environment is active.
+
+| Tool | Version | Install |
+|------|---------|---------|
+| ruff | 0.16+ | `uv tool install ruff` |
+| mypy | 2.3+ | `uv tool install mypy` |
+| TypeScript | 6+ | `npm install -g typescript` |
+| prettier | 3.9+ | `npm install -g prettier` |
+| pnpm | 11+ | `npm install -g pnpm` |
+
+```bash
+uv tool install ruff mypy
+. ~/.nvm/nvm.sh && npm install -g typescript prettier pnpm
+```
+
+Python globals go through `uv tool install`, never `pip install --user` — each gets an
+isolated environment and a binary on your PATH.
+
+### Platform CLIs — install as needed
+
+Only if you work with the platform in question. These are shell tools invoked against any
+project, so install them globally rather than as project dependencies.
+
+| Tool | Install | When |
+|------|---------|------|
+| Supabase CLI | `npm install -g supabase` | Supabase projects |
+| Vercel CLI | `npm install -g vercel` | Vercel deployments |
+| AWS Amplify CLI | `npm install -g @aws-amplify/cli` | Amplify projects |
+| Google clasp | `npm install -g @google/clasp` | Apps Script projects |
+| Zapier CLI | `npm install -g zapier-platform-cli` | Zapier integrations |
 
 ### DevOps Tools
 
@@ -191,9 +226,14 @@ It prints a pass/fail table for every tool, your git configuration, SSH access, 
 the InnoDay CLI and MCP server — with the exact fix command for anything missing or
 out of date.
 
-**You are not done onboarding until this comes back clean.** If you do not have the
-company Claude Code plugin installed, the same checks are documented step by step in
-[`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md) and can be run by hand.
+**You are not done onboarding until this comes back clean** — every ❌ resolved. Warnings
+are fine to leave: they flag optional platform CLIs you may not need.
+
+If `/dev-check` is not available as a slash command, the skill is written as
+instructions rather than a script — open
+[`skills/dev-check/SKILL.md`](../skills/dev-check/SKILL.md) and work through the checks by
+hand, or copy the directory into `~/.claude/skills/` first. See
+[Claude Code](../technologies/claude.md#skills-in-this-guide).
 
 ---
 
