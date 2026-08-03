@@ -42,15 +42,6 @@ cd development-guide && claude
 > /dev-check
 ```
 
-## Technologies
-
-| | |
-|---|---|
-| [Git & GitHub](technologies/git.md) | Branching, pull requests, `gh` CLI, repository standards |
-| [Coding Standards](technologies/standards.md) | Structure, linting, testing, Docker, CI |
-| [Claude Code](technologies/claude.md) | AI-assisted development, MCP |
-| [InnoDay](technologies/innoday.md) | Tickets and projects *(internal)* |
-
 ## Claude Code Skills
 
 This repository ships two skills. Clone it, run `claude` from inside it, and they are available —
