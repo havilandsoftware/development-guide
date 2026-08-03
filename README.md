@@ -1,7 +1,6 @@
 # Haviland Software Development Guide
 
-Hello! 👋 My name is Karl Haviland and this is my company's development guide, for your benefit. I have
-been lucky enough to build up developers who went off to work at some of the best computer science
+Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best computer science
 and data science shops around the world. I am continuing to add and adjust to this guide — and if
 you have ideas for new additions, please let me know!
 
@@ -43,15 +42,6 @@ cd development-guide && claude
 > /dev-check
 ```
 
-## Technologies
-
-| | |
-|---|---|
-| [Git & GitHub](technologies/git.md) | Branching, pull requests, `gh` CLI, repository standards |
-| [Coding Standards](technologies/standards.md) | Structure, linting, testing, Docker, CI |
-| [Claude Code](technologies/claude.md) | AI-assisted development, MCP |
-| [InnoDay](technologies/innoday.md) | Tickets and projects *(internal)* |
-
 ## Claude Code Skills
 
 This repository ships two skills. Clone it, run `claude` from inside it, and they are available —
@@ -62,10 +52,9 @@ there is nothing else to install.
 
 ## Join Us
 
-**What we're looking for:** I value clear communication and thought, good questions, independence,
-and organization over years of experience or whether you know the ins and outs of a specific
+If you're interested in working with an amazing group of innovators, we value clear communication and thought, good questions, independence, and organization over years of experience or whether you know the ins and outs of a specific
 technology. Tools change; those habits are what make someone worth working with on the second
-project as much as the first.
+project as much as the first!
 
 If that sounds like you, let us know you exist — fill out
 [Join Us](https://www.pixelfuel.io/join-us).
