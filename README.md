@@ -1,37 +1,41 @@
 # Haviland Software Development Guide
 
-## About this Guide
-We want to build and maintain a high quality development team! This guide outlines the various technologies, processes, and development standards we use, and how to get started. The guide is divided into three core sections and each section is expected to be read carefully by all team members (no matter their role :-))!
+This is the internal development guide for
+[Haviland Software](https://github.com/havilandsoftware), published openly because most of it —
+coding standards, git workflow, AI-assisted development practices — is useful to anyone building
+software. A few sections reference internal-only tooling and won't apply outside the org; the
+standards themselves stand on their own.
 
-*NOTE:* This guide is NOT a "Tutorial". Technologies change constantly and those providers spend exponentially more time developing out better tutorials/tech documentation than we can ever maintain.  The learning guide will link out to resources that we feel are best at providing this information.
+*NOTE:* This guide is **not a tutorial**. Technologies change constantly, and the providers
+building them maintain far better documentation than we could. The learning guide links out to the
+resources we think are best.
 
-## Getting started
-1. [Expectations](getting-started/expectations.md)
-2. [Installation and Setup Guide](getting-started/installation-and-setup-guide.md)
-3. [AI Responsibility Guide](getting-started/ai.md)
-4. [Learning Guide](getting-started/learning-guide.md)
-5. [Release Guide](getting-started/release-guide.md)
+## Getting Started
 
-## Claude Code Skills
-This repository ships two skills that work once it is cloned:
-- `/dev-check` — audit your machine against this guide (core toolchain, git config, SSH, project deps)
-- `/interview` — guided walkthrough of the interview task below
+Work through these in order.
 
-## Interview Task
-Candidates: [Interview Task](getting-started/interview-test.md) — build a small AI agent across six
-tickets. A guided Claude Code skill is included (`/interview`).
+1. [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) — accounts, tooling, machine setup, verification
+2. [Expectations](getting-started/expectations.md) — how the team works
+3. [AI Responsibility Guide](getting-started/ai.md) — using AI tools responsibly
+4. [Learning Guide](getting-started/learning-guide.md) — what to learn, in what order
+5. [Release Guide](getting-started/release-guide.md) — merged PR to verified production
 
 ## Technologies
-- [Git](technologies/git.md)
-- [Coding Standards](technologies/standards.md)
-- [Claude Code](technologies/claude.md)
 
-## About this guide
+| | |
+|---|---|
+| [Git](technologies/git.md) | Branching, pull requests, repository standards |
+| [GitHub](technologies/github.md) | Platform, `gh` CLI, repository settings |
+| [Coding Standards](technologies/standards.md) | Structure, linting, testing, Docker, CI |
+| [Claude Code](technologies/claude.md) | AI-assisted development, MCP |
+| [InnoDay](technologies/innoday.md) | Tickets and projects *(internal)* |
 
-This is the internal development guide for [Haviland Software](https://github.com/havilandsoftware),
-published openly because most of it — coding standards, git workflow, AI-assisted development
-practices — is useful to anyone building software. A few sections reference internal-only tooling and
-won't apply outside the org; the standards themselves stand on their own.
+## Claude Code Skills
+
+This repository ships two skills that work once it is cloned:
+
+- `/dev-check` — audit your machine against this guide
+- `/interview` — guided walkthrough of the [interview task](getting-started/interview-test.md)
 
 ## Licence
 

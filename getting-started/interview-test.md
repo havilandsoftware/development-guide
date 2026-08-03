@@ -70,8 +70,8 @@ assess your work. See [the skill](../.claude/skills/interview/SKILL.md) for what
 ## Before You Start
 
 Work through the [Installation and Setup Guide](installation-and-setup-guide.md) **Tier 1** only.
-You need: Git 2.49+ with an SSH key, Python 3.12+, `uv`, `ruff`, `mypy`, Docker, `gh`, and an IDE
-with AI assistance (Cursor, or VSCode with Copilot).
+You need: Git 2.55+ with an SSH key, Python 3.12+, `uv`, `ruff`, `mypy`, Docker, `gh`, VSCode, and
+the Claude Code CLI.
 
 You do not need any Tier 2 or Tier 3 tooling — no AWS, Terraform, Kubernetes, or Angular.
 
@@ -220,7 +220,11 @@ We will sit down for about an hour and go through what you built. Expect:
 - A read through the code, with you explaining the decisions
 - **"Why did you do it this way?"** on a few specific choices
 - **"Where did Claude get it wrong?"** — we will ask this, and *"it didn't"* is not a credible
-  answer. Knowing where your tools failed you is the skill we are actually testing
+  answer. Knowing where your tools failed you is the skill we are actually testing. Follow-up:
+  **how did you notice?** "I ran it and it crashed" is a fine answer; so is "that method isn't in
+  the library's docs." What we are listening for is a repeatable method rather than a lucky catch.
+- **"What did you notice but deliberately not fix?"** — spotting something and leaving it alone
+  because it was out of scope is a good answer here. We read that as judgement, not as an omission.
 - What you would do next with another week
 
 Bring your questions about how we work. The interview goes both ways.

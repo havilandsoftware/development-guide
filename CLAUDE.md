@@ -23,8 +23,8 @@ When editing this guide, respect these core team values:
 
 ### AI-First Approach
 The team is "Responsible AI First" - they actively use AI tools in creative ways while maintaining ethical standards. The team uses:
-- Cursor (primary AI coding tool)
-- Claude Code (this tool)
+- Claude Code (primary AI coding tool)
+- VSCode as the editor — plain, no AI plugins. Do not reintroduce Cursor or Copilot.
 - Focus on responsible, methodical, and iterative AI usage
 
 ### Documentation Standards
@@ -71,12 +71,21 @@ Since this is a documentation repository, there are no build/test commands. Comm
 ### Updating Installation Guides
 Location: `getting-started/installation-and-setup-guide.md`
 - Maintain the three-tier structure: Tier 1 (core, required at onboarding), Tier 2 (project-specific), Tier 3 (DevOps). Tier 2/3 tools belong under "Additional Tooling" at the end, not in the main flow
-- Include version requirements where applicable (e.g., Git 2.49+, Python 3.12+, Node.js v22)
+- Keep the four-section order: Accounts → Programs to Install → Setup → Verify
+- **Version floors live in `.claude/skills/dev-check/SKILL.md`.** That table is the source of truth;
+  edit it first, then bring the guide's tables into line. Never update only one of the two.
+- Floors are written with a `+` (`2.55+`), never exact pins, and each versioned section carries a
+  `Versions verified: <date>` marker. Update the date when you re-verify. Exact pins rot within
+  weeks for tools that ship daily.
 
 ### Technology-Specific Guidelines
 - **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
-- Install steps for Python 3.12+ and Node.js v22 are inline in `getting-started/installation-and-setup-guide.md`
-- Always specify version requirements (Python 3.12+, Node.js v22)
+- Runtimes carry two numbers, and `standards.md` §2 is authoritative: **minimum supported**
+  (Python 3.12+, Node 22+ — below this a repo is a tracked issue) and **new projects use**
+  (Python 3.14, Node 24 Active LTS). The install guide, Dockerfile, and CI templates all specify
+  the latter. Do not reintroduce Node 22 as what new work starts on.
+- Python is never installed globally per-version — `uv` provisions it per project.
+- The editor is plain VSCode. Claude Code is the AI tool. **Do not reintroduce Cursor or Copilot.**
 
 ### Skills
 `.claude/skills/` ships skills usable from any clone of this repo. They must depend on **nothing
@@ -86,6 +95,8 @@ skill that only works for one org does not belong here.
 - `dev-check/` — machine audit. **Must honour the three tiers**: only Tier 1 can produce a ❌.
   Tier 2/3 are `N/A` unless the current repo shows a marker (`angular.json`, `*.tf`, etc.) proving
   it needs them. Failing a developer for a missing Terraform trains people to ignore the report.
+  Also holds the version floors for the whole guide (see above), and the InnoDay checks — those
+  degrade to skipped rather than failing for anyone outside the org.
 
 ### Interview Task and Skill
 - `getting-started/interview-test.md` — the candidate task, structured as six virtual tickets
@@ -99,11 +110,22 @@ skill that only works for one org does not belong here.
 ## Important Files
 
 - `README.md` - Main entry point, outlines all major sections
+- `LICENSE` - CC BY 4.0 for prose, MIT for embedded code samples
 - `getting-started/installation-and-setup-guide.md` - Complete setup instructions
 - `getting-started/expectations.md` - Team guidelines and standard practices
 - `getting-started/ai.md` - AI responsibility principles
-- `technologies/git.md` - Git workflow and repository standards
+- `getting-started/learning-guide.md` - Five areas to learn, in order
 - `getting-started/release-guide.md` - Standard release process
+- `technologies/git.md` - Git workflow and repository standards
+- `technologies/github.md` - GitHub platform, `gh` CLI, public-repo requirements
+- `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
+- `.claude/skills/dev-check/SKILL.md` - Machine audit; source of truth for version floors
+
+## This Repository Is Public
+
+Published under CC BY 4.0 / MIT. Before adding anything, check it does not include client names,
+internal URLs, service endpoints, credentials, absolute paths containing a username, or named
+individuals with privileges attached.
 
 ## Editing Guidelines
 

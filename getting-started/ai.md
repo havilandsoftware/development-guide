@@ -47,7 +47,6 @@ This guide outlines the principles and best practices for responsible AI use wit
 
 | Tool | Purpose |
 |------|---------|
-| [Cursor](https://www.cursor.com/) | Primary AI coding IDE with inline suggestions and chat |
+| [VSCode](https://code.visualstudio.com/) | Our editor — plain VSCode, no AI plugins required |
 | [Claude Code](../technologies/claude.md) | CLI-based AI agent for complex coding tasks, planning, and GitHub integration |
-| [GitHub Copilot](https://github.com/features/copilot) | In-editor code completion and chat (VSCode, Cursor) |
 | [Claude (claude.ai)](https://claude.ai) | General-purpose AI assistant for research, writing, and analysis |
