@@ -70,6 +70,15 @@ project as much as the first.
 If that sounds like you, let us know you exist — fill out
 [Join Us](https://www.pixelfuel.io/join-us).
 
+## Contributing
+
+This guide is published for reference and is maintained by our own team, so we do not accept outside
+pull requests. That said, I meant what I said above about wanting ideas — **open an issue**. Spotted a
+stale version, a broken link, or a standard that no longer makes sense? That is genuinely useful and
+I would rather hear it.
+
+Security concerns go through [SECURITY.md](SECURITY.md), not a public issue.
+
 ## Licence
 
 Documentation is licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the embedded

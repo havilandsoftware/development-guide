@@ -117,7 +117,7 @@ effectively irreversible — history stays visible in forks, mirrors, and caches
 | `LICENSE` | **Required.** Without one, default copyright applies and nobody may legally reuse the code — which defeats the point of publishing. |
 | `SECURITY.md` | **Required.** Where to report a vulnerability privately, what is in scope, and how quickly you will respond. Without it, the first report arrives as a public issue. |
 | `README.md` | **Required.** Must state what the repo is, who it is for, and whether outside use is supported. |
-| `CONTRIBUTING.md` | Required **only if you accept outside pull requests.** Decide deliberately — omitting it silently is not the same as declining contributions. |
+| `CONTRIBUTING.md` | Required **only if you accept outside pull requests.** If you do not, say so in `README.md` and disable forking instead — omitting the file silently is not the same as declining contributions. |
 | `CODE_OF_CONDUCT.md` | Optional. Conventional for repos expecting outside participation. |
 
 A minimal `SECURITY.md` covers four things: the private reporting channel (never a public issue), the
@@ -136,6 +136,7 @@ Set all of these **before** flipping visibility:
 | Dependabot alerts and security updates | Enabled |
 | Branch protection on `main` | Require a pull request and at least one approving review |
 | Actions → workflow permissions | **Read-only**, and disable "Allow Actions to approve pull requests" |
+| Forking | Disabled, unless you intend to accept outside pull requests — see note below |
 | Private vulnerability reporting | Enable **immediately after** going public — see note below |
 
 ```bash
@@ -156,13 +157,30 @@ gh api -X PUT repos/$R/branches/main/protection \
   -F enforce_admins=false -F required_status_checks=null -F restrictions=null
 ```
 
-**Private vulnerability reporting is a public-repo-only feature.** Attempting it while the repo is
-private returns `404`, and it is silently ignored if passed in the `security_and_analysis` PATCH
-above. Enable it as the first step *after* flipping visibility:
+**Two settings can only be handled after the repo is public.** Both look already-correct while it is
+private, which is the trap — check them again immediately after flipping visibility.
+
+**Private vulnerability reporting** is a public-repo-only feature. Attempting it while private
+returns `404`, and it is silently ignored if passed in the `security_and_analysis` PATCH above.
+
+**Forking** is how an outsider opens a pull request. If the repo is published for reference and you
+do not want outside PRs, disable it. Note that `allow_forking` may *report* `false` on a private repo
+purely because the org blocks private-repo forking — the repo-level flag underneath can still be
+`true`, and it takes effect the moment you go public. Read the value, do not assume it.
 
 ```bash
-gh api -X PUT repos/$R/private-vulnerability-reporting   # public repos only
+# run these immediately AFTER flipping visibility
+gh api -X PUT repos/$R/private-vulnerability-reporting
+gh api -X PATCH repos/$R -F allow_forking=false      # only if declining outside PRs
+
+# then verify
+gh api repos/$R --jq '{allow_forking, private}'
+gh api repos/$R/private-vulnerability-reporting --jq '.enabled'
 ```
+
+Disabling forks does not stop anyone cloning or copying the content — the licence governs that.
+It removes the pull-request route, so state the policy in `README.md` too rather than letting people
+discover it by finding the button missing.
 
 **Why workflow permissions matter most here.** GitHub's default gives every workflow a `write` token
 and lets Actions approve pull requests. On a public repo that combination means a workflow — yours or
