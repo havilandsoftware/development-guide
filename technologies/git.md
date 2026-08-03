@@ -1,17 +1,49 @@
-# Git and Github
+# Git and GitHub
 
 ## Installation & First Time Setup
 Please follow the installation and first time setup instructions [here](../getting-started/installation-and-setup-guide.md#setup-git).
 
+Enable MFA on your GitHub account — see
+[Expectations → Security Practices](../getting-started/expectations.md#security-practices). Then
+authenticate the CLI, which Claude Code uses for all issue and PR operations:
+
+```bash
+gh auth login     # check with: gh auth status
+```
+
 ## Repository Creation Standards
 - Make it private
 - Add README using documentation standards below
-- Add your topics on Github page - we have set list to choose from below
-- Add a description on Github page
+- Add your topics on the GitHub page - we have a set list to choose from below
+- Add a description on the GitHub page
 - Update the merging strategy to only squash merge
 - Set default branch to main
-- Attach Github repository to the appropriate team
-- Attach the repository to channel
+- Protect `main`: require a pull request and one approving review
+- Attach the GitHub repository to the appropriate team
+- Attach the repository to a channel
+
+**Topics are not decoration** — tooling reads them. Release batching and project onboarding both
+discover repositories by topic, so a missing topic silently drops a repository out of releases. If
+you are unsure which applies, ask rather than guessing.
+
+## The `gh` CLI
+
+The commands that come up daily:
+
+```bash
+gh pr create --title "Title" --body "Description" --base main
+gh pr list · gh pr view 123 · gh pr checks 123 · gh pr diff 123
+gh issue create --title "Title" --body "Description"
+gh issue list --label bug
+gh run list · gh run watch · gh run view --log-failed
+gh api repos/havilandsoftware/<repo>
+```
+
+`gh api` reaches any REST endpoint with your existing auth, which is usually simpler than building a
+request by hand.
+
+CI configuration standards live in
+[Coding Standards §8](standards.md#8-github-actions--ci-baseline).
 
 ## Branching
 We follow a more consolidated/feature centric version of `git flow` as a branching strategy.
@@ -62,3 +94,23 @@ README documentation communicates how to work with the repository.  As the proje
 - [] Second todo
 
 ```
+
+## Public Repositories
+
+Most of our repositories are private. A public one carries extra requirements, because publishing is
+effectively irreversible — history stays visible in forks, mirrors, and caches after a takedown.
+
+Before making a repository public:
+
+- **Get approval from a repository admin.** This is not a solo decision.
+- **Add a LICENSE.** Without one, default copyright applies and nobody can legally reuse the code,
+  which defeats the purpose of publishing.
+- **Scrub the full history, not just the current state.** A credential in an old commit is still
+  exposed — see [Secret Removal Procedure](standards.md#secret-removal-procedure).
+- **Remove client names, internal URLs, service endpoints, and customer data.**
+- **Add `SECURITY.md`** with a vulnerability disclosure contact, and `CONTRIBUTING.md` if you intend
+  to accept outside contributions.
+- **Enable secret scanning and push protection**, and turn on Dependabot alerts.
+- **Audit dependency licences** for compatibility with the licence you are publishing under.
+
+Once public, treat every commit as permanent.

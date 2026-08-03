@@ -24,8 +24,7 @@ Work through these in order.
 
 | | |
 |---|---|
-| [Git](technologies/git.md) | Branching, pull requests, repository standards |
-| [GitHub](technologies/github.md) | Platform, `gh` CLI, repository settings |
+| [Git & GitHub](technologies/git.md) | Branching, pull requests, `gh` CLI, repository standards |
 | [Coding Standards](technologies/standards.md) | Structure, linting, testing, Docker, CI |
 | [Claude Code](technologies/claude.md) | AI-assisted development, MCP |
 | [InnoDay](technologies/innoday.md) | Tickets and projects *(internal)* |

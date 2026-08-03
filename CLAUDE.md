@@ -116,8 +116,7 @@ skill that only works for one org does not belong here.
 - `getting-started/ai.md` - AI responsibility principles
 - `getting-started/learning-guide.md` - Five areas to learn, in order
 - `getting-started/release-guide.md` - Standard release process
-- `technologies/git.md` - Git workflow and repository standards
-- `technologies/github.md` - GitHub platform, `gh` CLI, public-repo requirements
+- `technologies/git.md` - Git and GitHub: workflow, `gh` CLI, repo standards, public-repo rules
 - `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
 - `.claude/skills/dev-check/SKILL.md` - Machine audit; source of truth for version floors
 

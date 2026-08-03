@@ -16,7 +16,7 @@ request, review someone else's PR, resolve a merge conflict, and explain why we
 squash-merge. You should also be able to get yourself out of trouble — undo a commit,
 recover a lost branch, and know why force-pushing a shared branch is dangerous.
 
-**Ours:** [Git](../technologies/git.md) · [GitHub](../technologies/github.md)
+**Ours:** [Git & GitHub](../technologies/git.md)
 
 **External:**
 - [GitHub Hello World](https://docs.github.com/en/get-started/quickstart/hello-world) — start here if git is new to you
