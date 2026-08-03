@@ -17,7 +17,7 @@ This guide outlines the standard process for releasing applications to developme
 ### 1. Close PRs and Tickets
 
 - Ensure all pull requests related to the release are reviewed and merged
-- Update and close all associated tickets in Jira/Trello
+- Update and close all associated tickets in Linear and InnoDay
 - Conduct a final review of the release notes
 
 ### 2. Tag Applications

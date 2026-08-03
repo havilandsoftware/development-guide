@@ -42,6 +42,50 @@ When deciding where a skill belongs, the test is how widely it applies:
 Never commit client data, credentials, or service endpoints into a skill regardless of where it
 lives.
 
+### Skills in This Guide
+
+This repository ships two skills, and they work from any clone of it — nothing else to install:
+
+- [`/dev-check`](../.claude/skills/dev-check/SKILL.md) — audits your machine against the
+  [Installation and Setup Guide](../getting-started/installation-and-setup-guide.md). It also holds
+  the version floors the guide quotes, so it is the place to update a version.
+- [`/interview`](../.claude/skills/interview/SKILL.md) — guided walkthrough of the
+  [interview task](../getting-started/interview-test.md).
+
+Both live in `.claude/skills/`, so cloning this repository and running `claude` from inside it makes
+them available immediately:
+
+```bash
+cd ~/workspaces/development-guide && claude
+> /dev-check
+```
+
+They are written as instructions rather than scripts, so you can also follow them by hand. To use
+them from anywhere, copy the directories into `~/.claude/skills/`.
+
+## MCP Servers
+
+The [Model Context Protocol](https://modelcontextprotocol.io/) lets Claude Code talk to
+external tools and services directly, rather than through shell commands you write by hand.
+
+```bash
+claude mcp list              # what's registered
+claude mcp add <name> -- <command>
+```
+
+Servers are configured per user and available in every session. Two notes that come up
+repeatedly:
+
+- **A server caches its configuration at startup.** If you change credentials or config
+  after the server is running, calls keep failing with the old values until you reconnect
+  (`/mcp reconnect`). A uniform `401` across every call on a server that used to work is
+  almost always this, not a network fault.
+- **Never put credentials in the MCP command line** — they end up in shell history and in
+  `claude mcp list` output. Have the server read them from its own config file.
+
+Internal tooling: see [InnoDay](innoday.md) for that server's setup, including a
+configuration gotcha that produces exactly the `401` symptom described above.
+
 ## Best Practices
 
 ### Always Use Plan Mode
@@ -109,14 +153,14 @@ Give Claude access to additional repositories in a session:
 
 ```bash
 # At launch
-claude . --add-dir ~/workspaces/hs/shared-lib
+claude . --add-dir ~/workspaces/shared-lib
 
 # Inside a running session
-/add-dir ~/workspaces/hs/shared-lib
+/add-dir ~/workspaces/shared-lib
 
 # Always load certain repos — add to .claude/settings.json
 {
-  "additionalDirectories": ["~/workspaces/hs/shared-lib"]
+  "additionalDirectories": ["~/workspaces/shared-lib"]
 }
 ```
 

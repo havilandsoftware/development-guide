@@ -1,102 +1,82 @@
-# Installation Guide
+# Installation and Setup Guide
 
-Tooling here is split into three tiers. **Install Tier 1 on day one** — it is what every developer
+Work through this guide in order: create your accounts, install your programs, set up your
+machine, then verify the result. You are not finished until the verification step passes.
+
+Tooling is split into three tiers. **Install Tier 1 on day one** — it is what every developer
 needs before opening any project. Tiers 2 and 3 are installed on demand and are covered in
-[Additional Tooling](#additional-tooling-install-on-demand) at the end of this guide.
+[Additional Tooling](#additional-tooling-install-on-demand) at the end.
 
 | Tier | What | When to install |
 |------|------|-----------------|
-| **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, linters | Onboarding. Required. |
+| **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, linters | Onboarding. Required. |
 | **1 — Platform** | Supabase, Vercel | Onboarding, or when you first deploy to them. |
-| **2 — Project-specific** | Angular, Amplify, clasp, Codex | Only when you take on a project that uses it. |
-| **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
+| **2 — Project-specific** | Angular, Amplify, clasp | Only when you take on a project that uses it. |
+| **3 — DevOps** | AWS, gcloud, Railway, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
 
-If a tool is missing when you import a project, `dev-check` run from inside that repo will tell you
-exactly which tier-2/3 tools that project needs.
+If a tool is missing when you import a project, `/dev-check` run from inside that repo will
+tell you exactly which tier-2/3 tools that project needs.
 
-## Tier 1 — Create Cloud Accounts
+> **Versions verified:** 2026-07-29. Every version below is a **floor** — `2.55+` means 2.55
+> or newer, and newer is always fine. Re-verify with `/dev-check`, which holds the same
+> floors.
+
+---
+
+## 1. Create Cloud Accounts
+
+Create these before installing anything — several installers ask you to log in.
+
 - Slack
-- Github & Copilot
-- Trello & Jira
+- GitHub
+- Linear
+- InnoDay
 - Google
-- Github Copilot
 - AWS
 - Supabase
+- Railway — needed to view deployments and logs even if you never install the CLI
 
-## Tier 1 — Install WSL (Windows)
-*NOTE: only necessary if using Windows*
-- Ubuntu 22.04 LTS
+Enable MFA on every one of them. See
+[Expectations → Security Practices](expectations.md#security-practices) for why that is not
+optional.
 
-## Tier 1 — Setup Git
+---
 
-### Install Git
-- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). **Needs to be version 2.49+.**
-- Setup [first time configuration](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup) locally.- 
-```
-  git config --global user.name "John Doe"
-  git config --global user.email johndoe@example.com
-  git config --global init.defaultBranch main
-  git config --global core.editor nano
-  git config --global --add --bool push.autoSetupRemote true
-```
-- Create account in Github.
+## 2. Programs to Install
 
-### Create SSH Key and Add to Github
-For more detailed instructions, refer to [this guide](https://www.unixtutorial.org/how-to-generate-ed25519-ssh-key/).
-1. Generate the ssh key, then hit enter to create it in the default folder. *Notice the location of the id_ed25519.pub file in the output.*
-`ssh-keygen -t ed25519 -C "your-email@goes-here"`
-2. Type a password when prompted.
-3. Run the command to output the public key.
-`cat ~/.ssh/id_ed25519.pub`
+### Tier 1 — Core Toolchain
 
-Copy the contents into Github by
-1. Click on picture > Settings > SSH and GPG keys > New SSH Key >
-2. Put a name for your computer in the Title
-3. Paste the contents of your ~/.ssh/id_ed25519.pub file in the Key
-4. Click Add SSH key
+Everyone installs all of these, whatever you work on.
 
-### Create a Workspaces Directory
-Test your installation by cloning the development guide repository to your local workspace.
+| Tool | Version | Install |
+|------|---------|---------|
+| Git | 2.55+ | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
+| GitHub CLI (`gh`) | 2.96+ | [cli.github.com](https://cli.github.com/) |
+| nvm | 0.40+ | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
+| Node.js | 24.18+ | `nvm install 24 && nvm alias default 24` |
+| uv | 0.11+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Python | 3.14 | Provisioned per-project by `uv` — see below |
+| Claude Code CLI | 2.1+ | `npm install -g @anthropic-ai/claude-code` |
+| InnoDay CLI | latest | `uv tool install innoday` — see [InnoDay](../technologies/innoday.md) |
+| Docker Engine | 29.6+ | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
 
-1. Open a terminal.
-2. Create the `~/workspaces/hs` directory:
-  ```sh
-  mkdir -p ~/workspaces/hs
-  ```
-3. Change into the new directory:
-  ```sh
-  cd ~/workspaces/hs
-  ```
-4. Clone the repository:
-  ```sh
-  git clone git@github.com:havilandsoftware/development-guide.git
-  ```
+**Node.js — install via nvm, not your system package manager:**
 
-## Tier 1 — Install Languages and Frameworks
-
-### Python 3.12+
-
-**Ubuntu:**
 ```bash
-sudo apt update
-sudo apt install software-properties-common
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install python3.12 python3.12-dev python3.12-venv
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
+source ~/.bashrc
+
+nvm install 24
+nvm alias default 24
 ```
 
-**macOS:**
-```bash
-brew update
-brew install python@3.12
-```
+Verify: `node --version` → `v24.x.x`
 
-**Windows:** Download the Python 3.12 installer from [python.org/downloads](https://www.python.org/downloads/windows/), run it, and check "Add Python to PATH".
+Node 24 is the current Active LTS. If you are still on Node 22 (now Maintenance LTS), the two
+`nvm` commands above move you across.
 
-Note that `uv` provisions the right Python version per project, so this system Python is only a
-baseline — you do not need to install every version you work with.
-
-### uv (Python dependency manager)
+**Python — do not install a global Python per version.** `uv` provisions and pins the right
+interpreter per project, which is why there is no `apt install python3.x` step here.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -104,116 +84,199 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 Verify: `uv --version`
 
-### Node.js v22 (via nvm)
+**Claude Code** — after installing, see [Claude Code](../technologies/claude.md) for
+configuration, MCP servers, and working practices.
+
+### Tier 1 — Linters and Formatters
+
+Your editor and pre-commit hooks invoke these *before* any project environment is active, so
+they must be global rather than per-project.
+
+| Tool | Version | Install |
+|------|---------|---------|
+| ruff | 0.16+ | `uv tool install ruff` |
+| mypy | 2.3+ | `uv tool install mypy` |
+| TypeScript | 6+ | `npm install -g typescript` |
+| prettier | 3.9+ | `npm install -g prettier` |
+| pnpm | 11+ | `npm install -g pnpm` |
 
 ```bash
-# Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-source ~/.bashrc
-
-# Install and use Node 22
-nvm install 22
-nvm use 22
-
-# Make it the default
-echo "nvm use 22" >> ~/.bashrc
+uv tool install ruff mypy
+. ~/.nvm/nvm.sh && npm install -g typescript prettier pnpm
 ```
 
-Verify: `node --version` → should show `v22.x.x`
+Python globals always go through `uv tool install`, never `pip install --user` — each gets an
+isolated environment and a binary on your PATH.
 
-### Docker
+### Tier 1 — Platform CLIs
 
-Follow the [Docker Engine install guide for Ubuntu](https://docs.docker.com/engine/install/ubuntu).
+These act on projects from the shell, so they are machine-level too. Install whichever you
+need; a backend-only developer will not need `vercel`.
 
-For project structure and coding standards, see [Coding Standards](../technologies/standards.md).
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) 2.110+ — Postgres, auth, migrations
+- [Vercel CLI](https://vercel.com/docs/cli) 54+ — Next.js deployments
 
-## Tier 1 — Install Developer Applications
-- [Cursor](https://www.cursor.com/)
+### Tier 1 — Editors and Applications
+
 - [VSCode](https://code.visualstudio.com/download)
-- [Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/)
-- [DBeaver](https://dbeaver.io/download/)
+- [DBeaver](https://dbeaver.io/download/) — database client
 
-## Tier 1 — Install AI Tools
-- [Claude Code CLI](../technologies/claude.md#installation) - AI-powered development assistant
-- [GitHub CLI](https://cli.github.com/) - Required for Claude Code GitHub integration
+Claude Code is the team's AI tool and is in the core table above; there is no separate
+AI-assisted IDE to install.
 
-## Tier 1 — Install Browsers & Communication
+### Tier 1 — Browsers and Communication
+
+- [Firefox](https://www.mozilla.org/firefox/)
+- [Chrome](https://www.google.com/chrome/)
 - Slack
-- Edge
-- Chrome
-- FireFox
-- LastPass or other password manager
+- A password manager (LastPass, 1Password, or Bitwarden)
 
-## Tier 1 — Linters, Formatters, and Platform CLIs
+Two browsers, because anything user-facing needs testing in more than one engine.
 
-These are invoked by your editor and pre-commit hooks *before* any project environment is activated,
-so they must be installed globally rather than per-project.
+---
 
-**Python globals** — always via `uv tool install`, never `pip install --user`:
+## 3. Setup
+
+### Create a Workspaces Directory
+
+All repositories are cloned under `~/workspaces/`.
 
 ```bash
-uv tool install ruff    # linter + formatter (replaces flake8, black, isort)
-uv tool install mypy    # static type checker
+mkdir -p ~/workspaces
+cd ~/workspaces
 ```
 
-**Node globals:**
+### Setup Git
+
+Install Git 2.55+, then set your global configuration:
 
 ```bash
-. ~/.nvm/nvm.sh
-npm install -g typescript prettier pnpm
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+git config --global init.defaultBranch main
+git config --global core.editor nano
+git config --global --add --bool push.autoSetupRemote true
 ```
 
-**Platform CLIs** — these act on projects from the shell, so they are machine-level too. Install
-whichever you need; a backend-only developer will not need `vercel`:
+Check what is set with `git config --global --list`.
 
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) — PostgreSQL, auth, migrations
-- [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments
+### Create an SSH Key and Add It to GitHub
 
-Verify everything at once with the `dev-check` skill from this repository, run from outside any
-project directory:
+For a more detailed walkthrough, see
+[this guide](https://www.unixtutorial.org/how-to-generate-ed25519-ssh-key/).
+
+1. Generate the key, accepting the default location:
+
+   ```bash
+   ssh-keygen -t ed25519 -C "your-email@example.com"
+   ```
+
+2. Set a passphrase when prompted.
+3. Print the public key:
+
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+
+Add it to GitHub: profile picture → **Settings** → **SSH and GPG keys** → **New SSH key**.
+Title it after your computer, paste the key contents, and save.
+
+Test it:
 
 ```bash
-cd ~/workspaces/hs/development-guide && claude
+ssh -T git@github.com
+```
+
+Expected: `Hi <username>! You've successfully authenticated...`
+
+### Clone This Guide
+
+```bash
+cd ~/workspaces
+git clone git@github.com:havilandsoftware/development-guide.git
+```
+
+That both proves SSH works and gives you the `/dev-check` skill used in the next section.
+
+### Install WSL (Windows only)
+
+*Skip this section on macOS and Linux.*
+
+Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu 24.04 LTS,
+then run everything above from inside WSL rather than from PowerShell.
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+---
+
+## 4. Verify Your Setup
+
+Installing tools and knowing they work are different things. Verify with the `dev-check`
+skill, run from outside any project directory:
+
+```bash
+cd ~/workspaces/development-guide && claude
 > /dev-check
 ```
+
+It reports your core toolchain, git config, SSH access, and the InnoDay CLI and MCP server,
+with a copy-pasteable fix for anything missing.
+
+**You are not done onboarding until every ❌ is resolved.** Warnings are fine to leave — they
+flag platform CLIs you may not need yet. Run it again from *inside* a project to find out
+which tier-2/3 tools that project requires.
 
 ---
 
 ## Additional Tooling (Install On Demand)
 
-Everything above is required. Everything below is **not** — install it only when a project or role
-actually calls for it. Installing all of it up front creates a machine full of stale CLIs that
-`dev-check` then reports as outdated.
+Everything above is required. Everything below is **not** — install it only when a project or
+role actually calls for it. Installing all of it up front creates a machine full of stale
+CLIs that `dev-check` then reports as outdated.
 
-The signal to install is concrete: you clone or import a project, run `dev-check` **from inside that
-repository**, and it reports a tool that project depends on. Then install just that tool.
+The signal to install is concrete: you clone or import a project, run `/dev-check` **from
+inside that repository**, and it reports a tool that project depends on. Then install just
+that tool.
 
 ### Tier 2 — Project-Specific
 
-Needed only by projects built on these platforms. New frontend projects use Next.js, so Angular is
-maintenance-only; see [Coding Standards](../technologies/standards.md#4-javascript--typescript-standards).
+Needed only by projects built on these platforms. New frontend projects use Next.js, so
+Angular is maintenance-only; see
+[Coding Standards](../technologies/standards.md#4-javascript--typescript-standards).
 
 | Tool | Install | Needed when |
 |------|---------|-------------|
 | [Angular CLI](https://angular.dev/tools/cli) | `npm install -g @angular/cli` | Maintaining an existing Angular app |
 | [AWS Amplify CLI](https://docs.amplify.aws/cli/) | `npm install -g @aws-amplify/cli` | Project deploys via Amplify |
 | [clasp](https://github.com/google/clasp) | `npm install -g @google/clasp` | Project ships Google Apps Script |
-| [Codex CLI](https://github.com/openai/codex) | `npm install -g @openai/codex` | Project workflow uses Codex |
 
 ### Tier 3 — DevOps and Infrastructure
 
-Needed only if you provision or operate infrastructure. A developer working purely on application
-code does not need any of these.
+Needed only if you provision or operate infrastructure. A developer working purely on
+application code does not need any of these.
 
-| Tool | Install | Needed when |
+| Tool | Version | Needed when |
 |------|---------|-------------|
-| [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | [installer](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | Deploying to or debugging AWS |
-| [gcloud CLI](https://cloud.google.com/sdk/docs/install) | [installer](https://cloud.google.com/sdk/docs/install) | Working on Google Cloud |
-| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | [installer](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | Operating Kubernetes / EKS |
-| [Terraform](https://developer.hashicorp.com/terraform/install) | [installer](https://developer.hashicorp.com/terraform/install) | Managing infrastructure as code |
-| [Helm](https://helm.sh/docs/intro/install/) | [installer](https://helm.sh/docs/intro/install/) | Deploying Kubernetes charts |
-| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | [installer](https://minikube.sigs.k8s.io/docs/start/) | Running Kubernetes locally |
-| [Zapier Platform CLI](https://docs.zapier.com/platform/build-cli/overview) | `npm install -g zapier-platform-cli` | Building a Zapier integration |
+| [Railway CLI](https://docs.railway.com/guides/cli) | 5.30+ | Deploying to or debugging Railway |
+| [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | 2.36+ | Deploying to or debugging AWS |
+| [gcloud CLI](https://cloud.google.com/sdk/docs/install) | 578+ | Working on Google Cloud |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | 1.36+ | Operating Kubernetes / EKS |
+| [Terraform](https://developer.hashicorp.com/terraform/install) | 1.15+ | Managing infrastructure as code |
+| [Helm](https://helm.sh/docs/intro/install/) | 4.2+ | Deploying Kubernetes charts |
+| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | 1.38+ | Running Kubernetes locally |
+| [Zapier Platform CLI](https://docs.zapier.com/platform/build-cli/overview) | 19+ | Building a Zapier integration |
 
-**kubectl version skew:** Kubernetes supports only ±1 minor version between `kubectl` and the API
-server, so match your cluster rather than always taking the newest release.
+**kubectl version skew:** Kubernetes supports only ±1 minor version between `kubectl` and the
+API server, so match your cluster rather than always taking the newest release. Current
+stable: `curl -Ls https://dl.k8s.io/release/stable.txt`.
+
+---
+
+## Next Steps
+
+- [Expectations](expectations.md) — how the team works
+- [AI Responsibility Guide](ai.md) — using AI tools responsibly
+- [Learning Guide](learning-guide.md) — what to learn first
+- [Coding Standards](../technologies/standards.md) — project structure, linting, testing, CI

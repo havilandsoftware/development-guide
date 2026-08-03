@@ -13,14 +13,14 @@ tool belongs to determines whether a missing tool is a failure or simply not nee
 
 | Tier | Contents | Verdict when missing |
 |------|----------|----------------------|
-| **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, ruff, mypy, TypeScript, prettier, pnpm | ❌ **FAIL** — required for every developer |
+| **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, ruff, mypy, TypeScript, prettier, pnpm | ❌ **FAIL** — required for every developer |
 | **1 — Platform** | Supabase, Vercel | ⚠️ **WARN** — install when you first touch a project that deploys there |
-| **2 — Project-specific** | Angular, Amplify, clasp, Codex | ℹ️ **N/A** unless this repo needs it |
-| **3 — DevOps** | AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
+| **2 — Project-specific** | Angular, Amplify, clasp | ℹ️ **N/A** unless this repo needs it |
+| **3 — DevOps** | Railway, AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
 
 **Never fail a developer for a missing tier-2 or tier-3 tool.** Reporting a red ❌ for Terraform on
 an application developer's machine trains people to ignore the report. Only flag tier 2/3 when the
-current repository gives evidence it is needed (see Step 4).
+current repository gives evidence it is needed (see Step 5).
 
 ---
 
@@ -52,23 +52,30 @@ State the mode at the top of the report so the reader knows what was and wasn't 
 
 ## Step 2 — Tier 1: Core Toolchain (all modes)
 
+> **Floors verified 2026-07-29** against primary sources (npm registry, PyPI, GitHub releases,
+> endoflife.date, `dl.k8s.io/release/stable.txt`). This table is the source of truth for the
+> version tables in the
+> [installation guide](../../../getting-started/installation-and-setup-guide.md) — update it
+> here first, then bring the guide into line. Floors are minimums; anything newer passes.
+
 | Tool | Min | Check |
 |------|-----|-------|
-| Git | 2.49+ | `git --version` |
-| uv | any | `uv --version` |
+| Git | 2.55+ | `git --version` |
+| uv | 0.11+ | `uv --version` |
 | Python | 3.12+ | `python3 --version` |
-| nvm | any | `[ -s "$HOME/.nvm/nvm.sh" ] && echo found \|\| echo missing` |
-| Node.js | v22+ | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
-| Docker | any | `docker --version` |
-| GitHub CLI | any | `gh --version \| head -1` |
-| Claude Code | any | `claude --version` |
-| ruff | any | `ruff --version` |
-| mypy | any | `mypy --version` |
-| TypeScript | any | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
-| prettier | any | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
-| pnpm | any | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
-| Supabase CLI† | any | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
-| Vercel CLI† | any | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+| nvm | 0.40+ | `[ -s "$HOME/.nvm/nvm.sh" ] && echo found \|\| echo missing` |
+| Node.js | v24+ | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
+| Docker | 29.6+ | `docker --version` |
+| GitHub CLI | 2.96+ | `gh --version \| head -1` |
+| Claude Code | 2.1+ | `claude --version` |
+| InnoDay CLI | any | `innoday --version 2>/dev/null \| grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[^ ]*' \| head -1` |
+| ruff | 0.16+ | `ruff --version` |
+| mypy | 2.3+ | `mypy --version` |
+| TypeScript | 6+ | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
+| prettier | 3.9+ | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
+| pnpm | 11+ | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
+| Supabase CLI† | 2.110+ | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
+| Vercel CLI† | 54+ | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
 
 † Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
 ([standards](../../../technologies/standards.md#7-approved-infrastructure--services)), but a
@@ -81,10 +88,14 @@ has not sourced nvm — that is a shell-init problem, not a missing install.
 
 **Python is checked but not installed globally per-version.** `uv` provisions the right Python per
 project, so a 3.12+ system Python is a baseline only. Do not tell anyone to install every version.
+New projects use 3.14 — see
+[LTS Version Policy](../../../technologies/standards.md#2-lts-version-policy) for the distinction
+between the minimum supported and what new work starts on.
 
-**Node version nuance:** if `node --version` reports v20 or below but `nvm alias default` resolves to
-v22, the shell simply has not sourced nvm. Report ✅ with `open a new terminal, or run: nvm use default`
-rather than ❌.
+**Node version nuance:** if `node --version` reports v22 or below but `nvm alias default` resolves to
+v24, the shell simply has not sourced nvm. Report ✅ with `open a new terminal, or run: nvm use default`
+rather than ❌. Node 24 is the current Active LTS; 22 has moved to Maintenance, so a machine genuinely
+on 22 is ⚠️ OUTDATED rather than ❌ FAIL — the fix is `nvm install 24 && nvm alias default 24`.
 
 ```bash
 . "$HOME/.nvm/nvm.sh" 2>/dev/null && nvm alias default 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+'
@@ -115,7 +126,7 @@ For anything more than one minor version behind current: report ⚠️ OUTDATED 
 git config --global --list 2>/dev/null | grep -E '^(user\.|init\.|core\.editor|push\.)'
 ```
 
-Required per the [installation guide](../../../getting-started/installation-and-setup-guide.md#tier-1--setup-git):
+Required per the [installation guide](../../../getting-started/installation-and-setup-guide.md#setup-git):
 
 | Setting | Expected |
 |---------|----------|
@@ -140,7 +151,78 @@ GitHub. **Never print a private key** in the report, and never suggest committin
 
 ---
 
-## Step 4 — Project Dependencies and Tier 2/3 Needs (REPO mode only)
+## Step 4 — InnoDay CLI and MCP (all modes)
+
+InnoDay is internal tier-1 tooling: the CLI and its MCP server should work on every machine
+regardless of which project you are in. Skip this section entirely if `innoday` is not on PATH and
+the developer is outside Haviland Software — it will not apply to them.
+
+**4a — Configured:** the CLI reads identity and API URL from `~/.innoday/config.json`. No
+environment variables are involved.
+
+```bash
+ls ~/.innoday/config.json >/dev/null 2>&1 && echo PRESENT || echo MISSING
+innoday --format json orgs current 2>/dev/null | python3 -c "
+import json,sys
+try:
+    d=json.load(sys.stdin); print('org=' + (d.get('alias') or d.get('name','')))
+except Exception: print('not configured')
+" 2>/dev/null || echo "not configured"
+```
+
+Config present and an org resolved → ✅. Otherwise ❌ with `innoday config init`.
+
+**4b — API reachable:**
+
+```bash
+innoday ping api 2>&1
+```
+
+Exit 0 → ✅. Unreachable → ⚠️ WARN, not ❌: the API may simply not be running, which says nothing
+about the developer's machine. Show `innoday config show` to confirm the configured URL.
+
+**4c — MCP server registered:**
+
+```bash
+claude mcp list 2>/dev/null
+```
+
+Look for a server named `innoday`. Connected → ✅ / Error or absent → ❌, fix
+`claude mcp add innoday -- mcp-server-innoday`. If `claude mcp list` itself fails, ⚠️ WARN — the
+Claude Code CLI is unavailable, which Step 2 already reported.
+
+**4d — Team secret seeded:** a deployed API gates every non-public route behind an
+`X-Team-Secret` header, and `innoday config init` does **not** seed it. A machine can have the CLI
+installed and MCP registered and still `401` on every call.
+
+The config is **profile-based** — the secret lives at
+`profiles.<current_profile>.platform.team_secret`, not at the top level. Resolve the active profile
+first and report only on that one; a secret seeded on `default` while working on `dev` fails
+exactly as though it were never set.
+
+```bash
+python3 -c "
+import json,os
+try:
+    d=json.load(open(os.path.expanduser('~/.innoday/config.json')))
+    prof=d.get('profiles',{}).get(d.get('current_profile') or 'default',{})
+    print('seeded' if prof.get('platform',{}).get('team_secret') else 'missing')
+except Exception: print('no-config')
+" 2>/dev/null
+```
+
+`seeded` → ✅. `missing` → ⚠️ WARN (only an error against a gated API; a local one has no secret),
+fix `innoday config set team-secret "<secret>"` — which writes to the active profile, so check
+`innoday config show` first. `no-config` → skip, already reported by 4a.
+
+After seeding, reconnect the MCP server (`/mcp reconnect`) so it re-reads the file. A server caches
+config at startup, so uniform `401`s from MCP while the CLI works is this, not a network fault.
+
+State which profile you checked in the report.
+
+---
+
+## Step 5 — Project Dependencies and Tier 2/3 Needs (REPO mode only)
 
 This is where tier 2 and 3 become relevant: check what **this repository** actually needs, then
 report only those.
@@ -217,9 +299,9 @@ that the credential must be rotated first — removing it from history does not 
 
 ---
 
-## Step 5 — Report
+## Step 6 — Report
 
-One table per section, in this order: context, Tier 1, git/SSH, project (REPO mode only).
+One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project (REPO mode only).
 
 ```markdown
 ## Developer Environment Check
@@ -230,15 +312,27 @@ One table per section, in this order: context, Tier 1, git/SSH, project (REPO mo
 
 | Tool | Required | Found | Status |
 |------|----------|-------|--------|
-| Git | 2.49+ | 2.51.0 | ✅ |
-| uv | any | 0.9.9 | ✅ |
-| ruff | any | — | ❌ `uv tool install ruff` |
+| Git | 2.55+ | 2.55.0 | ✅ |
+| uv | 0.11+ | 0.8.3 | ⚠️ `uv self update` |
+| Node.js | v24+ | v24.18.0 | ✅ |
+| ruff | 0.16+ | — | ❌ `uv tool install ruff` |
+| Vercel CLI | 54+ | — | ⚠️ platform CLI — install when you deploy to Vercel |
 
 ### Git Config & SSH
 
 | Check | Status |
 |-------|--------|
 | `push.autoSetupRemote` | ❌ `git config --global --add --bool push.autoSetupRemote true` |
+
+### InnoDay
+
+| Check | Status |
+|-------|--------|
+| CLI installed | ✅ v0.1.87b0 |
+| config + org resolved | ✅ profile `dev` |
+| `ping api` | ⚠️ API unreachable — `innoday config show` |
+| Claude Code MCP | ✅ connected |
+| team secret (profile `dev`) | ✅ seeded |
 
 ### This Project
 
@@ -251,9 +345,10 @@ One table per section, in this order: context, Tier 1, git/SSH, project (REPO mo
 
 ### Summary
 
-**3 issues.** Copy-paste fixes:
+**3 issues, 2 warnings.** Copy-paste fixes:
 
 ```bash
+uv self update
 uv tool install ruff
 git config --global --add --bool push.autoSetupRemote true
 ```
@@ -265,6 +360,9 @@ Rules for the report:
 - Group all fixes into one block at the end so the reader can paste once.
 - Report versions you actually observed. If a check errored, say "could not determine" — never infer
   a version you did not see.
-- Distinguish ❌ FAIL (tier 1 missing), ⚠️ WARN (present but outdated or below guide minimum), and
-  ℹ️ N/A (tier 2/3 not needed here). Three states, used consistently.
+- Distinguish ❌ FAIL (tier 1 missing), ⚠️ WARN (present but outdated, or a platform/tier-2/3 tool
+  this developer does not need yet), and ℹ️ N/A (tier 2/3 with no marker in this repo). Three
+  states, used consistently.
+- **Sample values above must stay consistent with the floors in Step 2.** Showing `uv 0.8.3` as ✅
+  against a 0.11+ floor teaches the wrong thing; regenerate this block whenever floors move.
 - Do not install anything. Report and hand over the commands — the developer decides.
