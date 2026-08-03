@@ -52,10 +52,9 @@ there is nothing else to install.
 
 ## Join Us
 
-**What we're looking for:** I value clear communication and thought, good questions, independence,
-and organization over years of experience or whether you know the ins and outs of a specific
+If you're interested in working with an amazing group of innovators, we value clear communication and thought, good questions, independence, and organization over years of experience or whether you know the ins and outs of a specific
 technology. Tools change; those habits are what make someone worth working with on the second
-project as much as the first.
+project as much as the first!
 
 If that sounds like you, let us know you exist — fill out
 [Join Us](https://www.pixelfuel.io/join-us).
