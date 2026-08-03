@@ -1,11 +1,6 @@
 # Haviland Software Development Guide
 
-<<<<<<< Updated upstream
-Hello! 👋 My name is Karl Haviland and this is my company's development guide, for your benefit. I have
-=======
-Hello!  My name is Karl Haviland and this is my company's development guide, for your benefit! I have
->>>>>>> Stashed changes
-been lucky enough to build up developers who went off to work at some of the best computer science
+Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best computer science
 and data science shops around the world. I am continuing to add and adjust to this guide — and if
 you have ideas for new additions, please let me know!
 
