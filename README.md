@@ -1,18 +1,6 @@
 # Haviland Software Development Guide
 
-Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best computer science
-and data science shops around the world. I am continuing to add and adjust to this guide — and if
-you have ideas for new additions, please let me know!
-
-It tries to balance the process for onboarding a new developer with speed and flexibility.
-
-It is published openly because most of it — coding standards, git workflow, AI-assisted development
-practices — is useful to anyone building software. A few sections reference internal-only tooling and
-won't apply outside the org; the standards themselves stand on their own.
-
-*NOTE:* This is **not a tutorial**. Technologies change constantly, and the providers building them
-maintain far better documentation than we could. The learning guide links out to the resources we
-think are best.
+Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best development shops around the world. This repository captures many of the practices and technical background I use today to keep my teams up to date and in order. It is published openly because I believe in transparency and sharing such as coding standards, git workflow, AI-assisted development practices. I am continually adjusting this guide, so if you have ideas for new additions, please let me know!
 
 ---
 
