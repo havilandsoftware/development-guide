@@ -5,3 +5,10 @@ log/
 .DS_Store
 Thumbs.db
 .idea/
+
+# Interview answer key — never committed (public repo).
+# `hiring/*`, not `hiring/` — git cannot re-include a file inside an
+# excluded *directory*, so the negation below is silently dead against
+# `hiring/`: the README it names would be ignored along with everything else.
+hiring/*
+!hiring/README.md
