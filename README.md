@@ -30,6 +30,12 @@ cd development-guide && claude
 > /dev-check
 ```
 
+`/dev-check` only audits — it reports what's missing with copy-pasteable fixes but doesn't install
+anything. On a machine that has nothing but Claude Code, you can instead ask Claude directly to
+install everything in the [Installation and Setup Guide](getting-started/installation-and-setup-guide.md);
+it can run almost every command itself. See that guide's "Already have Claude Code?" section for
+what still needs you (sudo password, SSH passphrase, adding the key to GitHub, cloud logins).
+
 ## Claude Code Skills
 
 This repository ships two skills. Clone it, run `claude` from inside it, and they are available —
