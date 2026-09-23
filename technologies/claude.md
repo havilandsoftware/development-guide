@@ -132,17 +132,21 @@ Running multiple Claude Code sessions simultaneously across isolated git worktre
 
 Each worktree is a full checkout of the repo on its own branch, with its own Claude session. Sessions work independently without interfering with each other.
 
+Worktrees live in a `.worktrees/` directory — never as sibling folders next to the
+repo. A sibling named `<repo>-<branch>` looks like a separate project, and a workspace
+full of them makes it impossible to tell which directories are the real repos.
+
 ```bash
-# Create a worktree for each parallel task
-git worktree add .claude/worktrees/add-auth -b parallel/add-auth
-git worktree add .claude/worktrees/fix-payments -b parallel/fix-payments
+# Create a worktree for each parallel task (add .worktrees/ to .gitignore once)
+git worktree add .worktrees/add-auth -b parallel/add-auth
+git worktree add .worktrees/fix-payments -b parallel/fix-payments
 
 # Launch a Claude session in each (run in separate terminals)
-claude .claude/worktrees/add-auth
-claude .claude/worktrees/fix-payments
+cd .worktrees/add-auth && claude
+cd .worktrees/fix-payments && claude
 
-# Clean up when done
-git worktree remove .claude/worktrees/add-auth
+# Clean up when done — this removes the checkout, not the branch
+git worktree remove .worktrees/add-auth
 ```
 
 **Core rule**: Only one agent should edit a given file at a time. Design task boundaries so file changes don't overlap between sessions.
