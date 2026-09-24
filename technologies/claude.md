@@ -151,18 +151,23 @@ git worktree remove .worktrees/add-auth
 
 ### Multi-Repo Sessions
 
-Give Claude access to additional repositories in a session:
+Give Claude access to additional repositories in a session. `<other-repo>` below stands for any repo you want Claude to read alongside the current one:
 
 ```bash
 # At launch
-claude --add-dir ~/workspaces/shared-lib
+claude --add-dir ~/workspaces/<other-repo>
 
 # Inside a running session
-/add-dir ~/workspaces/shared-lib
+/add-dir ~/workspaces/<other-repo>
+```
 
-# Always load certain repos — add to .claude/settings.json
+To always load a repo, add it to `.claude/settings.json` under `permissions` (not at the top level). It takes effect only once you trust the folder:
+
+```json
 {
-  "additionalDirectories": ["~/workspaces/shared-lib"]
+  "permissions": {
+    "additionalDirectories": ["/home/<you>/workspaces/<other-repo>"]
+  }
 }
 ```
 
