@@ -132,9 +132,7 @@ Running multiple Claude Code sessions simultaneously across isolated git worktre
 
 Each worktree is a full checkout of the repo on its own branch, with its own Claude session. Sessions work independently without interfering with each other.
 
-Worktrees live in a `.worktrees/` directory — never as sibling folders next to the
-repo. A sibling named `<repo>-<branch>` looks like a separate project, and a workspace
-full of them makes it impossible to tell which directories are the real repos.
+Worktrees live in a `.worktrees/` directory, never as sibling folders next to the repo. A sibling named `<repo>-<branch>` looks like a separate project, and a workspace full of them makes it impossible to tell which directories are the real repos. Use `<repo>/.worktrees/<branch>` (gitignored) for a single repo. Where several repos sit side by side in one workspace, a shared `<workspace>/.worktrees/<repo>-<branch>` works too. If a tool creates the worktree for you (Claude Code's `--worktree`, or a skill), leave it where the tool puts it.
 
 ```bash
 # Create a worktree for each parallel task (add .worktrees/ to .gitignore once)
@@ -157,7 +155,7 @@ Give Claude access to additional repositories in a session:
 
 ```bash
 # At launch
-claude . --add-dir ~/workspaces/shared-lib
+claude --add-dir ~/workspaces/shared-lib
 
 # Inside a running session
 /add-dir ~/workspaces/shared-lib
