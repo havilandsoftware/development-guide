@@ -21,6 +21,15 @@ tell you exactly which tier-2/3 tools that project needs.
 > or newer, and newer is always fine. Re-verify with `/dev-check`, which holds the same
 > floors.
 
+### Already have Claude Code?
+
+You can hand this whole guide to Claude Code instead of working through it by hand: clone this
+repo, open `claude` inside it, and ask it to install everything in this guide. It can run nearly
+every command below directly, including the `sh/` scripts in section 2. You'll still be prompted
+yourself for anything genuinely interactive: your `sudo` password, your SSH key passphrase,
+adding the SSH key to GitHub's web UI, and any cloud-account logins. Run `/dev-check` afterward
+to confirm nothing was missed.
+
 ---
 
 ## 1. Create Cloud Accounts
@@ -50,15 +59,22 @@ Everyone installs all of these, whatever you work on.
 
 | Tool | Version | Install |
 |------|---------|---------|
-| Git | 2.55+ | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
-| GitHub CLI (`gh`) | 2.96+ | [cli.github.com](https://cli.github.com/) |
+| Git | 2.55+ | `bash sh/install-git.sh` (Ubuntu/Debian — adds the git-core PPA) or [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
+| GitHub CLI (`gh`) | 2.96+ | `bash sh/install-gh.sh` (Ubuntu/Debian) or [cli.github.com](https://cli.github.com/) |
 | nvm | 0.40+ | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
 | Node.js | 24.18+ | `nvm install 24 && nvm alias default 24` |
 | uv | 0.11+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Python | 3.14 | Provisioned per-project by `uv` — see below |
 | Claude Code CLI | 2.1+ | `npm install -g @anthropic-ai/claude-code` |
 | InnoDay CLI | latest | `uv tool install innoday` — see [InnoDay](../technologies/innoday.md) |
-| Docker Engine | 29.6+ | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
+| Docker Engine | 29.6+ | `bash sh/install-docker.sh` (Ubuntu/Debian) or [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
+
+The `sh/install-git.sh`, `sh/install-gh.sh`, and `sh/install-docker.sh` scripts (in this repo's
+[`sh/`](../sh) directory) exist because these installs are `sudo`-gated, multi-line, piped
+commands — exactly the kind that get silently mangled when copy-pasted into a terminal (a long
+line hard-wraps mid-command, splitting a `sudo tee` from its file-path argument). Running the
+script file avoids that. They target Ubuntu/Debian; on another distro, use the linked docs
+instead.
 
 **Node.js — install via nvm, not your system package manager:**
 
