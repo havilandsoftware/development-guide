@@ -12,7 +12,7 @@ Work through these in order. Days are a guide, not a deadline.
 |---|---|---|
 | **1** | Create your accounts, install the Tier 1 toolchain, configure git and SSH | [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) |
 | **1** | Run `/dev-check` and resolve every ❌ | ↑ section 4 |
-| **2** | Learn how we work — branching, PRs, tickets, code review | [Expectations](getting-started/expectations.md) · [Git & GitHub](technologies/git.md) · [Plan Format](getting-started/plan-format.md) |
+| **2** | Learn how we work — branching, PRs, tickets, code review | [Expectations](getting-started/expectations.md) · [Git & GitHub](technologies/git.md) |
 | **3** | Learn how we use AI, and where we are careful with it | [AI Responsibility Guide](getting-started/ai.md) · [Claude Code](technologies/claude.md) |
 | **4** | Read the standards for your language before your first PR | [Coding Standards](technologies/standards.md) |
 | **5** | Understand how code reaches production | [Release Guide](getting-started/release-guide.md) |
