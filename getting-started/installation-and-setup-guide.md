@@ -10,16 +10,16 @@ needs before opening any project. Tiers 2 and 3 are installed on demand and are 
 | Tier | What | When to install |
 |------|------|-----------------|
 | **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, linters | Onboarding. Required. |
-| **1 — Platform** | Supabase, Vercel | Onboarding, or when you first deploy to them. |
+| **1 — Platform** | Supabase, Vercel, AWS CLI, gcloud | Onboarding, or when you first deploy to them. |
 | **2 — Project-specific** | Angular, Amplify, clasp | Only when you take on a project that uses it. |
-| **3 — DevOps** | AWS, gcloud, Railway, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
+| **3 — DevOps** | Railway, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
 
 If a tool is missing when you import a project, `/dev-check` run from inside that repo will
 tell you exactly which tier-2/3 tools that project needs.
 
-> **Versions verified:** 2026-07-29. Every version below is a **floor** — `2.55+` means 2.55
-> or newer, and newer is always fine. Re-verify with `/dev-check`, which holds the same
-> floors.
+> **Versions:** this guide does not repeat them. The minimum for every tool, and where to
+> install it, is in the newest file in the [radar](../radar/) folder — the same file `/dev-check` checks
+> against. Every version there is a floor: `2.55+` means 2.55 or newer.
 
 ---
 
@@ -48,17 +48,17 @@ optional.
 
 Everyone installs all of these, whatever you work on.
 
-| Tool | Version | Install |
-|------|---------|---------|
-| Git | 2.55+ | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
-| GitHub CLI (`gh`) | 2.96+ | [cli.github.com](https://cli.github.com/) |
-| nvm | 0.40+ | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
-| Node.js | 24.18+ | `nvm install 24 && nvm alias default 24` |
-| uv | 0.11+ | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| Python | 3.14 | Provisioned per-project by `uv` — see below |
-| Claude Code CLI | 2.1+ | `npm install -g @anthropic-ai/claude-code` |
-| InnoDay CLI | latest | `uv tool install innoday` — see [InnoDay](../technologies/innoday.md) |
-| Docker Engine | 29.6+ | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
+| Tool | Install |
+|------|---------|
+| Git | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
+| GitHub CLI (`gh`) | [cli.github.com](https://cli.github.com/) |
+| nvm | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
+| Node.js | `nvm install 24 && nvm alias default 24` |
+| uv | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Python | Provisioned per-project by `uv` — see below |
+| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` |
+| InnoDay CLI | `uv tool install innoday` — see [InnoDay](../technologies/innoday.md) |
+| Docker Engine | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
 
 **Node.js — install via nvm, not your system package manager:**
 
@@ -92,13 +92,13 @@ configuration, MCP servers, and working practices.
 Your editor and pre-commit hooks invoke these *before* any project environment is active, so
 they must be global rather than per-project.
 
-| Tool | Version | Install |
-|------|---------|---------|
-| ruff | 0.16+ | `uv tool install ruff` |
-| mypy | 2.3+ | `uv tool install mypy` |
-| TypeScript | 6+ | `npm install -g typescript` |
-| prettier | 3.9+ | `npm install -g prettier` |
-| pnpm | 11+ | `npm install -g pnpm` |
+| Tool | Install |
+|------|---------|
+| ruff | `uv tool install ruff` |
+| mypy | `uv tool install mypy` |
+| TypeScript | `npm install -g typescript` |
+| prettier | `npm install -g prettier` |
+| pnpm | `npm install -g pnpm` |
 
 ```bash
 uv tool install ruff mypy
@@ -113,8 +113,10 @@ isolated environment and a binary on your PATH.
 These act on projects from the shell, so they are machine-level too. Install whichever you
 need; a backend-only developer will not need `vercel`.
 
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) 2.110+ — Postgres, auth, migrations
-- [Vercel CLI](https://vercel.com/docs/cli) 54+ — Next.js deployments
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) — Postgres, auth, migrations
+- [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) — AWS services
+- [gcloud CLI](https://cloud.google.com/sdk/docs/install) — Google Cloud
 
 ### Tier 1 — Editors and Applications
 
@@ -250,7 +252,7 @@ Angular is maintenance-only; see
 [Coding Standards](../technologies/standards.md#4-javascript--typescript-standards).
 
 | Tool | Install | Needed when |
-|------|---------|-------------|
+|------|-------------|
 | [Angular CLI](https://angular.dev/tools/cli) | `npm install -g @angular/cli` | Maintaining an existing Angular app |
 | [AWS Amplify CLI](https://docs.amplify.aws/cli/) | `npm install -g @aws-amplify/cli` | Project deploys via Amplify |
 | [clasp](https://github.com/google/clasp) | `npm install -g @google/clasp` | Project ships Google Apps Script |
@@ -260,16 +262,14 @@ Angular is maintenance-only; see
 Needed only if you provision or operate infrastructure. A developer working purely on
 application code does not need any of these.
 
-| Tool | Version | Needed when |
-|------|---------|-------------|
-| [Railway CLI](https://docs.railway.com/guides/cli) | 5.30+ | Deploying to or debugging Railway |
-| [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | 2.36+ | Deploying to or debugging AWS |
-| [gcloud CLI](https://cloud.google.com/sdk/docs/install) | 578+ | Working on Google Cloud |
-| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | 1.36+ | Operating Kubernetes / EKS |
-| [Terraform](https://developer.hashicorp.com/terraform/install) | 1.15+ | Managing infrastructure as code |
-| [Helm](https://helm.sh/docs/intro/install/) | 4.2+ | Deploying Kubernetes charts |
-| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | 1.38+ | Running Kubernetes locally |
-| [Zapier Platform CLI](https://docs.zapier.com/platform/build-cli/overview) | 19+ | Building a Zapier integration |
+| Tool | Needed when |
+|------|-------------|
+| [Railway CLI](https://docs.railway.com/guides/cli) | Deploying to or debugging Railway |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) | Operating Kubernetes / EKS |
+| [Terraform](https://developer.hashicorp.com/terraform/install) | Managing infrastructure as code |
+| [Helm](https://helm.sh/docs/intro/install/) | Deploying Kubernetes charts |
+| [Minikube](https://minikube.sigs.k8s.io/docs/start/) | Running Kubernetes locally |
+| [Zapier Platform CLI](https://docs.zapier.com/platform/build-cli/overview) | Building a Zapier integration |
 
 **kubectl version skew:** Kubernetes supports only ±1 minor version between `kubectl` and the
 API server, so match your cluster rather than always taking the newest release. Current

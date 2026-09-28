@@ -1,6 +1,7 @@
 ---
 name: dev-check
-description: Audit your development machine against the Haviland Software development guide — core toolchain, git config, SSH, and per-project dependencies. Reports a pass/fail table with exact fix commands. Use when setting up a new machine, onboarding, or after importing a project to find out which tooling it needs.
+description: Audit your development machine against the Haviland Software development guide — core toolchain, git config, SSH, and per-project dependencies — then offer a checklist of what to install. Versions come from the technology radar (radar/*.csv). Use when setting up a new machine, onboarding, or after importing a project to find out which tooling it needs.
+argument-hint: "[radar-file]"
 ---
 
 # Developer Environment Check
@@ -14,13 +15,36 @@ tool belongs to determines whether a missing tool is a failure or simply not nee
 | Tier | Contents | Verdict when missing |
 |------|----------|----------------------|
 | **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, ruff, mypy, TypeScript, prettier, pnpm | ❌ **FAIL** — required for every developer |
-| **1 — Platform** | Supabase, Vercel | ⚠️ **WARN** — install when you first touch a project that deploys there |
+| **1 — Platform** | Supabase, Vercel, AWS CLI, gcloud | ⚠️ **WARN** — checked on every machine, offered in the install checklist |
 | **2 — Project-specific** | Angular, Amplify, clasp | ℹ️ **N/A** unless this repo needs it |
-| **3 — DevOps** | Railway, AWS, gcloud, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
+| **3 — DevOps** | Railway, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
 
 **Never fail a developer for a missing tier-2 or tier-3 tool.** Reporting a red ❌ for Terraform on
 an application developer's machine trains people to ignore the report. Only flag tier 2/3 when the
 current repository gives evidence it is needed (see Step 5).
+
+---
+
+## Step 0 — Load the Radar
+
+Every version floor and install link comes from a **radar** file: a CSV with the header
+`technology,version,url`, one row per tool. Nothing in this skill hard-codes a version.
+Pick the radar in this order, and stop at the first that applies:
+
+1. **An argument was passed** (`/dev-check 2026-07-29.csv`) — a local path if it exists, otherwise
+   that name under `https://raw.githubusercontent.com/havilandsoftware/development-guide/main/radar/`,
+   or a URL used as-is.
+2. **You are inside a clone of this guide** (a `radar/` folder next to `.claude/skills/dev-check/`) —
+   the local `radar/*.csv` whose name sorts last, so unmerged radar edits can be tested.
+3. **Otherwise the newest published radar** — the name that sorts last from
+   `curl -fsSL https://api.github.com/repos/havilandsoftware/development-guide/contents/radar?ref=main`.
+4. **Offline** — `radar.csv` in this skill's base directory, which `install.sh` put there.
+
+Name the radar file in the report's first line. If none of these yields a file whose first line is
+`technology,version,url`, stop and say so rather than guessing floors.
+
+A radar `version` is a floor (`2.55+`, anything newer passes) or `any` (present is enough). A tool
+this skill checks that the radar does not list is reported `could not determine floor`, not failed.
 
 ---
 
@@ -52,35 +76,34 @@ State the mode at the top of the report so the reader knows what was and wasn't 
 
 ## Step 2 — Tier 1: Core Toolchain (all modes)
 
-> **Floors verified 2026-07-29** against primary sources (npm registry, PyPI, GitHub releases,
-> endoflife.date, `dl.k8s.io/release/stable.txt`). This table is the source of truth for the
-> version tables in the
-> [installation guide](https://github.com/havilandsoftware/development-guide/blob/main/getting-started/installation-and-setup-guide.md) — update it
-> here first, then bring the guide into line. Floors are minimums; anything newer passes.
+Floors come from the radar (Step 0); the `Tool` names below match its `technology` column.
 
-| Tool | Min | Check |
-|------|-----|-------|
-| Git | 2.55+ | `git --version` |
-| uv | 0.11+ | `uv --version` |
-| Python | 3.12+ | `python3 --version` |
-| nvm | 0.40+ | `[ -s "$HOME/.nvm/nvm.sh" ] && echo found \|\| echo missing` |
-| Node.js | v24+ | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
-| Docker | 29.6+ | `docker --version` |
-| GitHub CLI | 2.96+ | `gh --version \| head -1` |
-| Claude Code | 2.1+ | `claude --version` |
-| InnoDay CLI | any | `innoday --version 2>/dev/null \| grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[^ ]*' \| head -1` |
-| ruff | 0.16+ | `ruff --version` |
-| mypy | 2.3+ | `mypy --version` |
-| TypeScript | 6+ | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
-| prettier | 3.9+ | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
-| pnpm | 11+ | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
-| Supabase CLI† | 2.110+ | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
-| Vercel CLI† | 54+ | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+| Tool | Check |
+|------|-------|
+| Git | `git --version` |
+| uv | `uv --version` |
+| Python | `python3 --version` |
+| nvm | `[ -s "$HOME/.nvm/nvm.sh" ] && echo found \|\| echo missing` |
+| Node.js | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
+| Docker | `docker --version` |
+| GitHub CLI | `gh --version \| head -1` |
+| Claude Code | `claude --version` |
+| InnoDay CLI | `innoday --version 2>/dev/null \| grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[^ ]*' \| head -1` |
+| ruff | `ruff --version` |
+| mypy | `mypy --version` |
+| TypeScript | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
+| prettier | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
+| pnpm | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
+| Supabase CLI† | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
+| Vercel CLI† | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+| AWS CLI† | `aws --version` |
+| gcloud CLI† | `gcloud --version 2>/dev/null \| head -1` |
 
 † Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
 ([standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#7-approved-infrastructure--services)), but a
 backend-only developer has no use for `vercel`, and hard-failing them for it is the same mistake as
-failing them for Terraform.
+failing them for Terraform. They are still offered in the Step 7 checklist, so installing them is one
+tick away.
 
 Source nvm before checking Node globals: `. ~/.nvm/nvm.sh 2>/dev/null`. If a tool is absent from
 `PATH` but present under `~/.nvm/versions/node/*/bin/`, report it found with a note that the shell
@@ -235,7 +258,6 @@ Detect from the repo, not from guesswork:
 # OR-detectors into AND-detectors and silently report "no markers found".
 { [ -d terraform/ ] || compgen -G "*.tf" >/dev/null; } && echo NEEDS_TERRAFORM
 { [ -d k8s/ ] || [ -d helm/ ] || [ -f Chart.yaml ]; } && echo NEEDS_KUBERNETES
-grep -rqE "boto3|aws-sdk|amazonaws" --include=pyproject.toml --include=package.json . 2>/dev/null && echo NEEDS_AWS
 
 # Tier 2 — project frameworks
 [ -f angular.json ] && echo NEEDS_ANGULAR
@@ -306,7 +328,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 ```markdown
 ## Developer Environment Check
 
-**Context:** REPO — git repo detected (Python)
+**Context:** REPO — git repo detected (Python) · **Radar:** `2026-09-28.csv`
 
 ### Tier 1 — Core Toolchain
 
@@ -317,6 +339,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 | Node.js | v24+ | v24.18.0 | ✅ |
 | ruff | 0.16+ | — | ❌ `uv tool install ruff` |
 | Vercel CLI | 54+ | — | ⚠️ platform CLI — install when you deploy to Vercel |
+| gcloud CLI | 578+ | — | ⚠️ platform CLI — offered below |
 
 ### Git Config & SSH
 
@@ -341,7 +364,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 | `uv.lock` committed | ✅ |
 | `requires-python` | ⚠️ `>=3.11` — guide minimum is 3.12 |
 | Tier 2 (project-specific) | N/A — no Angular/Amplify/clasp markers |
-| Tier 3 (DevOps) | N/A — no terraform/k8s/AWS markers |
+| Tier 3 (DevOps) | N/A — no terraform/k8s markers |
 
 ### Summary
 
@@ -363,6 +386,34 @@ Rules for the report:
 - Distinguish ❌ FAIL (tier 1 missing), ⚠️ WARN (present but outdated, or a platform/tier-2/3 tool
   this developer does not need yet), and ℹ️ N/A (tier 2/3 with no marker in this repo). Three
   states, used consistently.
-- **Sample values above must stay consistent with the floors in Step 2.** Showing `uv 0.8.3` as ✅
+- **Sample values above must stay consistent with the newest radar.** Showing `uv 0.8.3` as ✅
   against a 0.11+ floor teaches the wrong thing; regenerate this block whenever floors move.
-- Do not install anything. Report and hand over the commands — the developer decides.
+- Nothing is installed during Steps 1–6. Installing happens only in Step 7, and only what the
+  developer ticks.
+
+---
+
+## Step 7 — Offer to Install
+
+If the report has no ❌ or ⚠️ items, stop here. Otherwise show a checklist with
+`AskUserQuestion` (`multiSelect: true`) of every ❌ and ⚠️ item that has an install — missing tools
+and outdated ones. Tier 2/3 tools appear only if Step 5 flagged them.
+
+- One question per report section (Core, Platform, Project), up to 4 options each — the tool's
+  limit. If a section has more than 4, split it (`Core 1/2`, `Core 2/2`); more than 16 items in
+  total, run a second round for the rest.
+- Label: tool name and radar floor (`ruff 0.16+`). Description: the exact command you will run and
+  the radar `url` it comes from.
+- Say above the checklist that nothing is ticked by default: tick what to install, leave the rest.
+
+Then, for each ticked item, one at a time:
+
+1. Use the install method at the tool's radar `url` for this OS. Prefer user-level installs:
+   `uv tool install`, `npm install -g` under nvm, Homebrew on macOS, the vendor's own install script.
+2. **Anything needing `sudo`** (Docker Engine on Linux, `apt`, system packages) — do not run it:
+   Claude cannot answer a password prompt. Give it as `! <command>` for the developer to run, and
+   carry on with the rest.
+3. After each install, re-run that tool's Step 2 check and report the version you actually saw.
+
+Finish with a short table — installed ✅, left for the developer (`sudo`) ⏭, failed ❌ with the
+error — and suggest running `/dev-check` again from a new terminal so `PATH` changes take effect.

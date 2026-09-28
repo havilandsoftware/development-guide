@@ -1,5 +1,19 @@
 # Haviland Software Development Guide
 
+**Set up your machine in one command.** It works on macOS, Linux, and WSL, and you don't need to clone anything:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
+claude
+> /dev-check
+```
+
+This installs Claude Code and the `/dev-check` skill. `/dev-check` then checks your machine against
+the newest [technology radar](radar/) and gives you a checklist of what to install.
+[Details ↓](#quick-start--dev-check)
+
+---
+
 Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best development shops around the world. This repository captures many of the practices and technical background I use today to keep my teams up to date and in order. It is published openly because I believe in transparency and sharing such as coding standards, git workflow, AI-assisted development practices. I am continually adjusting this guide, so if you have ideas for new additions, please let me know!
 
 ---
@@ -37,12 +51,22 @@ claude
 > /dev-check
 ```
 
-`/dev-check` audits your machine against this guide — toolchain, git config, SSH, InnoDay — and
-hands you a copy-paste fix for everything missing. Work through the fixes and run it again until it
-is clean. Run it from inside a project and it also checks what that project needs.
+`/dev-check` audits your machine against this guide: toolchain, cloud CLIs, git config, SSH, and
+InnoDay. Then it offers to install what's missing. Run it again until it is clean. Run it from inside a project and it also checks what that project needs.
 
-Piping a script into your shell deserves a look first: [`install.sh`](install.sh) is ~50 lines, needs
-no `sudo`, and writes only to `~/.claude/skills/dev-check/` (plus Anthropic's own Claude Code
+It prints every tool `/dev-check` will check, with its minimum version and install link. After the
+audit, `/dev-check` shows a checklist of what's missing. Tick what you want and it installs those.
+Anything that needs `sudo`, it hands back for you to run.
+
+Versions and install links come from the [technology radar](radar/): dated CSVs, with the newest one
+used by default. To use a different one, pass a radar file name, a local path, or a URL:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh -s -- 2026-09-28.csv
+```
+
+Piping a script into your shell deserves a look first: [`install.sh`](install.sh) is under 80 lines,
+needs no `sudo`, and writes only to `~/.claude/skills/dev-check/` (plus Anthropic's own Claude Code
 installer when `claude` is missing). Re-run it any time to pick up the latest checks.
 
 ### Other skills
