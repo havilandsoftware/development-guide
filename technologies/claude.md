@@ -96,6 +96,9 @@ Plan mode is critical for complex tasks. It allows Claude to:
 
 Start plan mode by using the `/plan` command or specifying your intent upfront.
 
+Every plan follows the [Plan Format](../getting-started/plan-format.md): goal, terms, rules,
+step-by-step flows, done-when checklist, PR breakdown, open questions, verification.
+
 ### Creating GitHub Issues with Claude
 Use the GitHub CLI integration to create well-structured issues efficiently:
 
