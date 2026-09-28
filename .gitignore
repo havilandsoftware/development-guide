@@ -12,3 +12,6 @@ Thumbs.db
 # `hiring/`: the README it names would be ignored along with everything else.
 hiring/*
 !hiring/README.md
+
+# Git worktrees — created under .worktrees/, never committed
+.worktrees/

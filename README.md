@@ -10,8 +10,8 @@ Work through these in order. Days are a guide, not a deadline.
 
 | | Do this | Read |
 |---|---|---|
-| **1** | Create your accounts, install the Tier 1 toolchain, configure git and SSH | [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) |
-| **1** | Run `/dev-check` and resolve every ❌ | ↑ section 4 |
+| **1** | Run the [Quick Start](#quick-start--dev-check) one-liner, then `/dev-check`, and resolve every ❌ | [Quick Start](#quick-start--dev-check) |
+| **1** | Create your accounts, install anything `/dev-check` flagged, configure git and SSH | [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) |
 | **2** | Learn how we work — branching, PRs, tickets, code review | [Expectations](getting-started/expectations.md) · [Git & GitHub](technologies/git.md) |
 | **3** | Learn how we use AI, and where we are careful with it | [AI Responsibility Guide](getting-started/ai.md) · [Claude Code](technologies/claude.md) |
 | **4** | Read the standards for your language before your first PR | [Coding Standards](technologies/standards.md) |
@@ -21,22 +21,34 @@ Work through these in order. Days are a guide, not a deadline.
 **The one thing that matters most:** if you are stuck, say so early. Asking a question on day one is
 a good signal. Being quietly blocked for two days is the only real way to struggle here.
 
-## Quick Start
+## Quick Start — `/dev-check`
+
+One command on any macOS, Linux, or WSL machine. No clone needed:
 
 ```bash
-mkdir -p ~/workspaces && cd ~/workspaces
-git clone git@github.com:havilandsoftware/development-guide.git
-cd development-guide && claude
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
+```
+
+It installs [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) if you do not have
+it, and adds the `/dev-check` skill for your user. Then:
+
+```bash
+claude
 > /dev-check
 ```
 
-## Claude Code Skills
+`/dev-check` audits your machine against this guide — toolchain, git config, SSH, InnoDay — and
+hands you a copy-paste fix for everything missing. Work through the fixes and run it again until it
+is clean. Run it from inside a project and it also checks what that project needs.
 
-This repository ships two skills. Clone it, run `claude` from inside it, and they are available —
-there is nothing else to install.
+Piping a script into your shell deserves a look first: [`install.sh`](install.sh) is ~50 lines, needs
+no `sudo`, and writes only to `~/.claude/skills/dev-check/` (plus Anthropic's own Claude Code
+installer when `claude` is missing). Re-run it any time to pick up the latest checks.
 
-- `/dev-check` — audit your machine against this guide
-- `/interview` — guided walkthrough of the [interview task](getting-started/interview-test.md)
+### Other skills
+
+`/interview` — a guided walkthrough of the [interview task](getting-started/interview-test.md) —
+ships in this repo. Clone it and run `claude` from inside to use it.
 
 ## Join Us
 

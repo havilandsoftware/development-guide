@@ -92,6 +92,10 @@ Location: `getting-started/installation-and-setup-guide.md`
 outside this repository** — no private repos, no internal service endpoints, no client names. A
 skill that only works for one org does not belong here.
 
+- `install.sh` (repo root) — the public `curl … | sh` bootstrap: installs Claude Code if missing,
+  then copies `dev-check/SKILL.md` into `~/.claude/skills/`. Keep it POSIX `sh`, no `sudo`,
+  fetching only from this repo and Anthropic's installer. Because the skill runs outside the repo,
+  **links in `dev-check/SKILL.md` must be absolute GitHub URLs**, never relative.
 - `dev-check/` — machine audit. **Must honour the three tiers**: only Tier 1 can produce a ❌.
   Tier 2/3 are `N/A` unless the current repo shows a marker (`angular.json`, `*.tf`, etc.) proving
   it needs them. Failing a developer for a missing Terraform trains people to ignore the report.

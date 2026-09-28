@@ -5,8 +5,8 @@ description: Audit your development machine against the Haviland Software develo
 
 # Developer Environment Check
 
-Audit the machine against the [Installation and Setup Guide](../../../getting-started/installation-and-setup-guide.md)
-and [Coding Standards](../../../technologies/standards.md).
+Audit the machine against the [Installation and Setup Guide](https://github.com/havilandsoftware/development-guide/blob/main/getting-started/installation-and-setup-guide.md)
+and [Coding Standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md).
 
 The guide splits tooling into three tiers, and **this skill must respect that split** — the tier a
 tool belongs to determines whether a missing tool is a failure or simply not needed:
@@ -55,7 +55,7 @@ State the mode at the top of the report so the reader knows what was and wasn't 
 > **Floors verified 2026-07-29** against primary sources (npm registry, PyPI, GitHub releases,
 > endoflife.date, `dl.k8s.io/release/stable.txt`). This table is the source of truth for the
 > version tables in the
-> [installation guide](../../../getting-started/installation-and-setup-guide.md) — update it
+> [installation guide](https://github.com/havilandsoftware/development-guide/blob/main/getting-started/installation-and-setup-guide.md) — update it
 > here first, then bring the guide into line. Floors are minimums; anything newer passes.
 
 | Tool | Min | Check |
@@ -78,7 +78,7 @@ State the mode at the top of the report so the reader knows what was and wasn't 
 | Vercel CLI† | 54+ | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
 
 † Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
-([standards](../../../technologies/standards.md#7-approved-infrastructure--services)), but a
+([standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#7-approved-infrastructure--services)), but a
 backend-only developer has no use for `vercel`, and hard-failing them for it is the same mistake as
 failing them for Terraform.
 
@@ -89,7 +89,7 @@ has not sourced nvm — that is a shell-init problem, not a missing install.
 **Python is checked but not installed globally per-version.** `uv` provisions the right Python per
 project, so a 3.12+ system Python is a baseline only. Do not tell anyone to install every version.
 New projects use 3.14 — see
-[LTS Version Policy](../../../technologies/standards.md#2-lts-version-policy) for the distinction
+[LTS Version Policy](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#2-lts-version-policy) for the distinction
 between the minimum supported and what new work starts on.
 
 **Node version nuance:** if `node --version` reports v22 or below but `nvm alias default` resolves to
@@ -126,7 +126,7 @@ For anything more than one minor version behind current: report ⚠️ OUTDATED 
 git config --global --list 2>/dev/null | grep -E '^(user\.|init\.|core\.editor|push\.)'
 ```
 
-Required per the [installation guide](../../../getting-started/installation-and-setup-guide.md#setup-git):
+Required per the [installation guide](https://github.com/havilandsoftware/development-guide/blob/main/getting-started/installation-and-setup-guide.md#setup-git):
 
 | Setting | Expected |
 |---------|----------|
@@ -258,10 +258,10 @@ uv run ruff check . 2>&1 | tail -3
 uv run pytest -q 2>&1 | tail -3
 ```
 
-Check against [Python Standards](../../../technologies/standards.md#3-python-standards):
+Check against [Python Standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#3-python-standards):
 
 - `uv.lock` committed — ❌ if absent
-- `requires-python` is `>=3.12` — ⚠️ if lower ([LTS policy](../../../technologies/standards.md#2-lts-version-policy))
+- `requires-python` is `>=3.12` — ⚠️ if lower ([LTS policy](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#2-lts-version-policy))
 - `ruff` `target-version` matches the floor
 - Code under `src/<package>/`, tests under `tests/` — ⚠️ on loose root scripts
 - `requirements.txt` as the primary dependency file — ⚠️, `pyproject.toml` is the source of truth
@@ -279,7 +279,7 @@ and `scripts` with at least `dev`, `build`, `test`, `lint`.
 
 ### Universal repo requirements
 
-Check the [Universal Requirements](../../../technologies/standards.md#1-universal-requirements):
+Check the [Universal Requirements](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#1-universal-requirements):
 
 ```bash
 for f in README.md CLAUDE.md .gitignore .env.example; do
@@ -292,7 +292,7 @@ git ls-files --error-unmatch .env >/dev/null 2>&1 && echo "🚨 .env IS COMMITTE
 ```
 
 A committed `.env` is the one finding worth interrupting the report for. Point at the
-[Secret Removal Procedure](../../../technologies/standards.md#secret-removal-procedure) and say plainly
+[Secret Removal Procedure](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#secret-removal-procedure) and say plainly
 that the credential must be rotated first — removing it from history does not un-leak it.
 
 `.env.example` is only required if the project uses environment variables; `N/A` otherwise.

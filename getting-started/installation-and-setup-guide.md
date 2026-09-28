@@ -196,7 +196,8 @@ cd ~/workspaces
 git clone git@github.com:havilandsoftware/development-guide.git
 ```
 
-That both proves SSH works and gives you the `/dev-check` skill used in the next section.
+That proves SSH works and gives you the `/interview` skill. You do not need the clone for
+`/dev-check` — see the next section.
 
 ### Install WSL (Windows only)
 
@@ -214,10 +215,12 @@ wsl --install -d Ubuntu-24.04
 ## 4. Verify Your Setup
 
 Installing tools and knowing they work are different things. Verify with the `dev-check`
-skill, run from outside any project directory:
+skill. Install it once — this also installs Claude Code if it is missing — then run it from
+outside any project directory:
 
 ```bash
-cd ~/workspaces/development-guide && claude
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
+cd ~ && claude
 > /dev-check
 ```
 
