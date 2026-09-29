@@ -96,6 +96,29 @@ Plan mode is critical for complex tasks. It allows Claude to:
 
 Start plan mode by using the `/plan` command or specifying your intent upfront.
 
+### Plan Format
+Every plan or design Claude writes uses the same sections, in the same order. A reader should know
+what changes, how it behaves, and when it is finished without reading any code.
+
+**Style**
+- **Short.** One idea per line; bullets, numbered steps and small tables over paragraphs.
+- **Step by step.** Behaviour is written as numbered flows, in the order things happen.
+- **Outcome first.** Code detail (files, functions) stays inside *Build*.
+- **Honest.** Anything undecided or unverified goes in *Open / unsure*, with a recommended pick.
+
+```markdown
+# <Feature>: <A> ⇄ <B>
+
+## 1. Goal          — 3–5 bullets, outcomes only
+## 2. Terms         — only new or ambiguous words
+## 3. Rules         — numbered, one line each; what must always hold
+## 4. Flows         — **A. <Scenario>** then numbered steps; one flow per scenario
+## 5. Done when     — [ ] checkable outcomes a reviewer verifies
+## 6. Build         — N PRs, each shippable alone: what it delivers (Flows A, B); Reuse / New / DB change
+## 7. Open / unsure — decision or unknown, plus the recommended pick
+## 8. Verify        — tests per flow, then a live check per flow
+```
+
 ### Creating GitHub Issues with Claude
 Use the GitHub CLI integration to create well-structured issues efficiently:
 
