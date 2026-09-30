@@ -16,13 +16,17 @@ truth for version floors** — nowhere else in the guide repeats them.
 | `technology` | Must match a tool name in the [dev-check skill](../.claude/skills/dev-check/SKILL.md) check table |
 | `version` | A floor written with a `+` (`2.55+`), or `any`. Never an exact pin |
 | `url` | The official install page |
+| `tier` | `core`, `platform`, `project` or `devops` — decides ❌ vs ⚠️ vs N/A in `/dev-check` |
 | `requires` | Tools that must be installed first, `;`-separated. `/dev-check` installs in this order |
-| `linux` | Install-or-upgrade command for Debian/Ubuntu/WSL. Empty = the setup is too involved to script; follow `url` |
+| `linux` | Install-or-upgrade command for Ubuntu/WSL. Empty = too involved to script; follow `url`. `-` = not used on this OS |
 | `macos` | The same for macOS. `brew` commands implicitly require Homebrew |
 
 `/dev-check` runs these commands exactly as written. It never makes one up, and it hands back any
 command containing `sudo` for you to run. Files before `2026-09-29.csv` have only the first three
-columns.
+columns, and `2026-09-29.csv` has no `tier`.
+
+**CI runs every `linux` command on a bare Ubuntu** in `requires` order, then checks each floor
+(`.github/scripts/radar-linux.py`). A command that doesn't work there doesn't merge.
 
 Use a specific radar with:
 

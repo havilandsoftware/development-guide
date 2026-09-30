@@ -3,10 +3,10 @@ name: install
 
 on:
   pull_request:
-    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml]
+    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
   push:
     branches: [main]
-    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml]
+    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
 
 permissions:
   contents: read
@@ -50,6 +50,21 @@ jobs:
           print("\n".join(errors) or f"{len(files)} radar files OK, latest {latest}")
           sys.exit(1 if errors else 0)
           PY
+
+  radar-commands:
+    # Every Linux command in the current radar, on a bare Ubuntu with nothing but sudo.
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    steps:
+      - name: Bare machine with a sudo-capable user
+        run: |
+          apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq sudo python3 git ca-certificates >/dev/null
+          useradd -m -s /bin/bash dev && echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev
+      - uses: actions/checkout@v4
+      - name: Install everything, in dependency order, then check floors
+        run: |
+          chown -R dev "$GITHUB_WORKSPACE"
+          sudo -iu dev env DEBIAN_FRONTEND=noninteractive bash -c "cd '$GITHUB_WORKSPACE' && python3 .github/scripts/radar-linux.py"
 
   one-liner:
     strategy:

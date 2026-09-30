@@ -66,9 +66,15 @@ mv "$tmp/radar.csv" "$DEST/radar.csv"
 echo "✓ /dev-check installed to $DEST"
 echo "✓ radar: $(basename "$RADAR")"
 echo
-echo "/dev-check checks these (project-only tools just when a project needs them),"
-echo "then offers a checklist to install whichever are missing:"
-tail -n +2 "$DEST/radar.csv" | tr -d '\r' | awk -F, '{ printf "  %-20s %-8s %s\n", $1, $2, $3 }'
+case "$(uname -s)" in Darwin) OS=macos ;; *) OS=linux ;; esac
+echo "/dev-check checks these on every $OS machine, then offers to install what is missing:"
+# Columns are found by name, so older radars (no tier / os columns) still print every row.
+tr -d '\r' < "$DEST/radar.csv" | awk -F, -v os="$OS" '
+  NR == 1 { for (i = 1; i <= NF; i++) col[$i] = i; next }
+  col[os] && $col[os] == "-" { next }
+  col["tier"] && $col["tier"] != "core" && $col["tier"] != "platform" { later++; next }
+  { printf "  %-20s %-8s %s\n", $1, $2, $3 }
+  END { if (later) printf "  ...plus %d project and DevOps tools, checked only when a project needs them\n", later }'
 
 if ! command -v claude >/dev/null 2>&1; then
   echo

@@ -73,11 +73,11 @@ Location: `getting-started/installation-and-setup-guide.md`
 - Maintain the three-tier structure: Tier 1 (core, required at onboarding), Tier 2 (project-specific), Tier 3 (DevOps). Tier 2/3 tools belong under "Additional Tooling" at the end, not in the main flow
 - Keep the four-section order: Accounts → Programs to Install → Setup → Verify
 - **Version floors and install commands live only in `radar/YYYY-MM-DD.csv`**
-  (`technology,version,url,requires,linux,macos`, rows sorted by name, no commas inside fields).
+  (`technology,version,url,tier,requires,linux,macos`, rows sorted by name, no commas inside fields).
   `radar/LATEST` names the current file and must equal the name that sorts last. To change
   anything, add a new dated file and update `LATEST` — never edit an old one, and never write a
   version or install command into the guide or the skill. See `radar/README.md`; the `install`
-  workflow validates all of this.
+  workflow validates all of this, and runs every `linux` command on a bare Ubuntu container.
 - Floors are written with a `+` (`2.55+`) or `any`, never exact pins. Exact pins rot within weeks
   for tools that ship daily.
 

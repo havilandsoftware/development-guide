@@ -8,6 +8,8 @@ claude          # first run: sign in when prompted
 > /dev-check
 ```
 
+No `curl` yet (a fresh Ubuntu)? Use `wget -qO- …/install.sh | sh` with the same address.
+
 This installs Claude Code and the `/dev-check` skill. `/dev-check` then checks your machine against
 the newest [technology radar](radar/) and gives you a checklist of what to install.
 [Details ↓](#quick-start--dev-check)

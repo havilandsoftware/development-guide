@@ -12,12 +12,15 @@ and [Coding Standards](https://github.com/havilandsoftware/development-guide/blo
 The guide splits tooling into three tiers, and **this skill must respect that split** — the tier a
 tool belongs to determines whether a missing tool is a failure or simply not needed:
 
-| Tier | Contents | Verdict when missing |
-|------|----------|----------------------|
-| **1 — Core** | git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, ruff, mypy, TypeScript, prettier, pnpm | ❌ **FAIL** — required for every developer |
-| **1 — Platform** | Supabase, Vercel, AWS CLI, gcloud | ⚠️ **WARN** — checked on every machine, offered in the install checklist |
-| **2 — Project-specific** | Angular, Amplify, clasp | ℹ️ **N/A** unless this repo needs it |
-| **3 — DevOps** | Railway, kubectl, Terraform, Helm, Minikube, Zapier | ℹ️ **N/A** unless this repo provisions infrastructure |
+Each tool's tier is the radar's `tier` column (Step 0). Radars without that column: use Tier 1 for
+anything not listed as a Platform, Project or DevOps tool in the install guide.
+
+| Tier | Radar `tier` | Verdict when missing |
+|------|--------------|----------------------|
+| **1 — Core** | `core` | ❌ **FAIL** — required for every developer |
+| **1 — Platform** | `platform` | ⚠️ **WARN** — checked on every machine, offered in the install checklist |
+| **2 — Project-specific** | `project` | ℹ️ **N/A** unless this repo needs it |
+| **3 — DevOps** | `devops` | ℹ️ **N/A** unless this repo provisions infrastructure |
 
 **Never fail a developer for a missing tier-2 or tier-3 tool.** Reporting a red ❌ for Terraform on
 an application developer's machine trains people to ignore the report. Only flag tier 2/3 when the
@@ -48,11 +51,13 @@ Columns (split on commas; no field contains one):
 | `technology` | Matches a `Tool` name in the Step 2 check table |
 | `version` | A floor (`2.55+`, anything newer passes) or `any` (present is enough) |
 | `url` | The official install page |
+| `tier` | `core`, `platform`, `project` or `devops` — see the tier table above |
 | `requires` | Tools that must be installed first, `;`-separated |
-| `linux` | Install-or-upgrade command on Debian/Ubuntu/WSL; empty = follow `url` by hand |
+| `linux` | Install-or-upgrade command on Ubuntu/WSL. Empty = follow `url` by hand. `-` = not used on this OS (skip the check) |
 | `macos` | The same on macOS |
 
-Radars before `2026-09-29.csv` have only the first three columns: treat every command as empty. A
+Older radars lack some columns: `2026-09-28.csv` has only the first three (treat every command as
+empty), and `2026-09-29.csv` has no `tier`. A
 tool this skill checks that the radar does not list is reported `could not determine floor`, not
 failed.
 
@@ -90,10 +95,11 @@ Floors come from the radar (Step 0); the `Tool` names below match its `technolog
 
 | Tool | Check |
 |------|-------|
+| curl | `curl --version \| head -1` |
 | Git | `git --version` |
 | uv | `uv --version` |
 | Python | `python3 --version` |
-| nvm | `[ -s "$HOME/.nvm/nvm.sh" ] && echo found \|\| echo missing` |
+| nvm | `. "$HOME/.nvm/nvm.sh" && nvm --version` |
 | Node.js | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
 | Docker | `docker --version` |
 | GitHub CLI | `gh --version \| head -1` |
@@ -411,7 +417,8 @@ passing tool such as gcloud gets upgraded.
 Install in dependency order, never in the order ticked:
 
 1. Build the order from the radar's `requires` column: a tool goes after everything it requires,
-   and ties keep radar order. On macOS, every `brew …` command also requires Homebrew.
+   and ties keep radar order. On macOS, every `brew …` command also requires Homebrew. A
+   requirement whose command for this OS is `-` counts as present (curl ships with macOS).
 2. If a required tool is missing and was not ticked, add it and say so — `ruff` cannot install
    without `uv`.
 
@@ -426,22 +433,33 @@ Change the command only in these cases:
   names a package, upgrade with `sudo apt-get install --only-upgrade <package>`. If the tool's path
   is under `$(brew --prefix)`, use `brew upgrade <formula>`. The vendor script would install a
   second copy.
-- **Needs nvm.** For a command that requires `Node.js` or `nvm`, or starts with `nvm`/`npm`, prefix
-  it with `. ~/.nvm/nvm.sh && nvm use --silent default &&`.
+- **Needs nvm.** For a command whose `requires` includes `Node.js` or `nvm`, prefix it with
+  `. ~/.nvm/nvm.sh && { nvm use --silent default >/dev/null 2>&1 || :; } &&`. The `|| :` matters:
+  on a fresh machine there is no default yet, and a bare `nvm use default` fails the first Node
+  install.
+- **Needs uv.** For a command whose `requires` includes `uv`, prefix it with
+  `export PATH="$HOME/.local/bin:$PATH" &&`. A `uv` (or Claude Code) installed a moment ago lives in
+  `~/.local/bin`, which this shell does not have on `PATH` until a new terminal.
 - **Moving to a new Node major.** When a Node is already installed, add
   `--reinstall-packages-from=<old version>` to `nvm install`, so global tools such as TypeScript
   and prettier come across. Otherwise they vanish from `PATH`.
 
 ### 7e — Run, then hand back the rest
 
-1. Run each non-`sudo` command, one at a time, in the 7c order. Stop that tool's chain on failure;
-   carry on with unrelated tools.
+1. Run each non-`sudo` command, one at a time, in the 7c order, as
+   `bash -o pipefail -c '<command>'`. **`pipefail` is required.** Without it,
+   `curl … | sh` reports success when `curl` is missing or the download fails, and the tool
+   silently never installs. Stop that tool's chain on failure; carry on with unrelated tools.
 2. **Do not run any command containing `sudo`.** Claude cannot answer a password prompt. Collect
-   every one and print them together at the end as one block of `! <command>` lines, still in 7c
-   order, so the developer can paste once.
+   them as one block of `! <command>` lines in 7c order, so the developer can paste once.
+   - **Blocking `sudo` first.** If a ticked non-`sudo` tool requires a `sudo` one that is missing
+     (on a bare Ubuntu, `uv` needs `curl`), print that block **before** installing anything.
+     Ask the developer to run it and say when done, re-check, then continue. Otherwise hand the
+     block over at the end.
 3. After each install, re-run that tool's Step 2 check and report the version you actually saw.
-   Run Node-based checks through the same nvm prefix: the current shell may still have the old
-   Node first on `PATH`.
+   Run Node-based checks through the same nvm prefix and every check with `~/.local/bin` on
+   `PATH`: the current shell may still have the old Node first on `PATH`, and not have tools
+   installed a moment ago.
 
 Finish with a table — installed ✅, `sudo` for the developer ⏭, manual (empty radar command) 📖,
 failed ❌ with the error. Then tell them to open a new terminal and run `/dev-check` again.
