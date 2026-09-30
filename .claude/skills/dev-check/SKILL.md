@@ -27,24 +27,34 @@ current repository gives evidence it is needed (see Step 5).
 
 ## Step 0 — Load the Radar
 
-Every version floor and install link comes from a **radar** file: a CSV with the header
-`technology,version,url`, one row per tool. Nothing in this skill hard-codes a version.
-Pick the radar in this order, and stop at the first that applies:
+Every version floor, install link and install command comes from a **radar** file: a CSV, one row
+per tool. Nothing in this skill hard-codes a version or an install command. Pick the radar in this
+order, and stop at the first that applies:
 
 1. **An argument was passed** (`/dev-check 2026-07-29.csv`) — a local path if it exists, otherwise
-   that name under `https://raw.githubusercontent.com/havilandsoftware/development-guide/main/radar/`,
-   or a URL used as-is.
+   that name under `https://raw.githubusercontent.com/havilandsoftware/development-guide/main/radar/`, or a URL used as-is.
 2. **You are inside a clone of this guide** (a `radar/` folder next to `.claude/skills/dev-check/`) —
    the local `radar/*.csv` whose name sorts last, so unmerged radar edits can be tested.
-3. **Otherwise the newest published radar** — the name that sorts last from
-   `curl -fsSL https://api.github.com/repos/havilandsoftware/development-guide/contents/radar?ref=main`.
+3. **Otherwise the published radar** named in `https://raw.githubusercontent.com/havilandsoftware/development-guide/main/radar/LATEST`.
 4. **Offline** — `radar.csv` in this skill's base directory, which `install.sh` put there.
 
-Name the radar file in the report's first line. If none of these yields a file whose first line is
-`technology,version,url`, stop and say so rather than guessing floors.
+Name the radar file in the report's first line. If none of these yields a file whose first line
+starts `technology,version,url`, stop and say so rather than guessing floors.
 
-A radar `version` is a floor (`2.55+`, anything newer passes) or `any` (present is enough). A tool
-this skill checks that the radar does not list is reported `could not determine floor`, not failed.
+Columns (split on commas; no field contains one):
+
+| Column | Meaning |
+|--------|---------|
+| `technology` | Matches a `Tool` name in the Step 2 check table |
+| `version` | A floor (`2.55+`, anything newer passes) or `any` (present is enough) |
+| `url` | The official install page |
+| `requires` | Tools that must be installed first, `;`-separated |
+| `linux` | Install-or-upgrade command on Debian/Ubuntu/WSL; empty = follow `url` by hand |
+| `macos` | The same on macOS |
+
+Radars before `2026-09-29.csv` have only the first three columns: treat every command as empty. A
+tool this skill checks that the radar does not list is reported `could not determine floor`, not
+failed.
 
 ---
 
@@ -98,6 +108,7 @@ Floors come from the radar (Step 0); the `Tool` names below match its `technolog
 | Vercel CLI† | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
 | AWS CLI† | `aws --version` |
 | gcloud CLI† | `gcloud --version 2>/dev/null \| head -1` |
+| Homebrew (macOS only) | `brew --version \| head -1` |
 
 † Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
 ([standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#7-approved-infrastructure--services)), but a
@@ -180,8 +191,9 @@ InnoDay is internal tier-1 tooling: the CLI and its MCP server should work on ev
 regardless of which project you are in. Skip this section entirely if `innoday` is not on PATH and
 the developer is outside Haviland Software — it will not apply to them.
 
-**4a — Configured:** the CLI reads identity and API URL from `~/.innoday/config.json`. No
-environment variables are involved.
+**4a — Signed in, org selected:** the CLI reads identity and API URL from
+`~/.innoday/config.json`. No environment variables and no team secret are involved; everyday CLI
+and MCP use needs only a sign-in token.
 
 ```bash
 ls ~/.innoday/config.json >/dev/null 2>&1 && echo PRESENT || echo MISSING
@@ -193,7 +205,13 @@ except Exception: print('not configured')
 " 2>/dev/null || echo "not configured"
 ```
 
-Config present and an org resolved → ✅. Otherwise ❌ with `innoday config init`.
+- Config missing, or `not configured` → ❌, fix `innoday login`.
+- `org=` with nothing after it → ⚠️ no current org. Outside an InnoDay workspace this is normal;
+  to set one everywhere: `innoday orgs list`, then `innoday config set organization <alias>`.
+- `org=<alias>` → ✅.
+
+A plain `401` from the CLI or MCP means the token: `innoday login`. If MCP `401`s while the CLI
+works, the MCP server cached old config at startup — `/mcp reconnect`.
 
 **4b — API reachable:**
 
@@ -213,33 +231,6 @@ claude mcp list 2>/dev/null
 Look for a server named `innoday`. Connected → ✅ / Error or absent → ❌, fix
 `claude mcp add innoday -- mcp-server-innoday`. If `claude mcp list` itself fails, ⚠️ WARN — the
 Claude Code CLI is unavailable, which Step 2 already reported.
-
-**4d — Team secret seeded:** a deployed API gates every non-public route behind an
-`X-Team-Secret` header, and `innoday config init` does **not** seed it. A machine can have the CLI
-installed and MCP registered and still `401` on every call.
-
-The config is **profile-based** — the secret lives at
-`profiles.<current_profile>.platform.team_secret`, not at the top level. Resolve the active profile
-first and report only on that one; a secret seeded on `default` while working on `dev` fails
-exactly as though it were never set.
-
-```bash
-python3 -c "
-import json,os
-try:
-    d=json.load(open(os.path.expanduser('~/.innoday/config.json')))
-    prof=d.get('profiles',{}).get(d.get('current_profile') or 'default',{})
-    print('seeded' if prof.get('platform',{}).get('team_secret') else 'missing')
-except Exception: print('no-config')
-" 2>/dev/null
-```
-
-`seeded` → ✅. `missing` → ⚠️ WARN (only an error against a gated API; a local one has no secret),
-fix `innoday config set team-secret "<secret>"` — which writes to the active profile, so check
-`innoday config show` first. `no-config` → skip, already reported by 4a.
-
-After seeding, reconnect the MCP server (`/mcp reconnect`) so it re-reads the file. A server caches
-config at startup, so uniform `401`s from MCP while the CLI works is this, not a network fault.
 
 State which profile you checked in the report.
 
@@ -352,10 +343,9 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 | Check | Status |
 |-------|--------|
 | CLI installed | ✅ v0.1.87b0 |
-| config + org resolved | ✅ profile `dev` |
+| signed in + org | ✅ `hs`, profile `dev` |
 | `ping api` | ⚠️ API unreachable — `innoday config show` |
 | Claude Code MCP | ✅ connected |
-| team secret (profile `dev`) | ✅ seeded |
 
 ### This Project
 
@@ -389,31 +379,69 @@ Rules for the report:
 - **Sample values above must stay consistent with the newest radar.** Showing `uv 0.8.3` as ✅
   against a 0.11+ floor teaches the wrong thing; regenerate this block whenever floors move.
 - Nothing is installed during Steps 1–6. Installing happens only in Step 7, and only what the
-  developer ticks.
+  developer picks.
 
 ---
 
 ## Step 7 — Offer to Install
 
-If the report has no ❌ or ⚠️ items, stop here. Otherwise show a checklist with
-`AskUserQuestion` (`multiSelect: true`) of every ❌ and ⚠️ item that has an install — missing tools
-and outdated ones. Tier 2/3 tools appear only if Step 5 flagged them.
+If the report has no ❌ or ⚠️ items, skip to 7b. Otherwise:
+
+### 7a — Pick what to install
+
+First ask one question (single select): **"Install all N items (Recommended)"**, **"Let me choose"**,
+or **"Skip"**. List the N items and their commands in the question text. Tier 2/3 tools are included
+only if Step 5 flagged them.
+
+On **Let me choose**, show checklists with `AskUserQuestion` (`multiSelect: true`):
 
 - One question per report section (Core, Platform, Project), up to 4 options each — the tool's
-  limit. If a section has more than 4, split it (`Core 1/2`, `Core 2/2`); more than 16 items in
-  total, run a second round for the rest.
-- Label: tool name and radar floor (`ruff 0.16+`). Description: the exact command you will run and
-  the radar `url` it comes from.
-- Say above the checklist that nothing is ticked by default: tick what to install, leave the rest.
+  limit. More than 4, split it (`Core 1/2`, `Core 2/2`); more than 16 in total, a second round.
+- Label: tool and floor (`ruff 0.16+`). Description: the exact command and the radar `url`.
+- Say that nothing is ticked yet: tick what to install.
 
-Then, for each ticked item, one at a time:
+### 7b — Upgrade tools that already pass
 
-1. Use the install method at the tool's radar `url` for this OS. Prefer user-level installs:
-   `uv tool install`, `npm install -g` under nvm, Homebrew on macOS, the vendor's own install script.
-2. **Anything needing `sudo`** (Docker Engine on Linux, `apt`, system packages) — do not run it:
-   Claude cannot answer a password prompt. Give it as `! <command>` for the developer to run, and
-   carry on with the rest.
+Ask once (single select): **"Also upgrade tools that already pass?"** — `No (Recommended)` / `Choose`.
+On `Choose`, offer every ✅ tool that has a radar command, in checklists as in 7a. This is how a
+passing tool such as gcloud gets upgraded.
+
+### 7c — Order
+
+Install in dependency order, never in the order ticked:
+
+1. Build the order from the radar's `requires` column: a tool goes after everything it requires,
+   and ties keep radar order. On macOS, every `brew …` command also requires Homebrew.
+2. If a required tool is missing and was not ticked, add it and say so — `ruff` cannot install
+   without `uv`.
+
+### 7d — Commands
+
+Use the radar column for this OS (`linux` or `macos`) exactly as written. **Never improvise a
+command.** If the column is empty, list the tool as manual with its `url`.
+
+Change the command only in these cases:
+
+- **Existing install from a package manager.** If `dpkg -S "$(readlink -f "$(command -v <tool>)")"`
+  names a package, upgrade with `sudo apt-get install --only-upgrade <package>`. If the tool's path
+  is under `$(brew --prefix)`, use `brew upgrade <formula>`. The vendor script would install a
+  second copy.
+- **Needs nvm.** For a command that requires `Node.js` or `nvm`, or starts with `nvm`/`npm`, prefix
+  it with `. ~/.nvm/nvm.sh && nvm use --silent default &&`.
+- **Moving to a new Node major.** When a Node is already installed, add
+  `--reinstall-packages-from=<old version>` to `nvm install`, so global tools such as TypeScript
+  and prettier come across. Otherwise they vanish from `PATH`.
+
+### 7e — Run, then hand back the rest
+
+1. Run each non-`sudo` command, one at a time, in the 7c order. Stop that tool's chain on failure;
+   carry on with unrelated tools.
+2. **Do not run any command containing `sudo`.** Claude cannot answer a password prompt. Collect
+   every one and print them together at the end as one block of `! <command>` lines, still in 7c
+   order, so the developer can paste once.
 3. After each install, re-run that tool's Step 2 check and report the version you actually saw.
+   Run Node-based checks through the same nvm prefix: the current shell may still have the old
+   Node first on `PATH`.
 
-Finish with a short table — installed ✅, left for the developer (`sudo`) ⏭, failed ❌ with the
-error — and suggest running `/dev-check` again from a new terminal so `PATH` changes take effect.
+Finish with a table — installed ✅, `sudo` for the developer ⏭, manual (empty radar command) 📖,
+failed ❌ with the error. Then tell them to open a new terminal and run `/dev-check` again.

@@ -4,7 +4,7 @@
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
-claude
+claude          # first run: sign in when prompted
 > /dev-check
 ```
 
@@ -47,16 +47,19 @@ It installs [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) 
 it, and adds the `/dev-check` skill for your user. Then:
 
 ```bash
-claude
+claude          # first run: sign in to your Claude account when prompted
 > /dev-check
 ```
+
+If Claude Code was only just installed, open a new terminal first so `claude` is on your `PATH`.
 
 `/dev-check` audits your machine against this guide: toolchain, cloud CLIs, git config, SSH, and
 InnoDay. Then it offers to install what's missing. Run it again until it is clean. Run it from inside a project and it also checks what that project needs.
 
 It prints every tool `/dev-check` will check, with its minimum version and install link. After the
-audit, `/dev-check` shows a checklist of what's missing. Tick what you want and it installs those.
-Anything that needs `sudo`, it hands back for you to run.
+audit, `/dev-check` offers to install everything missing, or lets you choose, and can also upgrade
+tools that already pass. It installs in dependency order, using the exact commands in the radar.
+Anything that needs `sudo` comes back as one block for you to paste.
 
 Versions and install links come from the [technology radar](radar/): dated CSVs, with the newest one
 used by default. To use a different one, pass a radar file name, a local path, or a URL:

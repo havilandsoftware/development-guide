@@ -12,10 +12,11 @@
 #   sh install.sh ./my-radar.csv
 #
 # Safe to re-run: it refreshes the skill and radar and leaves an existing Claude Code install alone.
+# DEV_CHECK_REF=<branch or commit> installs from somewhere other than main (used by CI).
 set -eu
 
 REPO=havilandsoftware/development-guide
-RAW="https://raw.githubusercontent.com/$REPO/main"
+RAW="https://raw.githubusercontent.com/$REPO/${DEV_CHECK_REF:-main}"
 DEST="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/dev-check"
 RADAR="${1:-}"
 
@@ -45,19 +46,19 @@ fetch "$RAW/.claude/skills/dev-check/SKILL.md" > "$tmp/SKILL.md"
 [ "$(head -n 1 "$tmp/SKILL.md")" = "---" ] || die "downloaded skill is not a skill file"
 
 if [ -z "$RADAR" ]; then
-  # Newest radar = the YYYY-MM-DD.csv name that sorts last.
-  RADAR=$(fetch "https://api.github.com/repos/$REPO/contents/radar?ref=main" \
-    | grep -oE '"name": *"[0-9]{4}-[0-9]{2}-[0-9]{2}[^"]*\.csv"' | sed 's/.*"\([^"]*\)"$/\1/' \
-    | sort | tail -n 1)
-  [ -n "$RADAR" ] || die "could not find a radar file in $REPO/radar"
+  # radar/LATEST names the newest radar (CI keeps it equal to the name that sorts last).
+  RADAR=$(fetch "$RAW/radar/LATEST" | tr -d '\r' | head -n 1)
+  [ -n "$RADAR" ] || die "radar/LATEST is empty"
 fi
 case "$RADAR" in
   http://*|https://*) fetch "$RADAR" > "$tmp/radar.csv" ;;
   *) if [ -f "$RADAR" ]; then cp "$RADAR" "$tmp/radar.csv"
      else fetch "$RAW/radar/$(basename "$RADAR")" > "$tmp/radar.csv"; fi ;;
 esac
-[ "$(head -n 1 "$tmp/radar.csv" | tr -d '\r')" = "technology,version,url" ] \
-  || die "$RADAR is not a radar file (first line must be: technology,version,url)"
+case "$(head -n 1 "$tmp/radar.csv" | tr -d '\r')" in
+  technology,version,url*) ;;
+  *) die "$RADAR is not a radar file (first line must start: technology,version,url)" ;;
+esac
 
 mkdir -p "$DEST"
 mv "$tmp/SKILL.md" "$DEST/SKILL.md"
