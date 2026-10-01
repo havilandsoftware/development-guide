@@ -1,0 +1,92 @@
+# Proves the public one-liner works on a clean machine, and that every radar file is well formed.
+name: install
+
+on:
+  pull_request:
+    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
+  push:
+    branches: [main]
+    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
+
+permissions:
+  contents: read
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint install.sh
+        run: shellcheck -s sh install.sh
+      - name: Validate radar files
+        run: |
+          python3 - <<'PY'
+          import csv, glob, os, re, sys
+          errors = []
+          files = sorted(glob.glob("radar/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.csv"))
+          latest = open("radar/LATEST").read().strip()
+          if latest != os.path.basename(files[-1]):
+              errors.append(f"radar/LATEST says {latest}, newest file is {os.path.basename(files[-1])}")
+          skill = open(".claude/skills/dev-check/SKILL.md").read()
+          step2 = skill[skill.index("## Step 2"):skill.index("## Step 3")]
+          checked = {re.sub(r"†| \(macOS only\)", "", m).strip()
+                     for m in re.findall(r"^\| ([^|`]+?) \| `", step2, re.M)}
+          for f in files:
+              rows = list(csv.reader(open(f)))
+              head, body = rows[0], rows[1:]
+              if head[:3] != ["technology", "version", "url"]:
+                  errors.append(f"{f}: header must start technology,version,url")
+              names = [r[0] for r in body]
+              if names != sorted(names, key=str.lower):
+                  errors.append(f"{f}: rows not sorted by technology")
+              for r in body:
+                  if len(r) != len(head):
+                      errors.append(f"{f}: {r[0]} has {len(r)} fields, header has {len(head)}")
+                  if not re.fullmatch(r"any|[0-9][0-9.]*\+", r[1]):
+                      errors.append(f"{f}: {r[0]} version {r[1]!r} must be a floor like 2.55+ or any")
+          missing = checked - set(names)
+          if missing:
+              errors.append(f"{files[-1]}: no row for tools the skill checks: {sorted(missing)}")
+          print("\n".join(errors) or f"{len(files)} radar files OK, latest {latest}")
+          sys.exit(1 if errors else 0)
+          PY
+
+  radar-commands:
+    # Every Linux command in the current radar, on a bare Ubuntu with nothing but sudo.
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    steps:
+      - name: Bare machine with a sudo-capable user
+        run: |
+          apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq sudo python3 git ca-certificates >/dev/null
+          useradd -m -s /bin/bash dev && echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev
+      - uses: actions/checkout@v4
+      - name: Install everything, in dependency order, then check floors
+        run: |
+          chown -R dev "$GITHUB_WORKSPACE"
+          sudo -iu dev env DEBIAN_FRONTEND=noninteractive bash -c "cd '$GITHUB_WORKSPACE' && python3 .github/scripts/radar-linux.py"
+
+  one-liner:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      # Install from this commit, not main, so a PR tests its own script and radar.
+      DEV_CHECK_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hide any preinstalled Claude Code so the bare-machine path runs
+        run: |
+          for p in $(which -a claude 2>/dev/null); do sudo mv "$p" "$p.hidden"; done
+          if command -v claude; then echo 'claude still on PATH'; exit 1; fi
+      - name: Run the published one-liner
+        run: curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/$DEV_CHECK_REF/install.sh" | sh
+      - name: Check what it installed
+        run: |
+          test -s ~/.claude/skills/dev-check/SKILL.md
+          head -n 1 ~/.claude/skills/dev-check/radar.csv | grep -q '^technology,version,url'
+          ~/.local/bin/claude --version
+      - name: Re-run is safe, and an explicit radar is honoured
+        run: sh install.sh 2026-09-28.csv && head -n 1 ~/.claude/skills/dev-check/radar.csv | grep -qx 'technology,version,url'

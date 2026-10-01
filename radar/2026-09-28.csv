@@ -1,0 +1,28 @@
+technology,version,url
+Angular CLI,any,https://angular.dev/tools/cli
+AWS Amplify CLI,any,https://docs.amplify.aws/cli/
+AWS CLI,2.36+,https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+clasp,any,https://github.com/google/clasp
+Claude Code,2.1+,https://docs.claude.com/en/docs/claude-code/setup
+Docker,29.6+,https://docs.docker.com/engine/install/
+gcloud CLI,578+,https://cloud.google.com/sdk/docs/install
+Git,2.55+,https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+GitHub CLI,2.96+,https://cli.github.com/
+Helm,4.2+,https://helm.sh/docs/intro/install/
+InnoDay CLI,any,https://github.com/havilandsoftware/development-guide/blob/main/technologies/innoday.md
+kubectl,1.36+,https://kubernetes.io/docs/tasks/tools/
+Minikube,1.38+,https://minikube.sigs.k8s.io/docs/start/
+mypy,2.3+,https://mypy.readthedocs.io/en/stable/getting_started.html
+Node.js,24+,https://github.com/nvm-sh/nvm#usage
+nvm,0.40+,https://github.com/nvm-sh/nvm#installing-and-updating
+pnpm,11+,https://pnpm.io/installation
+prettier,3.9+,https://prettier.io/docs/install
+Python,3.12+,https://docs.astral.sh/uv/guides/install-python/
+Railway CLI,5.30+,https://docs.railway.com/guides/cli
+ruff,0.16+,https://docs.astral.sh/ruff/installation/
+Supabase CLI,2.110+,https://supabase.com/docs/guides/local-development/cli/getting-started
+Terraform,1.15+,https://developer.hashicorp.com/terraform/install
+TypeScript,6+,https://www.typescriptlang.org/download/
+uv,0.11+,https://docs.astral.sh/uv/getting-started/installation/
+Vercel CLI,54+,https://vercel.com/docs/cli
+Zapier Platform CLI,19+,https://docs.zapier.com/platform/build-cli/overview

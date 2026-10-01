@@ -72,11 +72,14 @@ Since this is a documentation repository, there are no build/test commands. Comm
 Location: `getting-started/installation-and-setup-guide.md`
 - Maintain the three-tier structure: Tier 1 (core, required at onboarding), Tier 2 (project-specific), Tier 3 (DevOps). Tier 2/3 tools belong under "Additional Tooling" at the end, not in the main flow
 - Keep the four-section order: Accounts → Programs to Install → Setup → Verify
-- **Version floors live in `.claude/skills/dev-check/SKILL.md`.** That table is the source of truth;
-  edit it first, then bring the guide's tables into line. Never update only one of the two.
-- Floors are written with a `+` (`2.55+`), never exact pins, and each versioned section carries a
-  `Versions verified: <date>` marker. Update the date when you re-verify. Exact pins rot within
-  weeks for tools that ship daily.
+- **Version floors and install commands live only in `radar/YYYY-MM-DD.csv`**
+  (`technology,version,url,tier,requires,linux,macos`, rows sorted by name, no commas inside fields).
+  `radar/LATEST` names the current file and must equal the name that sorts last. To change
+  anything, add a new dated file and update `LATEST` — never edit an old one, and never write a
+  version or install command into the guide or the skill. See `radar/README.md`; the `install`
+  workflow validates all of this, and runs every `linux` command on a bare Ubuntu container.
+- Floors are written with a `+` (`2.55+`) or `any`, never exact pins. Exact pins rot within weeks
+  for tools that ship daily.
 
 ### Technology-Specific Guidelines
 - **All languages**: `technologies/standards.md` is the single source of truth for coding standards, project structure, linting, testing, Dockerfiles, and CI
@@ -92,10 +95,18 @@ Location: `getting-started/installation-and-setup-guide.md`
 outside this repository** — no private repos, no internal service endpoints, no client names. A
 skill that only works for one org does not belong here.
 
+- `install.sh` (repo root) — the public `curl … | sh` bootstrap: installs Claude Code if missing,
+  then copies `dev-check/SKILL.md` and the radar named in `radar/LATEST` (or one passed as `$1`)
+  into `~/.claude/skills/dev-check/`. `DEV_CHECK_REF` points it at another branch or commit; CI
+  uses that to run it on clean Ubuntu and macOS runners. Keep it POSIX `sh`, no `sudo`,
+  fetching only from this repo and Anthropic's installer. Because the skill runs outside the repo,
+  **links in `dev-check/SKILL.md` must be absolute GitHub URLs**, never relative.
 - `dev-check/` — machine audit. **Must honour the three tiers**: only Tier 1 can produce a ❌.
   Tier 2/3 are `N/A` unless the current repo shows a marker (`angular.json`, `*.tf`, etc.) proving
   it needs them. Failing a developer for a missing Terraform trains people to ignore the report.
-  Also holds the version floors for the whole guide (see above), and the InnoDay checks — those
+  Reads floors and install commands from the radar and never improvises one. After the report it
+  offers to install, in `requires` order. It never runs `sudo`: those commands come back in one
+  block. Also holds the InnoDay checks — those
   degrade to skipped rather than failing for anyone outside the org.
 
 ### Interview Task and Skill
@@ -118,7 +129,8 @@ skill that only works for one org does not belong here.
 - `getting-started/release-guide.md` - Standard release process
 - `technologies/git.md` - Git and GitHub: workflow, `gh` CLI, repo standards, public-repo rules
 - `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
-- `.claude/skills/dev-check/SKILL.md` - Machine audit; source of truth for version floors
+- `.claude/skills/dev-check/SKILL.md` - Machine audit and install checklist
+- `radar/` - Technology radar: dated CSVs, source of truth for version floors and install links
 
 ## This Repository Is Public
 

@@ -1,5 +1,21 @@
 # Haviland Software Development Guide
 
+**Set up your machine in one command.** It works on macOS, Linux, and WSL, and you don't need to clone anything:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
+claude          # first run: sign in when prompted
+> /dev-check
+```
+
+No `curl` yet (a fresh Ubuntu)? Use `wget -qO- …/install.sh | sh` with the same address.
+
+This installs Claude Code and the `/dev-check` skill. `/dev-check` then checks your machine against
+the newest [technology radar](radar/) and gives you a checklist of what to install.
+[Details ↓](#quick-start--dev-check)
+
+---
+
 Hello! 👋 My name is Karl Haviland and this is my company's development guide for your benefit to use freely! Over my nearly 20 year career, I have been lucky enough to hire and train many developers that work at some of the best development shops around the world. This repository captures many of the practices and technical background I use today to keep my teams up to date and in order. It is published openly because I believe in transparency and sharing such as coding standards, git workflow, AI-assisted development practices. I am continually adjusting this guide, so if you have ideas for new additions, please let me know!
 
 ---
@@ -10,8 +26,8 @@ Work through these in order. Days are a guide, not a deadline.
 
 | | Do this | Read |
 |---|---|---|
-| **1** | Create your accounts, install the Tier 1 toolchain, configure git and SSH | [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) |
-| **1** | Run `/dev-check` and resolve every ❌ | ↑ section 4 |
+| **1** | Run the [Quick Start](#quick-start--dev-check) one-liner, then `/dev-check`, and resolve every ❌ | [Quick Start](#quick-start--dev-check) |
+| **1** | Create your accounts, install anything `/dev-check` flagged, configure git and SSH | [Installation and Setup Guide](getting-started/installation-and-setup-guide.md) |
 | **2** | Learn how we work — branching, PRs, tickets, code review | [Expectations](getting-started/expectations.md) · [Git & GitHub](technologies/git.md) |
 | **3** | Learn how we use AI, and where we are careful with it | [AI Responsibility Guide](getting-started/ai.md) · [Claude Code](technologies/claude.md) |
 | **4** | Read the standards for your language before your first PR | [Coding Standards](technologies/standards.md) |
@@ -21,22 +37,47 @@ Work through these in order. Days are a guide, not a deadline.
 **The one thing that matters most:** if you are stuck, say so early. Asking a question on day one is
 a good signal. Being quietly blocked for two days is the only real way to struggle here.
 
-## Quick Start
+## Quick Start — `/dev-check`
+
+One command on any macOS, Linux, or WSL machine. No clone needed:
 
 ```bash
-mkdir -p ~/workspaces && cd ~/workspaces
-git clone git@github.com:havilandsoftware/development-guide.git
-cd development-guide && claude
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh
+```
+
+It installs [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) if you do not have
+it, and adds the `/dev-check` skill for your user. Then:
+
+```bash
+claude          # first run: sign in to your Claude account when prompted
 > /dev-check
 ```
 
-## Claude Code Skills
+If Claude Code was only just installed, open a new terminal first so `claude` is on your `PATH`.
 
-This repository ships two skills. Clone it, run `claude` from inside it, and they are available —
-there is nothing else to install.
+`/dev-check` audits your machine against this guide: toolchain, cloud CLIs, git config, SSH, and
+InnoDay. Then it offers to install what's missing. Run it again until it is clean. Run it from inside a project and it also checks what that project needs.
 
-- `/dev-check` — audit your machine against this guide
-- `/interview` — guided walkthrough of the [interview task](getting-started/interview-test.md)
+It prints every tool `/dev-check` will check, with its minimum version and install link. After the
+audit, `/dev-check` offers to install everything missing, or lets you choose, and can also upgrade
+tools that already pass. It installs in dependency order, using the exact commands in the radar.
+Anything that needs `sudo` comes back as one block for you to paste.
+
+Versions and install links come from the [technology radar](radar/): dated CSVs, with the newest one
+used by default. To use a different one, pass a radar file name, a local path, or a URL:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/havilandsoftware/development-guide/main/install.sh | sh -s -- 2026-09-28.csv
+```
+
+Piping a script into your shell deserves a look first: [`install.sh`](install.sh) is under 80 lines,
+needs no `sudo`, and writes only to `~/.claude/skills/dev-check/` (plus Anthropic's own Claude Code
+installer when `claude` is missing). Re-run it any time to pick up the latest checks.
+
+### Other skills
+
+`/interview` — a guided walkthrough of the [interview task](getting-started/interview-test.md) —
+ships in this repo. Clone it and run `claude` from inside to use it.
 
 ## Join Us
 
