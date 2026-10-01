@@ -197,24 +197,15 @@ InnoDay is internal tier-1 tooling: the CLI and its MCP server should work on ev
 regardless of which project you are in. Skip this section entirely if `innoday` is not on PATH and
 the developer is outside Haviland Software — it will not apply to them.
 
-**4a — Signed in, org selected:** the CLI reads identity and API URL from
-`~/.innoday/config.json`. No environment variables and no team secret are involved; everyday CLI
-and MCP use needs only a sign-in token.
+**4a — Signed in:** everyday CLI and MCP use needs only a sign-in token. There is no org to pick
+here: the org comes from whichever InnoDay workspace you are working in.
 
 ```bash
-ls ~/.innoday/config.json >/dev/null 2>&1 && echo PRESENT || echo MISSING
-innoday --format json orgs current 2>/dev/null | python3 -c "
-import json,sys
-try:
-    d=json.load(sys.stdin); print('org=' + (d.get('alias') or d.get('name','')))
-except Exception: print('not configured')
-" 2>/dev/null || echo "not configured"
+innoday status 2>&1 | grep -q "CLI token valid" && echo SIGNED_IN || echo NOT_SIGNED_IN
 ```
 
-- Config missing, or `not configured` → ❌, fix `innoday login`.
-- `org=` with nothing after it → ⚠️ no current org. Outside an InnoDay workspace this is normal;
-  to set one everywhere: `innoday orgs list`, then `innoday config set organization <alias>`.
-- `org=<alias>` → ✅.
+`SIGNED_IN` → ✅. `NOT_SIGNED_IN` → ❌, fix `innoday login`. Report only signed in or not, never the
+identity, email or org list `innoday status` prints.
 
 A plain `401` from the CLI or MCP means the token: `innoday login`. If MCP `401`s while the CLI
 works, the MCP server cached old config at startup — `/mcp reconnect`.
@@ -349,7 +340,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 | Check | Status |
 |-------|--------|
 | CLI installed | ✅ v0.1.87b0 |
-| signed in + org | ✅ `hs`, profile `dev` |
+| signed in | ✅ profile `dev` |
 | `ping api` | ⚠️ API unreachable — `innoday config show` |
 | Claude Code MCP | ✅ connected |
 
