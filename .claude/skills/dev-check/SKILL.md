@@ -100,21 +100,24 @@ Floors come from the radar (Step 0); the `Tool` names below match its `technolog
 | uv | `uv --version` |
 | Python | `python3 --version` |
 | nvm | `. "$HOME/.nvm/nvm.sh" && nvm --version` |
-| Node.js | `node --version 2>/dev/null \|\| (. "$HOME/.nvm/nvm.sh" && node --version)` |
+| Node.js | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; node --version)` |
 | Docker | `docker --version` |
 | GitHub CLI | `gh --version \| head -1` |
 | Claude Code | `claude --version` |
-| InnoDay CLI | `innoday --version 2>/dev/null \| grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[^ ]*' \| head -1` |
+| InnoDay CLI‡ | `innoday --version 2>/dev/null \| grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[^ ]*' \| head -1` |
 | ruff | `ruff --version` |
 | mypy | `mypy --version` |
-| TypeScript | `tsc --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && tsc --version)` |
-| prettier | `prettier --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && prettier --version)` |
-| pnpm | `pnpm --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && pnpm --version)` |
-| Supabase CLI† | `supabase --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && supabase --version)` |
-| Vercel CLI† | `vercel --version 2>/dev/null \|\| (. ~/.nvm/nvm.sh && vercel --version)` |
+| TypeScript | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; tsc --version)` |
+| prettier | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; prettier --version)` |
+| pnpm | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; pnpm --version)` |
+| Supabase CLI† | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; supabase --version)` |
+| Vercel CLI† | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; vercel --version)` |
 | AWS CLI† | `aws --version` |
 | gcloud CLI† | `gcloud --version 2>/dev/null \| head -1` |
 | Homebrew (macOS only) | `brew --version \| head -1` |
+
+‡ InnoDay is Haviland Software's internal tool. Missing → ❌ only for Haviland Software developers;
+anyone else → ℹ️ N/A, and skip Step 4. This guide is public.
 
 † Platform CLIs — report ⚠️ WARN, not ❌ FAIL. They are the approved platforms
 ([standards](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#7-approved-infrastructure--services)), but a
@@ -122,9 +125,11 @@ backend-only developer has no use for `vercel`, and hard-failing them for it is 
 failing them for Terraform. They are still offered in the Step 7 checklist, so installing them is one
 tick away.
 
-Source nvm before checking Node globals: `. ~/.nvm/nvm.sh 2>/dev/null`. If a tool is absent from
-`PATH` but present under `~/.nvm/versions/node/*/bin/`, report it found with a note that the shell
-has not sourced nvm — that is a shell-init problem, not a missing install.
+**Node and its global tools are checked under the nvm default** (the checks above select it).
+That is what a new terminal uses. A shell started before a Node upgrade still has the old Node, and
+its old global tools, first on `PATH`. Checking those reports versions the developer will never see
+again. If plain `node --version` differs from the nvm default, mention it as `open a new terminal`;
+it is not a failure.
 
 **Python is checked but not installed globally per-version.** `uv` provisions the right Python per
 project, so a 3.12+ system Python is a baseline only. Do not tell anyone to install every version.
@@ -132,31 +137,9 @@ New projects use 3.14 — see
 [LTS Version Policy](https://github.com/havilandsoftware/development-guide/blob/main/technologies/standards.md#2-lts-version-policy) for the distinction
 between the minimum supported and what new work starts on.
 
-**Node version nuance:** if `node --version` reports v22 or below but `nvm alias default` resolves to
-v24, the shell simply has not sourced nvm. Report ✅ with `open a new terminal, or run: nvm use default`
-rather than ❌. Node 24 is the current Active LTS; 22 has moved to Maintenance, so a machine genuinely
-on 22 is ⚠️ OUTDATED rather than ❌ FAIL — the fix is `nvm install 24 && nvm alias default 24`.
-
-```bash
-. "$HOME/.nvm/nvm.sh" 2>/dev/null && nvm alias default 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+'
-```
-
-### Fixes
-
-```bash
-# Python tools — always uv tool, never pip install --user
-uv tool install ruff
-uv tool install mypy
-
-# Node globals
-. ~/.nvm/nvm.sh && npm install -g typescript prettier pnpm
-
-# uv itself
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-For anything more than one minor version behind current: report ⚠️ OUTDATED with
-`uv tool upgrade <tool>` or `npm update -g <package>`.
+**Fix commands come only from the radar** (Step 7d), never from this file or from memory. A tool
+present but below its floor is ⚠️ OUTDATED. Its fix is the radar command for this OS, which is
+written to install or upgrade.
 
 ---
 
@@ -201,11 +184,19 @@ the developer is outside Haviland Software — it will not apply to them.
 here: the org comes from whichever InnoDay workspace you are working in.
 
 ```bash
-innoday status 2>&1 | grep -q "CLI token valid" && echo SIGNED_IN || echo NOT_SIGNED_IN
+innoday whoami 2>&1 | head -1
 ```
 
-`SIGNED_IN` → ✅. `NOT_SIGNED_IN` → ❌, fix `innoday login`. Report only signed in or not, never the
-identity, email or org list `innoday status` prints.
+Give it 30 seconds (Bash tool timeout). Report only the verdict, never the name, email or orgs it
+prints:
+
+- A name with an email in brackets → ✅ signed in.
+- `Cannot reach InnoDay` or a timeout → ⚠️ could not reach InnoDay. This is not a sign-in problem,
+  so don't suggest `innoday login`; re-run later.
+- Anything else → ❌, fix `innoday login`.
+
+Don't use `innoday status` here: it loads every project in every org, which can take over 30
+seconds. It also says "cannot reach" for a network blip, which reads like a sign-in failure.
 
 A plain `401` from the CLI or MCP means the token: `innoday login`. If MCP `401`s while the CLI
 works, the MCP server cached old config at startup — `/mcp reconnect`.
@@ -216,7 +207,7 @@ works, the MCP server cached old config at startup — `/mcp reconnect`.
 innoday ping api 2>&1
 ```
 
-Exit 0 → ✅. Unreachable → ⚠️ WARN, not ❌: the API may simply not be running, which says nothing
+Give it 20 seconds. Exit 0 → ✅. Unreachable or timed out → ⚠️ WARN, not ❌: the API may simply not be running, which says nothing
 about the developer's machine. Show `innoday config show` to confirm the configured URL.
 
 **4c — MCP server registered:**
@@ -225,6 +216,7 @@ about the developer's machine. Show `innoday config show` to confirm the configu
 claude mcp list 2>/dev/null
 ```
 
+Give it 90 seconds: it health-checks every configured server, and one slow server can hold it up.
 Look for a server named `innoday`. Connected → ✅ / Error or absent → ❌, fix
 `claude mcp add innoday -- mcp-server-innoday`. If `claude mcp list` itself fails, ⚠️ WARN — the
 Claude Code CLI is unavailable, which Step 2 already reported.
@@ -316,7 +308,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 ```markdown
 ## Developer Environment Check
 
-**Context:** REPO — git repo detected (Python) · **Radar:** `2026-09-28.csv`
+**Context:** REPO — git repo detected (Python) · **Radar:** `2026-09-30.csv`
 
 ### Tier 1 — Core Toolchain
 
@@ -324,7 +316,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 |------|----------|-------|--------|
 | Git | 2.55+ | 2.55.0 | ✅ |
 | uv | 0.11+ | 0.8.3 | ⚠️ `uv self update` |
-| Node.js | v24+ | v24.18.0 | ✅ |
+| Node.js | 24+ | v24.21.0 | ✅ |
 | ruff | 0.16+ | — | ❌ `uv tool install ruff` |
 | Vercel CLI | 54+ | — | ⚠️ platform CLI — install when you deploy to Vercel |
 | gcloud CLI | 578+ | — | ⚠️ platform CLI — offered below |
@@ -370,6 +362,9 @@ Rules for the report:
 - Group all fixes into one block at the end so the reader can paste once.
 - Report versions you actually observed. If a check errored, say "could not determine" — never infer
   a version you did not see.
+- **A network failure is never a ❌.** If a check that goes over the network times out or can't
+  connect (SSH to GitHub, InnoDay, MCP), report ⚠️ `could not reach — re-run` and keep going. The
+  developer's machine may be fine.
 - Distinguish ❌ FAIL (tier 1 missing), ⚠️ WARN (present but outdated, or a platform/tier-2/3 tool
   this developer does not need yet), and ℹ️ N/A (tier 2/3 with no marker in this repo). Three
   states, used consistently.
