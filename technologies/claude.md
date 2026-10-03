@@ -22,6 +22,9 @@ each developer to remember them:
 - Coding standards and linting expectations (see [standards.md](standards.md))
 - Build, test, and release commands for the project
 
+Keep it short and current. [Writing CLAUDE.md and AGENTS.md](agent-instructions.md) lists the top
+10 anti-patterns, and `/dev-check` reviews a project's files against them.
+
 Project-specific skills belong in the repository's own `.claude/skills/` directory, versioned
 alongside the code they automate.
 

@@ -129,6 +129,7 @@ skill that only works for one org does not belong here.
 - `getting-started/release-guide.md` - Standard release process
 - `technologies/git.md` - Git and GitHub: workflow, `gh` CLI, repo standards, public-repo rules
 - `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
+- `technologies/agent-instructions.md` - Writing CLAUDE.md / AGENTS.md; top 10 anti-patterns (checklist for `/dev-check` Step 5b)
 - `.claude/skills/dev-check/SKILL.md` - Machine audit and install checklist
 - `radar/` - Technology radar: dated CSVs, source of truth for version floors and install links
 
