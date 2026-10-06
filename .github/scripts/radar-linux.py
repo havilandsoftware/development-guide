@@ -46,7 +46,7 @@ for t in order:
 
 skill = open(".claude/skills/dev-check/SKILL.md").read()
 step2 = skill[skill.index("## Step 2"):skill.index("## Step 3")]
-checks = {re.sub(r"†| \(macOS only\)", "", n).strip(): c.replace("\\|", "|")
+checks = {re.sub(r"[†‡]| \(macOS only\)", "", n).strip(): c.replace("\\|", "|")
           for n, c in re.findall(r"^\| ([^|`]+?) \| `(.+)` \|$", step2, re.M)}
 
 def floor_ok(out, floor):
