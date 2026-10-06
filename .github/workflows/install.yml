@@ -29,7 +29,7 @@ jobs:
               errors.append(f"radar/LATEST says {latest}, newest file is {os.path.basename(files[-1])}")
           skill = open(".claude/skills/dev-check/SKILL.md").read()
           step2 = skill[skill.index("## Step 2"):skill.index("## Step 3")]
-          checked = {re.sub(r"†| \(macOS only\)", "", m).strip()
+          checked = {re.sub(r"[†‡]| \(macOS only\)", "", m).strip()
                      for m in re.findall(r"^\| ([^|`]+?) \| `", step2, re.M)}
           for f in files:
               rows = list(csv.reader(open(f)))
