@@ -6,16 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the **Haviland Software Development Guide** - a comprehensive documentation repository that outlines technologies, processes, and development standards for the team. This is NOT a tutorial repository; it provides curated links to external resources and establishes team standards.
 
-The guide is structured into three main sections:
+The guide is structured into these sections:
 - **getting-started/**: Onboarding materials, expectations, installation guides, and learning resources
 - **technologies/**: Language and framework-specific guidelines (Git, Coding Standards, Claude Code)
+- **radar/**: Dated CSVs of tool versions and install commands, read by `/dev-check`
 
 ## Repository Purpose & Architecture
 
 This is a **documentation-only repository** with no code to build, test, or run. The architecture is intentionally simple:
 - All content is in Markdown (.md) files
 - Navigation starts from README.md which links to all major sections
-- Documentation follows a hierarchical structure: Getting Started → Technologies → Processes
+- Documentation follows a hierarchical structure: Getting Started → Technologies
 
 ## Key Team Principles
 
@@ -88,7 +89,6 @@ Location: `getting-started/installation-and-setup-guide.md`
   (Python 3.14, Node 24 Active LTS). The install guide, Dockerfile, and CI templates all specify
   the latter. Do not reintroduce Node 22 as what new work starts on.
 - Python is never installed globally per-version — `uv` provisions it per project.
-- The editor is plain VSCode. Claude Code is the AI tool. **Do not reintroduce Cursor or Copilot.**
 
 ### Skills
 `.claude/skills/` ships skills usable from any clone of this repo. They must depend on **nothing
@@ -129,6 +129,7 @@ skill that only works for one org does not belong here.
 - `getting-started/release-guide.md` - Standard release process
 - `technologies/git.md` - Git and GitHub: workflow, `gh` CLI, repo standards, public-repo rules
 - `technologies/innoday.md` - InnoDay CLI and MCP (internal tooling)
+- `technologies/agent-instructions.md` - Writing CLAUDE.md / AGENTS.md; top 10 anti-patterns (checklist for `/dev-check` Step 5b)
 - `.claude/skills/dev-check/SKILL.md` - Machine audit and install checklist
 - `radar/` - Technology radar: dated CSVs, source of truth for version floors and install links
 
@@ -144,5 +145,5 @@ When making changes to this repository:
 1. **Respect the "no tutorials" philosophy** - this guide links to authoritative sources, it doesn't replace them
 2. **Maintain consistent structure** - new sections should follow existing patterns
 3. **Update links carefully** - ensure all internal references remain valid
-4. **Version specifications matter** - when updating tools, update version numbers throughout
+4. **Versions live only in `radar/`** - change one by adding a new dated radar file, never by writing a number into the guide
 5. **Think about onboarding** - new team members rely on this guide being accurate and current

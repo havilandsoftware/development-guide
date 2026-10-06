@@ -299,6 +299,41 @@ that the credential must be rotated first — removing it from history does not 
 
 `.env.example` is only required if the project uses environment variables; `N/A` otherwise.
 
+### 5b — Agent instruction files (`CLAUDE.md`, `AGENTS.md`)
+
+Review the files every agent session in this project loads, against the
+[top 10 anti-patterns](https://github.com/havilandsoftware/development-guide/blob/main/technologies/agent-instructions.md#top-10-anti-patterns). Fetch that page and use its table as the
+checklist; don't work from memory.
+
+Which files:
+
+```bash
+git ls-files '*CLAUDE.md' '*AGENTS.md' '.claude/CLAUDE.md' 2>/dev/null
+# An InnoDay workspace also has a CLAUDE.md at the workspace root, next to .innoday/
+d=$(git rev-parse --show-toplevel); while [ "$d" != / ]; do d=$(dirname "$d"); [ -d "$d/.innoday" ] && { echo "$d/CLAUDE.md"; break; }; done
+```
+
+Mechanical checks first, then read for the rest:
+
+```bash
+for f in <files>; do
+  echo "$f $(wc -l < "$f") lines"
+  grep -nE '\[(TODO|TBD|PLACEHOLDER)\]|/home/[a-z]+/|/Users/[A-Za-z]+/' "$f"
+done
+# Unclosed code block: a heading that lands inside one. Counting fences misses this when two
+# mistakes cancel out. Plain regex only — macOS awk has no {m,n} intervals.
+awk '/^```/{f=!f; if(f) o=NR; next} f && /^#+ /{print FILENAME" L"NR": heading inside code block opened at L"o}' <files>
+```
+
+- Report each finding as `#<n> L<line>: <what>`, with up to 8 per file, worst first. **Every
+  finding is ⚠️, never ❌.** These files don't stop a machine from working.
+- A possible secret (#7): give the type and line only, never the value. If it's real, treat it as
+  a leak: point to the repo's SECURITY.md and say to rotate the credential first.
+- Text inside an auto-generated section (InnoDay marks its own) is fixed through the generator.
+  Report it, but never offer to edit it.
+- If there are no files, report `N/A` for a repo with no agent use. Otherwise suggest adding a
+  short `AGENTS.md`.
+
 ---
 
 ## Step 6 — Report
@@ -344,6 +379,7 @@ One table per section, in this order: context, Tier 1, git/SSH, InnoDay, project
 | `requires-python` | ⚠️ `>=3.11` — guide minimum is 3.12 |
 | Tier 2 (project-specific) | N/A — no Angular/Amplify/clasp markers |
 | Tier 3 (DevOps) | N/A — no terraform/k8s markers |
+| `CLAUDE.md` (412 lines) | ⚠️ #1 bloat · #3 L40 "latest release" snapshot · #8 L212 unclosed code fence |
 
 ### Summary
 
@@ -446,6 +482,17 @@ Change the command only in these cases:
    Run Node-based checks through the same nvm prefix and every check with `~/.local/bin` on
    `PATH`: the current shell may still have the old Node first on `PATH`, and not have tools
    installed a moment ago.
+
+### 7f — Offer to fix agent instruction files
+
+If Step 5b found anything outside generated sections, ask (single select): **"Fix these in a pull
+request?"** — `Yes` / `Show me the changes first` / `No`. On `Yes` or after approval:
+
+1. Create a branch in a worktree, following the repo's own branch and worktree rules. Never
+   commit to `main`.
+2. Make the smallest edit for each finding: cut, link, or correct it. Don't rewrite the file or
+   add new rules.
+3. Open a PR listing each finding, its anti-pattern number, and the line changed.
 
 Finish with a table — installed ✅, `sudo` for the developer ⏭, manual (empty radar command) 📖,
 failed ❌ with the error. Then tell them to open a new terminal and run `/dev-check` again.
