@@ -50,15 +50,18 @@ Everyone installs all of these, whatever you work on.
 
 | Tool | Install |
 |------|---------|
-| Git | [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
-| GitHub CLI (`gh`) | [cli.github.com](https://cli.github.com/) |
+| Git | `bash sh/install-git.sh` (Ubuntu/Debian) or [git-scm.com](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) |
+| GitHub CLI (`gh`) | `bash sh/install-gh.sh` (Ubuntu/Debian) or [cli.github.com](https://cli.github.com/) |
 | nvm | [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
 | Node.js | `nvm install 24 && nvm alias default 24` |
 | uv | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Python | Provisioned per-project by `uv` — see below |
 | Claude Code CLI | `npm install -g @anthropic-ai/claude-code` |
 | InnoDay CLI | `uv tool install innoday` — see [InnoDay](../technologies/innoday.md) |
-| Docker Engine | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
+| Docker Engine | `bash sh/install-docker.sh` (Ubuntu/Debian) or [docs.docker.com](https://docs.docker.com/engine/install/ubuntu) |
+
+The [`sh/`](../sh) scripts exist because these `sudo`-gated, piped installs break when a long
+line is copy-pasted and wraps. On another distro, use the linked docs.
 
 **Node.js — install via nvm, not your system package manager:**
 
