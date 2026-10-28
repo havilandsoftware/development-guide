@@ -44,6 +44,37 @@ no server, and no dependencies to exploit, so the realistic surface is narrow:
 - Typos, broken links to moved documentation, and stale version numbers — normal issues, not
   security reports
 
+## Sending a Secret to a Person
+
+When a password or other secret has to go to a person — especially someone outside the team who
+can't reach our password manager — send it as a [onetimesecret.com](https://onetimesecret.com) link.
+**Never paste the secret itself into email or chat.**
+
+- **One link per secret.** A link opens once and is then destroyed. Set a lifetime; 7 days is the
+  most an anonymous link gets.
+- **Put the link in the message, never the secret.**
+- **Don't open the link to check it before sending** — that uses it up. Email link scanners and
+  previews can use it up too. If the recipient sees "already viewed", make a new link.
+- **Make the link straight from the password manager or vault**, so the secret is never displayed
+  on screen or in your shell history. With Vault and the anonymous API:
+
+  ```bash
+  set -o pipefail
+  vault kv get -field=password <path> |
+    jq -Rs 'if . == "" then error("empty secret")
+            else {secret:{secret:rtrimstr("\n"), ttl:604800}} end' |
+    curl -fsS -X POST https://us.onetimesecret.com/api/v2/secret/conceal \
+      -H 'Content-Type: application/json' -d @- |
+    jq -er '"https://us.onetimesecret.com/secret/" +
+            (.record.receipt.secret_identifier // error("no link returned"))'
+  ```
+
+  If any step fails it prints no link and exits non-zero — since you can't open the link to test
+  it, never send one from a run that errored. `ttl` is in seconds (604800 = 7 days). The example
+  uses the US region (`us.onetimesecret.com`) for both the request and the link. Use the v2
+  endpoint — the older v1 `/api/v1/share` on `onetimesecret.com` now returns 405.
+- **Delete any local copy of the links** once they're sent.
+
 ## A Note on This Repository
 
 This guide is published for reference and is maintained by Haviland Software for its own team. We do
