@@ -71,8 +71,8 @@ can't reach our password manager — send it as a [onetimesecret.com](https://on
 
   If any step fails it prints no link and exits non-zero — since you can't open the link to test
   it, never send one from a run that errored. `ttl` is in seconds (604800 = 7 days). The example
-  uses the US region (`us.onetimesecret.com`); a link only works on the region that made it. Use
-  the v2 endpoint — the older v1 `/api/v1/share` on `onetimesecret.com` now returns 405.
+  uses the US region (`us.onetimesecret.com`) for both the request and the link. Use the v2
+  endpoint — the older v1 `/api/v1/share` on `onetimesecret.com` now returns 405.
 - **Delete any local copy of the links** once they're sent.
 
 ## A Note on This Repository
