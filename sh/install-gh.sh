@@ -3,7 +3,7 @@
 # See https://cli.github.com for the source of this procedure.
 set -e
 
-type -p wget >/dev/null || sudo apt install wget -y
+type -p wget >/dev/null || { sudo apt update && sudo apt install wget -y; }
 sudo mkdir -p -m 755 /etc/apt/keyrings
 out=$(mktemp)
 wget -nv -O"$out" https://cli.github.com/packages/githubcli-archive-keyring.gpg
