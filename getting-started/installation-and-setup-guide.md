@@ -10,7 +10,7 @@ needs before opening any project. Tiers 2 and 3 are installed on demand and are 
 | Tier | What | When to install |
 |------|------|-----------------|
 | **1 — Core** | Git, uv, Python, nvm/Node, Docker, `gh`, Claude Code, InnoDay, linters | Onboarding. Required. |
-| **1 — Platform** | Supabase, Vercel, AWS CLI, gcloud | Onboarding, or when you first deploy to them. |
+| **1 — Platform** | Supabase, Vercel, AWS CLI, gcloud; security scanners (semgrep, bandit, gitleaks, trivy) | Onboarding, or when you first deploy to them or scan code. |
 | **2 — Project-specific** | Angular, Amplify, clasp | Only when you take on a project that uses it. |
 | **3 — DevOps** | Railway, kubectl, Terraform, Helm, Minikube, Zapier | Only if you do infrastructure work. |
 
@@ -117,6 +117,7 @@ need; a backend-only developer will not need `vercel`.
 - [Vercel CLI](https://vercel.com/docs/cli) — Next.js deployments
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) — AWS services
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install) — Google Cloud
+- Security scanners — [semgrep](https://semgrep.dev/docs/getting-started/cli), [bandit](https://bandit.readthedocs.io/en/latest/start.html), [gitleaks](https://github.com/gitleaks/gitleaks#installing), [trivy](https://trivy.dev/latest/getting-started/installation/) — free; `innoday security scan` and `innoday sync` run them on each checkout
 
 ### Tier 1 — Editors and Applications
 
