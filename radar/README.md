@@ -17,7 +17,7 @@ truth for version floors** — nowhere else in the guide repeats them.
 | `version` | A floor written with a `+` (`2.55+`), or `any`. Never an exact pin |
 | `url` | The official install page |
 | `tier` | `core`, `platform`, `project` or `devops` — decides ❌ vs ⚠️ vs N/A in `/dev-check` |
-| `requires` | Tools that must be installed first, `;`-separated. `/dev-check` installs in this order |
+| `requires` | Tools that must be installed first, `;`-separated. `/dev-check` installs in this order. `uv` also stands for "`~/.local/bin` is on PATH", which uv's installer sets up |
 | `linux` | Install-or-upgrade command for Ubuntu/WSL. Empty = too involved to script; follow `url`. `-` = not used on this OS |
 | `macos` | The same for macOS. `brew` commands implicitly require Homebrew |
 
