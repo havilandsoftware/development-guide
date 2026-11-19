@@ -3,10 +3,10 @@ name: install
 
 on:
   pull_request:
-    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
+    paths: [install.sh, sh/**, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
   push:
     branches: [main]
-    paths: [install.sh, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
+    paths: [install.sh, sh/**, radar/**, .claude/skills/dev-check/**, .github/workflows/install.yml, .github/scripts/**]
 
 permissions:
   contents: read
@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Lint install.sh
-        run: shellcheck -s sh install.sh
+      - name: Lint install.sh and sh/
+        run: shellcheck -s sh install.sh && shellcheck sh/*.sh
       - name: Validate radar files
         run: |
           python3 - <<'PY'
@@ -47,6 +47,9 @@ jobs:
           missing = checked - set(names)
           if missing:
               errors.append(f"{files[-1]}: no row for tools the skill checks: {sorted(missing)}")
+          unrun = [s for s in sorted(glob.glob("sh/*.sh")) if s not in open(files[-1]).read()]
+          if unrun:
+              errors.append(f"{files[-1]}: no row runs {unrun}, so CI never tests them")
           print("\n".join(errors) or f"{len(files)} radar files OK, latest {latest}")
           sys.exit(1 if errors else 0)
           PY

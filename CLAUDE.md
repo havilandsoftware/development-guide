@@ -79,6 +79,10 @@ Location: `getting-started/installation-and-setup-guide.md`
   anything, add a new dated file and update `LATEST` — never edit an old one, and never write a
   version or install command into the guide or the skill. See `radar/README.md`; the `install`
   workflow validates all of this, and runs every `linux` command on a bare Ubuntu container.
+- A radar `linux` command may instead run a script under `sh/`, fetched from `main` (start it with
+  `sudo -v &&` when the script uses `sudo`, so `/dev-check` hands it back). That script is then the
+  only copy of those steps: change them there, never in the radar too. CI runs the checkout's copy
+  for that row, and fails if any `sh/` script has no row that runs it.
 - Floors are written with a `+` (`2.55+`) or `any`, never exact pins. Exact pins rot within weeks
   for tools that ship daily.
 

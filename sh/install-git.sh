@@ -4,10 +4,10 @@
 # well behind the floor in dev-check.
 set -e
 
-sudo apt update
-sudo apt install -y software-properties-common
+sudo apt-get update
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository -y ppa:git-core/ppa
-sudo apt update
-sudo apt install -y git
+sudo apt-get update
+sudo apt-get install -y git
 
 git --version
