@@ -114,6 +114,10 @@ Floors come from the radar (Step 0); the `Tool` names below match its `technolog
 | Vercel CLI† | `(. "$HOME/.nvm/nvm.sh" 2>/dev/null && { nvm use --silent default >/dev/null 2>&1 \|\| :; }; vercel --version)` |
 | AWS CLI† | `aws --version` |
 | gcloud CLI† | `gcloud --version 2>/dev/null \| head -1` |
+| semgrep† | `semgrep --version` |
+| bandit† | `bandit --version \| head -1` |
+| gitleaks† | `gitleaks version` |
+| trivy† | `trivy --version \| head -1` |
 | Homebrew (macOS only) | `brew --version \| head -1` |
 
 ‡ InnoDay is Haviland Software's internal tool. Missing → ❌ only for Haviland Software developers;
@@ -124,6 +128,10 @@ anyone else → ℹ️ N/A, and skip Step 4. This guide is public.
 backend-only developer has no use for `vercel`, and hard-failing them for it is the same mistake as
 failing them for Terraform. They are still offered in the Step 7 checklist, so installing them is one
 tick away.
+
+The security scanners (semgrep, bandit, gitleaks, trivy) are `platform` for the same reason. They
+are free, and `innoday security scan` and `innoday sync` run them on each checkout: without them
+the code and Docker image checks are reported as not run, never as clean.
 
 **Node and its global tools are checked under the nvm default** (the checks above select it).
 That is what a new terminal uses. A shell started before a Node upgrade still has the old Node, and
