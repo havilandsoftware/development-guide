@@ -3,14 +3,17 @@ would, then run the skill's own Step 2 checks against the radar floors.
 
 Mirrors dev-check Step 7: dependency order from `requires`, `bash -o pipefail`, the nvm and uv prefixes,
 and sudo (passwordless here — on a real machine the developer runs those lines).
+A row that fetches a script from this repo's sh/ on main runs this checkout's copy instead, so a
+PR tests its own script.
 """
-import csv, re, subprocess, sys, time
+import csv, os, re, subprocess, sys, time
 
 radar = "radar/" + open("radar/LATEST").read().strip()
 head, *rows = list(csv.reader(open(radar)))
 tools = {r[0]: dict(zip(head, r)) for r in rows}
 NVM = ". ~/.nvm/nvm.sh && { nvm use --silent default >/dev/null 2>&1 || :; } && "
 UV = 'export PATH="$HOME/.local/bin:$PATH" && '
+SH = "https://raw.githubusercontent.com/havilandsoftware/development-guide/main/sh/"
 
 def runnable(t):
     return t in tools and tools[t]["linux"] not in ("", "-")
@@ -31,7 +34,7 @@ for t in order:
     reqs = [r for r in tools[t]["requires"].split(";") if r]
     if any(r in failed for r in reqs):
         failed.add(t); results.append((t, "skipped", 0, "a requirement failed")); continue
-    cmd = tools[t]["linux"]
+    cmd = tools[t]["linux"].replace(SH, f"file://{os.getcwd()}/sh/")
     if {"Node.js", "nvm"} & set(reqs):
         cmd = NVM + cmd
     if "uv" in reqs:

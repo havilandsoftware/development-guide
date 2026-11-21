@@ -26,7 +26,9 @@ command containing `sudo` for you to run. Files before `2026-09-29.csv` have onl
 columns, and `2026-09-29.csv` has no `tier`.
 
 **CI runs every `linux` command on a bare Ubuntu** in `requires` order, then checks each floor
-(`.github/scripts/radar-linux.py`). A command that doesn't work there doesn't merge.
+(`.github/scripts/radar-linux.py`). A command that doesn't work there doesn't merge. A command
+that runs a script from [`sh/`](../sh) on `main` runs the checkout's copy in CI; that script is the
+only copy of those steps.
 
 Use a specific radar with:
 
